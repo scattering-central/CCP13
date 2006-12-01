@@ -1,0 +1,253 @@
+66d65
+< #include "get_types.h"
+68,77c67,73
+< #define  FLOAT32   0
+< #define  CHAR8     1
+< #define  UCHAR8    2
+< #define  INT16     3
+< #define  UINT16    4
+< #define  INT32     5
+< #define  UINT32    6
+< #define  INT64     7
+< #define  UINT64    8
+< #define  FLOAT64   9
+---
+> #define FLOAT 0
+> #define CHAR 1
+> #define UCHAR 2
+> #define SHORT16 3
+> #define USHORT16 4
+> #define LONG32 5
+> #define ULONG32 6
+86c82,83
+< static void swabytes (void *, int, int);
+---
+> static void swabshort(void*,int);
+> static void swablong(void*,int);
+436,437c433,434
+<         case FLOAT32:
+<            dsize = sizeof (BSL_FLOAT32);
+---
+>         case FLOAT:
+>            dsize = sizeof (float);
+440,442c437,439
+<         case CHAR8:
+<         case UCHAR8:
+<            dsize = sizeof (BSL_CHAR8);
+---
+>         case CHAR:
+>         case UCHAR:
+>            dsize = sizeof (char);
+445,448c442,445
+<         case INT16:
+<         case UINT16:
+<            dsize = sizeof (BSL_INT16);
+< 	   break;
+---
+>         case SHORT16:
+>         case USHORT16:
+>            dsize = sizeof (short);
+>            break;
+450,461c447,449
+<         case INT32:
+<         case UINT32:
+<            dsize = sizeof (BSL_INT32);
+< 	   break;
+< 
+<         case INT64:
+<         case UINT64:
+<            dsize = sizeof (BSL_INT64);
+< 	   break;
+< 
+<         case FLOAT64:
+<            dsize = sizeof (BSL_FLOAT64);
+---
+>         case LONG32:
+>         case ULONG32:
+>            dsize = sizeof (long);
+465,466c453,454
+< 	   perror ("Error: Data type not supported");
+< 	   return;
+---
+>            perror ("Error: Data type not supported");
+>            return;
+480a469,470
+>    
+>     dptr = (void *) (tmp + offset - off);
+482d471
+<     tmp+=offset-off;
+483a473
+>     ctmp = tmp;
+485c475
+<     if ((dptr = (void *) malloc (ntotal * sizeof (float))) == NULL)
+---
+>     if (dtype != FLOAT)
+487,488c477,482
+<        perror ("Error: Unable to allocate enough memory for data buffer");
+<        return;
+---
+>        if ((dptr = (void *) malloc (ntotal * sizeof (float))) == NULL)
+>        {
+>           perror ("Error: Unable to allocate enough memory for data buffer");
+>           return;
+>        }
+>        ftmp = (float *) dptr;
+490d483
+<     ftmp = (float *) dptr;
+494,499c487,490
+<        case FLOAT32:
+< 	  if (swab)
+< 	     swabytes ((void*)tmp, ntotal, dsize);
+< 	  for (i=0; i<ntotal; i++, tmp += dsize)
+< 	      *ftmp++ = (float) *((BSL_FLOAT32 *) tmp);
+< 	  break;
+---
+>        case FLOAT:
+>           if (swab)
+>              swablong (dptr, ntotal);
+>           break;
+501,504c492,495
+<        case CHAR8:
+< 	  for (i=0; i<ntotal; i++, tmp += dsize)
+< 	      *ftmp++ = (float) *((BSL_CHAR8 *) tmp);
+< 	  break;
+---
+>        case CHAR:
+>           for (i=0; i<ntotal; i++, tmp += dsize)
+>               *ftmp++ = (float) *((char *) tmp);
+>           break;
+506,509c497,500
+<        case UCHAR8:
+< 	  for (i=0; i<ntotal; i++, tmp += dsize)
+< 	      *ftmp++ = (float) *((BSL_UCHAR8 *) tmp);
+< 	  break;
+---
+>        case UCHAR:
+>           for (i=0; i<ntotal; i++, tmp += dsize)
+>               *ftmp++ = (float) *((unsigned char *) tmp);
+>           break;
+511,516c502,507
+<        case INT16:
+< 	  if (swab)
+< 	     swabytes ((void*)tmp, ntotal, dsize);
+< 	  for (i=0; i<ntotal; i++, tmp += dsize)
+< 	      *ftmp++ = (float) *((BSL_INT16 *) tmp);
+< 	  break;
+---
+>        case SHORT16:
+>           if (swab)
+>              swabshort ((void*)tmp, ntotal);
+>           for (i=0; i<ntotal; i++, tmp += dsize)
+>               *ftmp++ = (float) *((short *) tmp);
+>           break;
+518,523c509,514
+<        case UINT16:
+< 	  if (swab)
+< 	     swabytes ((void*)tmp, ntotal, dsize);
+< 	  for (i=0; i<ntotal; i++, tmp += dsize)
+< 	      *ftmp++ = (float) *((BSL_UINT16 *) tmp);
+< 	  break;
+---
+>        case USHORT16:
+>           if (swab)
+>              swabshort ((void*)tmp, ntotal);
+>           for (i=0; i<ntotal; i++, tmp += dsize)
+>               *ftmp++ = (float) *((unsigned short *) tmp);
+>           break;
+525,530c516,521
+<        case INT32:
+< 	  if (swab)
+< 	     swabytes ((void*)tmp, ntotal, dsize);
+< 	  for (i=0; i<ntotal; i++, tmp += dsize)
+< 	      *ftmp++ = (float) *((BSL_INT32 *) tmp);
+< 	  break;
+---
+>        case LONG32:
+>           if (swab)
+>              swablong ((void*)tmp, ntotal);
+>           for (i=0; i<ntotal; i++, tmp += dsize)
+>               *ftmp++ = (float) *((long *) tmp);
+>           break;
+532,558c523,528
+<        case UINT32:
+< 	  if (swab)
+< 	     swabytes ((void*)tmp, ntotal, dsize);
+< 	  for (i=0; i<ntotal; i++, tmp += dsize)
+< 	      *ftmp++ = (float) *((BSL_UINT32 *) tmp);
+< 	  break;
+< 
+<        case INT64:
+< 	  if (swab)
+< 	     swabytes ((void*)tmp, ntotal, dsize);
+< 	  for (i=0; i<ntotal; i++, tmp += dsize)
+< 	      *ftmp++ = (float) *((BSL_INT64 *) tmp);
+< 	  break;
+< 
+<        case UINT64:
+< 	  if (swab)
+< 	     swabytes ((void*)tmp, ntotal, dsize);
+< 	  for (i=0; i<ntotal; i++, tmp += dsize)
+< 	      *ftmp++ = (float) *((BSL_UINT64 *) tmp);
+< 	  break;
+< 
+<        case FLOAT64:
+< 	  if (swab)
+< 	     swabytes ((void*)tmp, ntotal, dsize);
+< 	  for (i=0; i<ntotal; i++, tmp += dsize)
+< 	      *ftmp++ = (float) *((BSL_FLOAT64 *) tmp);
+< 	  break;
+---
+>        case ULONG32:
+>           for (i=0; i<ntotal; i++, tmp += dsize)
+>               *ftmp++ = (float) *((unsigned long *) tmp);
+>           if (swab)
+>              swablong (dptr, ntotal);
+>           break;
+561a532
+> 
+563c534,535
+<    
+---
+> 
+> 
+570c542
+< static void swabytes (void *vp, int n, int dsize)
+---
+> void swabshort (void *vp, int n)
+572,573c544,546
+<     unsigned char *cp = (unsigned char *)vp;
+<     int t,i,j;
+---
+>     unsigned short *sp = (unsigned short *) vp;
+>     unsigned char *cp;
+>     int t;
+577,583c550,552
+<        j=0;
+<        for(i=dsize-1;i>j;i--)
+<        {
+<          t = cp[i]; cp[i] = cp[j]; cp[j] = t;
+<          j++;
+<        }
+<        cp+=dsize;
+---
+>        cp = (unsigned char*) sp;
+>        t = cp[1]; cp[1] = cp[0]; cp[0] = t;
+>        sp++;
+584a554
+>       
+585a556,570
+> 
+> void swablong (void *vp, int n)
+> {
+>     unsigned long *lp = (unsigned long *) vp;
+>     unsigned char *cp;
+>     int t;
+> 
+>     while (n-- > 0)
+>     {
+>        cp = (unsigned char *) lp;
+>        t = cp[3]; cp[3] = cp[0]; cp[0] = t;
+>        t = cp[2]; cp[2] = cp[1]; cp[1] = t;
+>        lp++;
+>     }
+> }

@@ -1,0 +1,272 @@
+<!doctype html public "-//w3c//dtd html 4.0 transitional//en">
+<html>
+<head>
+   <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+   <meta name="Author" content="Mark Shotton">
+   <meta name="GENERATOR" content="Microsoft FrontPage 6.0">
+   <title>Extrapolation</title>
+</head>
+<body>
+<b><font size=+1>4.1 Extrapolation</font></b>
+<blockquote>
+<p><img SRC="Extrapolation.JPG" height=350 width=458>
+<p><b>Figure 1:</b> Extrapolated data (magenta) superimposed on the original
+SAXS data (blue).
+<br>&nbsp;
+</blockquote>
+<p>Prior to calculating either transform of the scattering data (see <a href="../../Overview.htm">Overview</a>
+and <a href="../transform/Transform.htm">Transform</a>), the data must
+first be extrapolated to q = 0 and q = infinity to avoid the introduction
+of series termination errors in the transform. This can be performed by
+selecting the <b>Extrapolate</b> item from the <b><a href="../Actions.htm">Actions</a></b>
+menu.
+<br>
+<p><b>4.1.1 Extrapolation to q = 0</b>
+<p>The data are extrapolated to q = 0 by fitting a Guinier or Vonk model
+to the first few genuine data points after the beamstop. If the experimental
+data do not contain an upturn in intensity at low q, back extrapolation
+may fail. The first genuine data point is indicated by the red limit marker
+on the left of the scattering data graph as shown in Figure 1. This limit marker
+can be moved by dragging it with the right-hand mouse button. The <i>CORFUNC </i>program
+will attempt to set a sensible initial value for this limit.
+<p>Fitting functions for back-extrapolation:
+<br>&nbsp;
+<table COLS=2 WIDTH="100%" >
+<tr>
+<td>I(q) = A e^(Bq&sup2;)</td>
+
+<td>Guinier</td>
+</tr>
+
+<tr>
+<td>I(q) = H<font size=-2>1</font> - H<font size=-2>2</font>q&sup2;</td>
+
+<td>Vonk</td>
+</tr>
+</table>
+
+<p>The Guinier model assumes that the small angle scattering arises from particles
+and that parameter B is related to the radius of gyration of those particles.
+This has dubious applicability to polymer systems. However, the correlation
+function is affected by the Guinier back-extrapolation to the greatest
+extent at large values of R (see <a href="../../Overview.htm">Overview</a>
+and <a href="../extraction/Extraction.htm">Extraction of parameters</a>)
+and so the back-extrapolation only has a small effect on the analysis.
+
+<p>The Guinier back-extrapolation <i>must</i> be selected if <i>CORFUNC</i> is
+being used to generate a volume fraction profile.
+<br><p>&nbsp;<b>4.1.2 Extrapolation to q = infinity</b>
+<p>The data are extrapolated to q = infinity by fitting either a Porod
+<a href="../../references/References.htm">[3]</a>
+or sigmoid <a href="../../references/References.htm">[4]</a> function to
+the tail of the scattering data (see <a href="../../edit/fitting/Fittingpar.htm">Fitting
+Parameters</a>). The "tail" of the data is taken as those data lying between
+the two red limit markers on the right of the scattering data graph as shown
+in Figure 1. These can be moved by dragging them with the right-hand mouse
+button. If these limits vary from frame to frame, in the case of real-time
+data, variable tail limits can also be chosen (see <a href="../../edit/fitting/Fittingpar.htm">Fitting
+Parameters</a>).
+<p>Tail-fitting functions:
+<br>&nbsp;
+<table COLS=2 WIDTH="100%" >
+<tr>
+<td>I(q) = B + (K/q^4)e^(-q&sup2;&#963;&sup2;)</td>
+
+<td>Sigmoid</td>
+</tr>
+
+<tr>
+<td>I(q) = B + (K/q^4)</td>
+
+<td>Porod</td>
+</tr>
+</table>
+
+<p>where B = Bonart thermal background
+<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; K = Porod constant
+<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &#963;
+describes the electron (or neutron scattering length) density profile at the interface between crystalline
+and amorphous regions. (see Figure 2)
+<br>&nbsp;
+<blockquote>
+<p><img SRC="fig3.GIF" height=296 width=461>
+<p><b>Figure 2: </b>The value of &#963; is a measure of the electron
+density profile at the interface between crystalline and amorphous regions.
+<br>&nbsp;
+</blockquote>
+<p>The sigmoid function should generally be chosen for tail-fitting. This
+fitting is accomplished by the use of a Levenburg-Marquart non-linear least-squares
+fitting algorithm <a href="../../references/References.htm">[5]</a>
+. Using a Porod function usually yields a poor quality
+correlation function, but a greater number of structural parameters can
+be extracted (see <a href="../extraction/Extraction.htm">Extraction of
+parameters</a>) . The fitting of the Porod function is a linear problem.<p>The
+Porod function should be selected if <i>CORFUNC</i> is being used to generate a
+volume fraction profile.
+
+<p>The tail-fitting will be performed to convergence or until the maximum
+number of iterations (see <a href="../../edit/fitting/Fittingpar.htm">Fitting
+Parameters</a>) has been reached. The user will be warned if the maximum
+number of iterations has been reached without convergence and may consider
+increasing this number and repeating the extrapolation.
+<p>The tail-fit affects the correlation function at low values of R (see
+<a href="../../Overview.htm">Overview</a>
+and <a href="../extraction/Extraction.htm">Extraction of parameters</a>)
+which is the most important region in the extraction of ideal lamellar
+morphology parameters. Hence it is vital to obtain a good fit to this tail.
+<p>Transformation is actually performed by numerical integration (see
+<a href="../transform/Transform.htm">Transform</a>)
+and uses extrapolated data up to q = 0.6, not infinity.
+<br>&nbsp;&nbsp;
+<p><b>4.1.3 Smoothing</b>
+<p>The extrapolated data set consists of the Guinier or Vonk back-extrapolation
+up to the first genuine data point, the original scattering data up to the first
+tail-fitting limit and the sigmoid or Porod tail-fit beyond this. It is shown
+as the magenta-coloured line in Figure 1. The join between the original
+scattering data and tail-fit is smoothed using a Savitzky-Golay <a href="../../references/References.htm">[5]</a>
+smoothing algorithm that smoothes the data without greatly altering higher
+moments. This avoids the formation of ripples in the transformed function
+which would otherwise occur with a period matching the d-spacing of the join. No
+smoothing is used at the join of the back-extrapolation to the scattering data.
+<br>&nbsp;
+<p><b>4.1.4 Output</b><b></b>
+<p>Once the extrapolation process is complete, the extrapolated data will
+be shown superimposed on the original scattering data as shown in Figure 1. Note
+that this extrapolated data has the Bonart background added to it for the
+purposes of comparison. Background-subtracted data is actually used in
+the <a href="../transform/transform.htm">Transform</a> process.<p>The following files are output during the extrapolation process (assuming
+scattering data filename
+A01000.nnn and q-axis file X00000.nnn where n is any alphanumeric character):
+<p>In all cases:
+<table COLS=2 WIDTH="1110" >
+<tr>
+<td width="236">CORFUNC.TXT</td>
+
+<td width="860">ASCII text file with extrapolation parameters</td>
+</tr>
+
+<tr>
+<td width="236">A01000.FUL</td>
+
+<td width="860">Extrapolated data (<a href="http://srs.dl.ac.uk/NCD/computing/manual.bsl.html">BSL/OTOKO
+  format</a>)</td>
+</tr>
+
+<tr>
+<td width="236">A01000.FU2&nbsp;</td>
+
+<td width="860">Extrapolated data + background (<a href="http://srs.dl.ac.uk/NCD/computing/manual.bsl.html">BSL/OTOKO
+  format</a>)</td>
+</tr>
+
+<tr>
+<td width="236">X00000.FLX</td>
+
+<td width="860">q-axis for use with the above (<a href="http://srs.dl.ac.uk/NCD/computing/manual.bsl.html">BSL/OTOKO
+  format</a>)</td>
+</tr>
+
+<tr>
+<td width="236">A01FUL.TXT</td>
+
+<td width="860">Extrapolated data (<a href="../../file/File.htm"> ASCII format</a>)</td>
+</tr>
+
+<tr>
+<td width="236">A01FU2.TXT</td>
+
+<td width="860">Extrapolated data + background (<a href="../../file/File.htm">ASCII format</a>)</td>
+</tr>
+
+<tr>
+<td width="236">X00FLX.TXT</td>
+
+<td width="860">q-axis for use with the above (<a href="../../file/File.htm">ASCII format</a>)</td>
+</tr>
+</table>
+
+<p>In the case of multiple-frame analysis:
+<table COLS=2 WIDTH="1110" >
+<tr>
+<td width="235">A01000.RAD</td>
+
+<td width="861">Guinier radius of gyration v. frame (<a href="http://srs.dl.ac.uk/NCD/computing/manual.bsl.html">BSL/OTOKO
+  format</a>)</td>
+</tr>
+
+<tr>
+<td width="235">A01000.BAK</td>
+
+<td width="861">Background v. frame (<a href="http://srs.dl.ac.uk/NCD/computing/manual.bsl.html">BSL/OTOKO
+  format</a>)</td>
+</tr>
+
+<tr>
+<td width="235">A01000.POR</td>
+
+<td width="861">Porod constant v. frame (<a href="http://srs.dl.ac.uk/NCD/computing/manual.bsl.html">BSL/OTOKO
+  format</a>)</td>
+</tr>
+
+<tr>
+<td width="235">A01000.SIG</td>
+
+<td width="861">Sigma v. frame (<a href="http://srs.dl.ac.uk/NCD/computing/manual.bsl.html">BSL/OTOKO
+  format</a>)</td>
+</tr>
+
+<tr>
+<td width="235">A01000.FAX</td>
+
+<td width="861">Frame number axis for use with the above (<a href="http://srs.dl.ac.uk/NCD/computing/manual.bsl.html">BSL/OTOKO
+  format</a>)</td>
+</tr>
+<tr>
+<td width="235">A01RAD.TXT</td>
+
+<td width="861">Guinier radius of gyration v. frame (<a href="../../file/File.htm">ASCII format</a>)</td>
+</tr>
+<tr>
+<td width="235">A01BAK.TXT</td>
+
+<td width="861">Background v. frame (<a href="../../file/File.htm">ASCII format</a>)</td>
+</tr>
+<tr>
+<td width="235">A01POR.TXT</td>
+
+<td width="861">Porod constant v. frame (<a href="../../file/File.htm">ASCII format</a>)</td>
+</tr>
+<tr>
+<td width="235">A01SIG.TXT</td>
+
+<td width="861">Sigma v. frame (<a href="../../file/File.htm">ASCII format</a>)</td>
+</tr>
+<tr>
+<td width="235">A01FAX.TXT</td>
+
+<td width="861">Frame number axis for use with the above (<a href="../../file/File.htm">ASCII format</a>)</td>
+</tr>
+</table>
+
+<p>These results can be plotted by selecting the required item from the
+<a href="../../display/Display.htm">Display</a> menu.
+<br>&nbsp;
+<p><b>4.1.5 Errors and Warnings</b>
+<p>See the <a href="../errors/Errors.htm">Errors and Warnings</a> section.
+<br>&nbsp;
+<p><b>4.1.6 Tips</b>
+<p>(1) Avoid choosing a noisy region for tail-fitting.
+<p>(2) If the back-extrapolation fails with one type of function, try using the 
+other.
+<p>(3) Check correlation functions and volume fraction profiles for fluctuations with periods
+corresponding
+to the truncation point of q = 0.6 (10.5 &Aring;) and the point at
+which the tail-fit joins the scattering data.
+<br>&nbsp;
+<p><b>4.1.7 Next Steps</b><b></b>
+<p>Once extrapolation has been completed successfully, the user may proceed
+with the <a href="../transform/Transform.htm">Transform</a> process.
+<br>
+<br>
+</body>
+</html>

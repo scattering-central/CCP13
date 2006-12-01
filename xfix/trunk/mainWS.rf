@@ -1,0 +1,6 @@
+
+!	mainWS.rf
+!       This resource file is loaded by mainWS.c
+
+*.mainWS.keyboardFocusPolicy: explicit
+

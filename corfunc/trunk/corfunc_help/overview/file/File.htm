@@ -1,0 +1,103 @@
+<!doctype html public "-//w3c//dtd html 4.0 transitional//en">
+<html>
+<head>
+   <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+   <meta name="Author" content="Mark Shotton">
+   <meta name="GENERATOR" content="Microsoft FrontPage 6.0">
+   <title>File menu</title>
+</head>
+<body text="#000000" bgcolor="#FFFFFF" link="#0000EE" vlink="#551A8B" alink="#FF0000">
+<b><font size=+1>2 File Menu</font></b>
+<blockquote>
+<p><img SRC="FileMenu.JPG" height=260 width=361>
+<p><b>Figure 1: </b>The File menu
+<br>&nbsp;
+</blockquote>
+<p><b>2.1 Load data ...</b>
+<p>Scattering data (y-axis of the graph shown in Figure 3) can be loaded into <i>CORFUNC</i>
+by choosing the <b>Load data ...</b> item from the <b>File</b> menu (see
+Figure 1). This will open a file selection tool (see Figure 2) that can
+be used to select the data file to be loaded. The data file may contain
+either a single frame or a series of frames in the case of a real-time dataset. The data file must be in either
+<a href="http://srs.dl.ac.uk/NCD/computing/manual.bsl.html">BSL/OTOKO
+format</a> or in an ASCII format where each frame of data is separated by
+a comma and each channel by a newline character, <i>i.e.</i>:
+<blockquote>
+<p>(frame 1&nbsp; channel 1),&nbsp; (frame 2&nbsp; channel 1), ...,&nbsp; (frame <i>n</i>&nbsp;
+channel 1)
+<br>(frame 1&nbsp; channel 2),&nbsp; (frame 2&nbsp; channel 2), ...,&nbsp; (frame <i>n</i>&nbsp;
+channel 2)
+<br>...
+<br>(frame 1&nbsp; channel <i>n</i>),&nbsp; (frame 2&nbsp; channel <i>n</i>),
+...,&nbsp; (frame <i>n</i>&nbsp; channel <i>n</i>)
+</blockquote>
+<p style="margin-top: 0; margin-bottom: 0">The maximum field length for each number in the ASCII file is 30. The
+input ASCII filename must be in the format XXXXXX.TXT or XXXXXX.DAT (where X is any alphanumeric
+character). Note that <i>CORFUNC</i> is rather particular about the format of 
+the ASCII fields it reads. Each field must start with 2 spaces, followed by the 
+number in scientific (e or E) notation, followed by a comma delimiter. 
+Unusually, <i>CORFUNC</i> expects the exponent to be 3 digits (not including the 
+sign); <i>e.g. </i>1.23456E-001 or -9.87654E+001.&nbsp; If you are writing your 
+own programs to provide ASCII data as input to <i>CORFUNC</i> the format 
+specifiers to use are:<p style="margin-top: 0; margin-bottom: 0">&nbsp;<table border="1" width="643" id="table1">
+	<tr>
+		<td width="319">
+		<pre style="margin-top: 0; margin-bottom: 0"><b><font size="4">FORTRAN</font></b></pre>
+		</td>
+		<td width="308">
+		<pre style="margin-top: 0; margin-bottom: 0"><b><font size="4">C / C+</font></b></pre>
+		</td>
+	</tr>
+	<tr>
+		<td width="319">
+		<pre style="margin-top: 0; margin-bottom: 0"><font size="4">1000 format(a2,e12.5e3,a)</font></pre>
+		<pre style="margin-top: 0; margin-bottom: 0"><font size="4">write(1,1000)'   ',data,','</font></pre>
+		</td>
+		<td width="308">
+		<pre style="margin-top: 0; margin-bottom: 0"><font size="4">fprintf(file,&quot; %7.5E,&quot;,*data);</font></pre>
+		<pre style="margin-top: 0; margin-bottom: 0">&nbsp;</pre>
+		</td>
+	</tr>
+</table>
+<p style="margin-top: 0; margin-bottom: 0">&nbsp;<p style="margin-top: 0; margin-bottom: 0">
+<font color="#008000"><i>A third ASCII format input option (see Appendix A <a href="http://www.isis.rl.ac.uk/LargeScale/LOQ/other/formats.htm">here</a>),
+whereby <b>both</b> data and q-axis are contained in the <b>same</b> file is in
+development.</i></font>
+<p><font color="#FF0000"><i>For BSL/OTOKO format files it is important to note
+that </i>CORFUNC<i> uses indicator(4) in the <b> header file</b> (see section
+1.4.1 of the <a href="http://srs.dl.ac.uk/NCD/computing/manual.bsl.html">BSL/OTOKO
+manual</a>) to flag the byte-order of the data. If the data was written
+on a big-endian machine (mainframe, workstation), this indicator should be set to 0, if it was written
+on a little-endian machine (PC), indicator(4) should be set to 1. The files
+that are output by </i>CORFUNC<i> will have indicator(4) assigned correctly, but
+files written prior to this format change may need to be manually edited
+to set the byte-order flag. Alternatively the CCP13 conversion utility </i><a href="http://www.ccp13.ac.uk/software/software.htm">XCONV</a><i>
+can be used to swap the byte-order.</i></font>
+<br>&nbsp;
+<p><b><font color="#000000">2.2 Load q-axis ...</font></b>
+<p><font color="#000000">The q-axis (x-axis of the graph shown in Figure
+3) is loaded in the same way as the data file. The q-axis file must contain
+the same number of channels as the data and <i> must contain one frame only</i>
+(ie. each frame of the data file uses the same q-axis).</font>
+<blockquote>
+<p><img SRC="FileChooser.JPG" NOSAVE height=327 width=508>
+<p><b>Figure 2: </b>The File selection tool
+<br>&nbsp;
+</blockquote>
+<p><b><font color="#000000">2.3 Data Display</font></b>
+<p><font color="#000000">Once the data and the q-axis files have been loaded,
+the first frame of the data will be displayed (if the <a href="../display/Display.htm">Display</a>
+menu "Data" checkbox is selected) as shown in Figure 3.</font>
+<blockquote>
+<p><img SRC="Graph.JPG" height=350 width=458>
+<p><b>Figure 3:</b> SAXS data displayed by <i>CORFUNC</i>
+<br>&nbsp;
+</blockquote>
+<p><b>2.4 Next steps</b>
+<p>Once the data has been loaded, the user can proceed with the <a href="../actions/extrapolation/Extrapolation.htm">extrapolation</a>
+process after first editing the <a href="../edit/Edit.htm">parameters</a>
+ required as input to this process.
+<br>&nbsp;
+<br>&nbsp;
+</body>
+</html>

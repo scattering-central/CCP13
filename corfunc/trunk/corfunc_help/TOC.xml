@@ -1,0 +1,34 @@
+<?xml version='1.0' encoding='ISO-8859-1'  ?>
+<!DOCTYPE toc
+  PUBLIC "-//Sun Microsystems Inc.//DTD JavaHelp TOC Version 1.0//EN"
+         "http://java.sun.com/products/javahelp/toc_1_0.dtd">
+<toc version="1.0">
+<tocitem text="Corfunc OnLine Help">
+   <tocitem text="Overview" target="Overview"/>
+   <tocitem text="Main Menu">
+     <tocitem text="File menu" target="File"/>
+     <tocitem text="Edit menu" target="Edit"/>
+     <tocitem text="Edit menu">
+       <tocitem text="General parameters" target="General parameters" />
+       <tocitem text="Fitting parameters" target="Fitting parameters" />
+       <tocitem text="Transform parameters" target="Transform parameters" />
+       <tocitem text="Hilbert parameters" target="Hilbert parameters" />
+       <tocitem text="Extraction parameters" target="Extraction parameters" />
+     </tocitem>
+     <tocitem text="Actions menu" target="Actions"/>
+     <tocitem text="Actions menu">
+       <tocitem text="Extrapolate" target="Extrapolation"/>
+       <tocitem text="Transform" target="Transform"/>
+       <tocitem text="Extract parameters" target="Extraction"/>
+       <tocitem text="Normalisation" target="Normalisation"/>
+       <tocitem text="Errors and warnings" target="Errors"/>
+     </tocitem>
+     <tocitem text="Display menu" target="Display"/>
+   <tocitem text="Graphics Windows" target="Graphics Windows"/>
+   </tocitem> 
+   <tocitem text="References" target="References"/>
+   <tocitem text="Appendix" target="Appendix"/>
+   <tocitem text="About" target="About"/>
+   <tocitem text="Bugs" target="Bugs"/>
+</tocitem>
+</toc>

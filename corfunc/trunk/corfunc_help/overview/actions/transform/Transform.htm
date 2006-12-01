@@ -1,0 +1,253 @@
+<!doctype html public "-//w3c//dtd html 4.0 transitional//en">
+<html>
+<head>
+   <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+   <meta name="Author" content="Mark Shotton">
+   <meta name="GENERATOR" content="Microsoft FrontPage 6.0">
+   <title>Transform</title>
+</head>
+<body>
+<b><font size=+1>4.2 Transform</font></b>
+<p><b>4.2.1.1 Calculating the One-dimensional Correlation Function</b>
+<p><font color="#008000"><b>Edit</b> - <b>Parameters...</b> - <b>Transform type:
+Standard</b></font>
+<p>By selecting the <b>Transform</b> option from the <b><a href="../Actions.htm">Actions</a></b>
+menu, the user may calculate the one-dimensional correlation function,
+&#915;<font size=-2>1</font>   <a href="../../references/References.htm"> [2]</a> (see Figure 1), the second moment of the data
+<a href="../../references/References.htm">[2]</a>, the interface distribution function
+<a href="../../references/References.htm">[7]</a>, and may re-transform &#915;<font size=-2>1</font>
+back into a scattering curve for comparison with the original data.
+<p>&#915;<font size=-2>1</font> is given by:
+<br><img SRC="gamma1.GIF" height=82 width=328>
+<br>where j(q) is the scattering intensity and Q is the Invariant of j(q) given by:
+<br><img SRC="q.GIF" height=82 width=328>
+<br>Every point in the extrapolated dataset is used to calculate each point
+on the correlation function. The integration is numerical (a trapezium
+approximation) and is only performed up to q&nbsp;=&nbsp;0.6. Together with the fluctuations
+introduced by this truncation, fluctuations are also introduced into the
+correlation function by the finite gap between points in the extrapolated
+dataset, <i>i.e.</i> we don't have intensity as a continuous function of
+q.
+<p>The user must specify the maximum value of R to which the correlation
+function should be calculated, the step in R, and whether to re-transform
+the correlation function for comparison with the original scattering data. These
+parameters may be input in the <a href="../../edit/transform/Transformpar.htm">Transform
+parameters</a> section of the Parameters window, opened by choosing the
+<b>Parameters...</b>
+item from the <b><a href="../../edit/Edit.htm">Edit</a></b> menu.
+<blockquote>
+<p><img SRC="Gamma1Graph.JPG" NOSAVE height=350 width=458>
+<p><b>Figure 1: </b>The one-dimensional correlation function
+<br>&nbsp;
+</blockquote>
+<p><b>4.2.1.2 Output</b>
+<p>The following files are output during the transformation process (assuming
+scattering data filename
+A01000.nnn and q-axis file X00000.nnn where n is any alphanumeric character):
+<p>In all cases:
+<table COLS=2 WIDTH="100%" >
+<tr>
+<td>A01000.CF1</td>
+
+<td>&#915;<font size=-2>1</font> (<a href="http://srs.dl.ac.uk/NCD/computing/manual.bsl.html">BSL/OTOKO
+  format</a>)</td>
+</tr>
+
+<tr>
+<td>A01CF1.TXT</td>
+
+<td>&#915;<font size=-2>1</font>  (<a href="../../file/File.htm">ASCII format</a>)</td>
+</tr>
+
+<tr>
+<td>A01000.CF3</td>
+
+<td>&#915;<font size="-2">3</font> (<a href="http://srs.dl.ac.uk/NCD/computing/manual.bsl.html">BSL/OTOKO
+  format</a>)</td>
+</tr>
+<tr>
+<td>A01CF3.TXT</td>
+
+<td>&#915;<font size="-2">3</font>  (<a href="../../file/File.htm">ASCII format</a>)</td>
+</tr>
+
+<tr>
+<td>A01000.IDF</td>
+
+<td>Interface distribution function (<a href="http://srs.dl.ac.uk/NCD/computing/manual.bsl.html">BSL/OTOKO
+  format</a>)</td>
+</tr>
+
+<tr>
+<td>A01IDF.TXT</td>
+
+<td>Interface distribution function (<a href="../../file/File.htm">ASCII format</a>)</td>
+</tr>
+
+<tr>
+<td>A01000.RXA</td>
+
+<td>Real axis (&Aring;) for use with the above files (<a href="http://srs.dl.ac.uk/NCD/computing/manual.bsl.html">BSL/OTOKO
+  format</a>)</td>
+</tr>
+
+<tr>
+<td>A01RXA.TXT</td>
+
+<td>Real axis (<a href="../../file/File.htm">ASCII format</a>)</td>
+</tr>
+</table>
+
+<p>In the case of multiple-frame analysis:
+<table COLS=2 WIDTH="1106" id="table1" >
+<tr>
+<td width="214">A01000.MO2</td>
+
+<td width="878">Second moment v. frame (<a href="http://srs.dl.ac.uk/NCD/computing/manual.bsl.html">BSL/OTOKO
+  format</a>)</td>
+</tr>
+<tr>
+<td width="214">A01MO2.TXT</td>
+
+<td width="878">Second moment v. frame (<a href="../../file/File.htm">ASCII format</a>)</td>
+</tr>
+</table>
+
+<p>If the re-transform is to be calculated:
+<table COLS=2 WIDTH="1106" >
+<tr>
+<td width="213">A01000.SMO</td>
+
+<td width="879">Re-transform</td>
+</tr>
+
+<tr>
+<td width="213">A01SMO.TXT</td>
+
+<td width="879">Re-transform (<a href="../../file/File.htm">ASCII format</a>)</td>
+</tr>
+
+<tr>
+<td width="213">A01000.SM2</td>
+
+<td width="879">Re-transform + background</td>
+</tr>
+
+<tr>
+<td width="213">A01SM2.TXT</td>
+
+<td width="879">Re-transform + background (<a href="../../file/File.htm">ASCII 
+format</a>)</td>
+</tr>
+</table>
+
+<p>These results can be plotted by selecting the required item from the
+<a href="../../display/Display.htm">Display</a>
+menu. In the case of the re-transformed data, it will be added to the background
+found during the <a href="../extrapolation/Extrapolation.htm">Extrapolation</a>
+process and superimposed on the original scattering data for comparison (see
+Figure 2).
+<blockquote>
+<p><img SRC="Retrans.JPG" height=350 width=458>
+<p><b>Figure 2:</b> The re-transformed 1-D correlation function (green) superimposed
+on the original SAXS data (blue).
+<br>&nbsp;
+</blockquote>
+<p><b>4.2.1.3 Tips</b>
+<p>(1) Check that &#915;<font size=-2>1</font> tends to zero as q tends to infinity;
+otherwise the background subtraction (see <a href="../extrapolation/Extrapolation.htm">Extrapolation</a>)
+may be incorrect.
+<p>(2) The gradient of &#915;<font size=-2>1</font> at R = 0 should be zero.
+<p>(3) There should be no ripples corresponding to q = 0.6 (R = 10&Aring;)
+or the joins in the <a href="../extrapolation/Extrapolation.htm">Extrapolated
+data</a>.
+<p>(4) Choose the maximum R and step in R to show up anticipated spacings
+in the sample.
+<br>
+<p><b>4.2.1.4 Next Steps</b>
+<p>Once the 1-D correlation function has been calculated successfully,
+the user may interpret this in order to obtain structural parameters describing the sample (see <a href="../extraction/Extraction.htm">Extraction of parameters</a>).
+<br>
+<p>&nbsp;<p><b>4.2.2.1 Calculating the Segment Density Distribution</b>
+<p><font color="#008000"><b>Edit</b> - <b>Parameters...</b> - <b>Transform type:
+Hilbert</b></font><p>By selecting the <b>Transform</b> option from the <b><a href="../Actions.htm">Actions</a></b>
+menu, the user may calculate the segment density distribution, <img border="0" src="rho_z.jpg" align="middle" width="35" height="21">,
+from the scattering curve <a href="../../references/References.htm">[8]</a>.<p>If the
+curvature (1/<i>R</i><sub><i>i</i></sub>) of an interface is small compared to
+the scattering vector Q (<i>i.e. </i>locally flat), then the scattering from an
+adsorbed layer of surfactant or polymer at that interface may be written:<p><span style="font-size:10.0pt;font-family:&quot;Times New Roman&quot;;
+mso-fareast-font-family:&quot;Times New Roman&quot;;mso-ansi-language:EN-GB;mso-fareast-language:
+EN-US;mso-bidi-language:AR-SA"><span style="mso-text-raise:-15.0pt">
+</span><img border="0" src="dsigma.jpg" width="229" height="45"><!--[if gte mso 9]><xml>
+ <o:OLEObject Type="Embed" ProgID="Equation.3" ShapeID="_x0000_i1025"
+  DrawAspect="Content" ObjectID="_1154354605">
+ </o:OLEObject>
+</xml><![endif]-->
+</span><p>where <i>N<sub>p</sub> </i>is the number concentration of scatterers, <i>B</i>
+is the background scattering, and the subscripts <i>i</i> and <i>l</i> refer to
+the <i>interface</i> and <i>layer</i> respectively. The <i>I<sub>ii</sub>(Q)</i>
+term describes the scattering from just the interface (and is a modified Porod
+Law), the <i>I<sub>ll</sub>(Q)</i> term describes the scattering from just the
+adsorbed layer, and the <i>I<sub>il</sub>(Q)</i> term is an interface-layer
+interference term. These three terms are given by:<p><img border="0" src="iii.jpg" width="225" height="51"><p><img border="0" src="iil.jpg" width="435" height="43"><p><img border="0" src="ill.jpg" width="343" height="51"><p align="left">where
+the subscript <i>m</i> refers to the solution <i>medium</i>, <i>A</i> is the
+surface area-to-volume ratio, and <img border="0" src="rho.jpg" align="middle" width="16" height="17">
+is the neutron
+scattering length (or electron) density.<p align="left"><i>Hence, under the condition that the
+interface is &quot;contrast matched&quot; to the medium</i> (<i>i.e.</i>   <img border="0" src="rhoirhom.jpg" align="middle" width="56" height="24">) the first two terms vanish and
+<img border="0" src="rho_z.jpg" align="middle" width="35" height="21"> may be recovered from the transform of the scattering. <span lang="EN-US" style="mso-bidi-font-size: 10.0pt; font-family: Times New Roman; mso-fareast-font-family: Times New Roman; mso-ansi-language: EN-US; mso-fareast-language: EN-US; mso-bidi-language: AR-SA">Unfortunately,
+because it is the <u>modulus</u> of the integral that is measured
+experimentally, the transformation is complicated by the need to introduce a
+phase factor, <img border="0" src="exppsi.jpg" align="middle" width="73" height="21">,
+where <img border="0" src="psi.jpg" align="middle" width="15" height="17"> is unknown.<span style="mso-spacerun: yes">&nbsp; </span>Fortunately the
+particle surface can be used as a phase reference point since <img border="0" src="rho_z.jpg" align="middle" width="35" height="21">
+= 0 for <i style="mso-bidi-font-style:normal">z</i> &lt; 0.<span style="mso-spacerun: yes">&nbsp;
+</span></span><i>I<sub>ll</sub>(Q)</i> <span lang="EN-US" style="mso-bidi-font-size: 10.0pt; font-family: Times New Roman; mso-fareast-font-family: Times New Roman; mso-ansi-language: EN-US; mso-fareast-language: EN-US; mso-bidi-language: AR-SA">is
+thus a causal function and <img border="0" src="psi.jpg" align="middle" width="15" height="17">
+can be determined using a dispersion integral relationship, but this
+necessitates the use of a Hilbert transform rather than a Fourier transform.</span>
+<p align="left"><span lang="EN-US" style="mso-bidi-font-size: 10.0pt; font-family: Times New Roman; mso-fareast-font-family: Times New Roman; mso-ansi-language: EN-US; mso-fareast-language: EN-US; mso-bidi-language: AR-SA">
+<img border="0" src="itilde.jpg" align="bottom" width="20" height="33">
+describes scattering from concentration fluctuations in the adsorbed layer.</span>
+<br>
+<br>The extrapolated dataset is interpolated to provide data with an
+equally-spaced Q-axis for input to the Hilbert transform routine. The
+interpolation is performed out to Q = 10.0 but only data out to
+Q&nbsp;=&nbsp;0.5 is actually transformed. Every point in the transform yields a
+point
+on the segment density distribution. Fluctuations are introduced into the segment
+density distribution by the finite gap between points in the extrapolated
+interpolated dataset, <i>i.e.</i> we don't have intensity as a continuous function of Q.
+<p><b>4.2.2.2 Output</b>
+<p>The following files are output during the transformation process (assuming
+scattering data filename A01000.nnn and q-axis file X00000.nnn where n is any
+alphanumeric character):
+<p>In all cases:
+<table COLS="2" WIDTH="100%">
+  <tr>
+    <td>A01INT.TXT</td>
+    <td>Interpolated extrapolated scattering data (<a href="../../file/File.htm">
+      ASCII format</a>)</td>
+  </tr>
+  <tr>
+    <td>A01ERR.TXT</td>
+    <td>The interpolation routine error estimate data (<a href="../../file/File.htm">
+      ASCII format</a>)</td>
+  </tr>
+	<tr>
+    <td>A01SDP.TXT</td>
+    <td>Segment density profile (renormalised for Q-axis units) (<a href="../../file/File.htm">
+      ASCII format</a>)</td>
+  </tr>
+</table>
+<p><b>4.2.2.3 Next Steps</b>
+<p>Once the segment density distribution has been calculated successfully it
+must be normalised to the amount of surfactant or polymer present at the
+interface in order to generate the volume fraction profile (see <a href="../extraction/Normalisation.htm">Normalisation</a>).
+<br>
+<p>&nbsp;
+<p><b>4.2.3 Errors and Warnings</b>
+<p>See the <a href="../errors/Errors.htm">Errors and Warnings</a> section.
+<br>&nbsp;&nbsp;&nbsp;
+</body>
+</html>

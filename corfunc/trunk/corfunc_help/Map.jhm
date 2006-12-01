@@ -1,0 +1,48 @@
+<?xml version='1.0' encoding='ISO-8859-1' ?>
+<!DOCTYPE map
+  PUBLIC "-//Sun Microsystems Inc.//DTD JavaHelp Map Version 1.0//EN"
+	 "http://java.sun.com/products/javahelp/map_1_0.dtd">
+
+<map version="1.0">
+	<mapID target="toplevelfolder" url="images/toplevel.gif" />
+
+	<mapID target="Overview" url="overview/Overview.htm" />
+
+	<mapID target="File" url="overview/file/File.htm" />
+
+	<mapID target="Edit" url="overview/edit/Edit.htm" />
+
+	<mapID target="General parameters" url="overview/edit/general/Generalpar.htm" />
+
+	<mapID target="Fitting parameters" url="overview/edit/fitting/Fittingpar.htm" />
+
+	<mapID target="Transform parameters" url="overview/edit/transform/Transformpar.htm" />
+
+	<mapID target="Hilbert parameters" url="overview/edit/transform/Hilbertpar.htm" />
+
+	<mapID target="Extraction parameters" url="overview/edit/extraction/Extractionpar.htm" />
+
+	<mapID target="Display" url="overview/display/Display.htm" />
+
+	<mapID target="Actions" url="overview/actions/Actions.htm" />
+
+	<mapID target="Graphics Windows" url="overview/graphics/GraphicsWindows.htm" />
+
+	<mapID target="Extrapolation" url="overview/actions/extrapolation/Extrapolation.htm"/>
+	
+	<mapID target="Transform" url="overview/actions/transform/Transform.htm"/>
+	
+	<mapID target="Extraction" url="overview/actions/extraction/Extraction.htm"/>
+
+	<mapID target="Normalisation" url="overview/actions/extraction/Normalisation.htm"/>
+
+	<mapID target="References" url="overview/references/References.htm" />
+
+	<mapID target="Errors" url="overview/actions/errors/Errors.htm" />
+
+	<mapID target="Appendix" url="overview/appendix/Appendix.htm" />
+
+	<mapID target="About" url="overview/About.htm" />
+
+	<mapID target="Bugs" url="overview/Bugs.htm" />
+</map>

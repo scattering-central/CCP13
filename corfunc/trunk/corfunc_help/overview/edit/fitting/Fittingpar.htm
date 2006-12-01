@@ -1,0 +1,74 @@
+<!doctype html public "-//w3c//dtd html 4.0 transitional//en">
+<html>
+<head>
+   <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+   <meta name="Author" content="Mark Shotton">
+   <meta name="GENERATOR" content="Microsoft FrontPage 4.0">
+   <title>Fitting parameters</title>
+</head>
+<body>
+<b><font size=+1>3.1.2 Fitting Parameters</font></b>
+<blockquote>
+<p><img SRC="Fitparameters.jpg" height=257 width=359>
+<p><b>Figure 1: </b>Fitting parameters
+<br>&nbsp;
+</blockquote>
+<p>These parameters are used in the <a href="../../actions/extrapolation/Extrapolation.htm">extrapolation</a>
+process, in which the data are extrapolated to q = 0 and q = infinity prior
+to calculating any transforms.
+<p>In order to extrapolate to q = 0,
+the first genuine data points after the beamstop are fitted with either
+a Guinier or Vonk profile (see <a href="../../actions/extrapolation/Extrapolation.htm">Extrapolation</a>).
+The profile type is selected by the user in the window shown in Figure
+1.
+<p>In order to extrapolate to q = infinity, the tail of the intensity data
+is fitted with a sigmoid or Porod function (see <a href="../../actions/extrapolation/Extrapolation.htm">Extrapolation</a>).
+Again, this function is selected by the user in the window shown in Figure
+1. The user must select the following limits to be used in these fitting
+procedures:
+<blockquote>
+  <p>(a) The x-axis value at the first genuine data point after the beamstop,
+  and
+<br>(b) The x-axis values at the beginning and end of the data to be used
+in the tail-fitting.
+<br>&nbsp;
+<p><img SRC="FittingLimits.JPG" height=300 width=450>
+<br><b>Figure 2: </b>The limits for extrapolation
+<br>&nbsp;
+</blockquote>
+<p>These limits are chosen by moving the red limit markers within the data
+display window as shown in Figure 2 (to display the data, select the <b>Data
+</b>item
+in the <a href="../../display/Display.htm">Display</a> menu). The markers
+are moved by selecting the marker with the right-hand mouse button and
+then dragging the marker to the desired position while keeping the button
+depressed. The first marker from the left is taken to be the start of the
+genuine data, and the next two markers are taken as the limits of the data
+to be used in tail-fitting.
+<p>If these tail-fitting limits vary from frame
+to frame in the case of real-time data, then variable tail-fitting limits
+can be used by selecting the <b>Variable limits for tail fit</b> checkbox
+and then clicking on <b>Edit limits</b> to display the window shown in
+Figure 3. The limits for the various frames in the dataset can then be
+selected frame-by-frame. <i>But the user must specify limits for all frames in
+the dataset, even if not all these frames are to be processed</i> (see <a href="../general/Generalpar.htm">General
+parameters</a>). Once entered in the text fields, the limits can be added
+to the list by clicking the <b>Add </b>button. The <b>Delete</b> button
+removes the last element in the list.
+<p>The limits will be applied once the
+user clicks on the <b>Accept</b> button. Clicking on the <b>Cancel</b>
+button or closing the window will cause all changes since the window was
+opened to be undone.
+<blockquote>
+<p><img SRC="VariableTailLimits.JPG" height=277 width=297>
+<p><b>Figure 3: </b>Selection of variable tail-fitting limits
+<br>&nbsp;
+</blockquote>
+<p>The least-squares fitting of the tail will be performed to convergence,
+or to the maximum number of iterations selected by the user in the window
+shown in Figure 1. The user will receive a warning if the maximum number
+of iterations is reached without convergence.
+<br>&nbsp;
+<br>&nbsp;
+</body>
+</html>

@@ -1,0 +1,641 @@
+<HTML>
+<HEAD>
+   <TITLE>CCP13 Documentation: XFIX</TITLE>   
+</HEAD>
+
+<BODY bgcolor="white" text="black">
+
+<EM><A HREF="http://wserv1.dl.ac.uk/SRS/CCP13">CCP13 - Software Development for Fibre Diffraction</A></EM>
+
+<H2><IMG SRC="xfix_icon.gif" ALIGN=middle>
+<A NAME="INTRO">  XFIX: Preliminary Analysis of Fibre Diffraction Patterns</A></H2>
+
+<TABLE WIDTH="700">
+<TR><TH ALIGN=left>Version 1.0: 20/04/98 <TH ALIGN=right>Richard Denny
+</TABLE>
+              
+<H3>Introduction</H3>
+
+<P>XFIX is designed to help ascertain some important parameters of a
+fibre diffraction pattern with the aid of an OSF/Motif-based
+graphical user interface (GUI). The job of the GUI is to handle the
+display images, collect information specifying regions of the data
+and to communicate with the program FIX which performs much of the
+underlying data-processing.</P>
+
+<P>Information such as the pattern centre, detector orientation,
+fibre tilt can be estimated and refined and putative unit cells can
+be plotted over the pattern. In addition, more general functions are
+available such as the capability to plot and fit integrated slices or
+scans through the pattern.</P>
+
+<H3>The XFIX Main Window</H3>
+
+<P>The top part of the main window is comprised of a menubar, some
+text fields for displaying the current file name, the current frame
+number, the (x,y) coordinates of the pointer, the (interpolated)
+value at the pointer coordinates and two arrow buttons to switch
+between images either side of a text field which indicates the
+current image number. If no file has been specified, the image number
+field is blank. Once a file has been specified, the first image
+displayed (the whole frame) is numbered zero.</P>
+
+<P>The middle part contains the large scrolled image area, the
+magnified area, two text fields for specifying the current display
+thresholds, two push buttons for inverting the current palette and
+refreshing the display and a set of toggle buttons used to specify
+subsequent behaviour and use of the pointer and mouse buttons.</P>
+
+<P>The bottom part contains a scrolled text window for displaying
+output from the processing program, FIX and commands sent to FIX by
+the XFIX interface.</P>
+
+<H3><A NAME="MENU1"></A>The File Menu</H3>
+
+<UL>
+   <LI><STRONG>New ...</STRONG><BR>
+   
+   This allows the user to specify a file using the BSL File
+   Selection interface. A new XFIX interface will then appear with
+   the specified file loaded.
+   
+   <LI><STRONG>Open ...</STRONG><BR>
+   
+   This allows the user to specify a file using the BSL File
+   Selection interface. The specified file will then be loaded into
+   XFIX.
+   
+   <LI><STRONG>Next Frame</STRONG><BR>
+   
+   This loads the next frame from a multi-frame file.
+   
+   <LI><STRONG>Save As Postscript ...</STRONG><BR>
+   
+   This saves the current image as a Postscript file.
+   
+   <LI><STRONG>Quit</STRONG><BR>
+   
+   This exits the program, subject to confirmation by the user.
+</UL>
+
+<H3><A NAME="MENU2"></A>The Edit Menu</H3>
+
+<UL>
+   <LI><STRONG>Parameters ...</STRONG><BR>
+   
+   This causes the Parameter Editor dialog to appear. This interface
+   is used to specify wavelength, sample to detector distance,
+   detector centre and orientation, sample tilt. If a calibration
+   ring is present on the image it may be useful to specify the
+   calibrant d-spacing in order to calculate the sample to detector
+   distance. Even if the default values for the wavelength and
+   calibrant d-spacing are known to be correct, it is necessary to
+   "OK" or "Apply" the values using this interface so that the sample
+   to detector distance is calculated.
+   
+   <LI><STRONG>Objects ...</STRONG><BR>
+   
+   This causes the Object Editor dialog to appear. This interface
+   handles some of the items which can be collected from the data:
+   points, rectangles, polygons and sectors. These items can be
+   selected in the editor and will then be highlighted in image
+   window (objects are normally labelled white on a black background;
+   selection causes the background to become red). Selected objects
+   will be used if estimation of the pattern centre, detector
+   rotation or sample tilt is performed. If no objects are selected
+   and one of these functions is requested all objects will be used.
+   
+   <LI><STRONG>Lines ...</STRONG><BR>
+   
+   This causes the Line Editor dialog to appear. This interface
+   handles lines and thicklines collected from the data. These items
+   are labelled white on a blue background; selection causes the
+   background to become green. Selected lines can be plotted or
+   fitted. If no lines are selected and plotting or fitting is
+   requested, all lines are processed.
+   
+   <LI><STRONG>Scans ...</STRONG><BR>
+   
+   This causes the Scan Editor dialog to appear. This interface
+   handles radial or azimuthal scans collected from the data. These
+   items are labelled white on a blue background; selection causes
+   the background to become green. Selected scans can be plotted or
+   fitted with radial or azimuthal averaging. If no scans are
+   selected and plotting or fitting is requested, all scans are
+   processed.
+   
+   <LI><STRONG>Cell ...</STRONG><BR>
+   
+   This interface is used to specify unit cell lengths and angles and
+   the missetting angles of the unit cell away from the fibre axis.
+   The cell parameters can be used to generate reciprocal lattice
+   points which are listed and mapped onto the diffraction pattern
+   within the specified resolution range.
+</UL>
+
+<H3><A NAME="MENU3"></A>The Estimate Menu</H3>
+
+<UL>
+   <LI><STRONG>Centre</STRONG><BR>
+   
+   The centre of the pattern is estimated using the objects defined
+   by the Object Editor. If three or more points are available, the
+   estimation is made by fitting a circle to the objects. If the
+   wavelength or calibrant spacing have been specified using the
+   Parameter Editor, the option is given to calculate the sample to
+   detector distance.
+   
+   <LI><STRONG>Rotation</STRONG><BR>
+   
+   The rotation of the pattern is estimated using a pairs of objects
+   defined by the Object Editor. It is usually sufficient to select
+   one pair of objects related by mirror symmetry across the meridian
+   as the rotation can be refined later.
+   
+   <LI><STRONG>Tilt</STRONG><BR>
+   
+   The tilt of the sample is estimated using a pairs of points
+   defined by the Object Editor. It is usually sufficient to select
+   one pair of points related by mirror symmetry (for an untilted
+   sample) across the equator as the tilt can be refined later.
+</UL>
+
+<H3><A NAME="MENU4"></A>The Process Menu</H3>
+
+<UL>
+   <LI><STRONG>List Objects</STRONG><BR>
+   
+   This causes FIX to calculate and list the filespace, standard
+   (i.e. centred and rotated) and reciprocal space coordinates for
+   each object if the required parameters have been entered or
+   determined for each calculation.
+   
+   <LI><STRONG>Plot Lines ...</STRONG><BR>
+   
+   This causes selected lines to be plotted (and possibly fitted)
+   using the XFIT interface to FIT. If no lines are selected, all
+   lines are plotted.
+   
+   <LI><STRONG>Plot Scans ...</STRONG><BR>
+   
+   This causes selected scans to be plotted (and possibly fitted)
+   using the XFIT interface to FIT. If no scans are selected, all
+   scans are plotted.
+   
+   <LI><STRONG>Refine ...</STRONG><BR>
+   
+   This causes the Refine Dialog interface to appear. The parameters
+   for the refinement can be chosen and clicking on "OK" starts the
+   refinement. The refinement algorithm uses the current image as
+   data, mapping the coordinates of the image into the four quadrants
+   of reciprocal space in order to compare the data in the quadrants
+   and minimize the variance between quadrants. This means that the
+   current image should be carefully chosen (not too big, but not so
+   small that there is little contrast in the image, not too close to
+   the equator if sample tilt is being refined but the intensity on
+   the image should be present on all four quadrants of the image).
+</UL>
+
+<H3><A NAME="MENU5"></A>The Options Menu</H3>
+
+<UL>
+   <LI><STRONG>Palette &gt;</STRONG><BR>
+   
+   This contains options for a grey scale and various colour
+   representations of the pixel values.
+   
+   <LI><STRONG>Magnification &gt;</STRONG><BR>
+   
+   This contains options for the factor applied in the magnification
+   window.
+   
+   <LI><STRONG>Line Colour &gt;</STRONG><BR>
+   
+   This contains options for the colour with which crosses, rectangles,
+   sectors and circles will be drawn.
+    
+   <LI><STRONG>Lattice Point Colour &gt;</STRONG><BR>
+   
+   This contains options for the colour with which lattice points
+   will be drawn.
+   
+   <LI><STRONG>Log Scale</STRONG><BR>
+   
+   This causes subsequent threshold changes to scale the data on a
+   logarithmic scale.
+   
+   <LI><STRONG>Interpolate</STRONG><BR>
+   
+   This causes subsequent images to be interpolated to fit the
+   current image window size. This happens automatically for zoomed
+   images.
+   
+   <LI><STRONG>Fit Lines/Scans</STRONG><BR>
+   
+   This allows subsequent plots of lines or scans to be fitted.
+   
+   <LI><STRONG>Show Lattice Points</STRONG><BR>
+   
+   This causes subsequently generated lattice points to be drawn onto
+   the current image. If there are any lattice points in memory,
+   these will be drawn immediately.
+   
+   <LI><STRONG>Azimuthal Scan</STRONG><BR>
+   
+   This causes subsequently plotted scans to be integrated radially
+   and the integrated values to be plotted as a function of angle.
+   
+   <LI><STRONG>Radial Scan</STRONG><BR>
+   
+   This causes subsequently plotted scans to be integrated
+   azimuthally and the integrated values to be plotted as a function
+   of radius.
+</UL>
+
+<H3>The Help Menu</H3>
+
+<P>The HTML help documents are displayed in your current Netscape Web
+browser.</P>
+
+<H3>Image Thresholds Selection</H3>
+
+<P>The threshold values for displaying the current image can be set
+by editing the threshold text fields (labelled "High" and "Low") and
+hitting &lt;return&gt;. When an image is first loaded, the thresholds
+are set to the maximum and minimum values in the data for that image.
+</P>
+
+<H3>Inverting the Current Palette</H3>
+
+<P>The "Invert Palette" button reverses the colour scale of the
+current palette.</P>
+
+<H3>Refreshing the Image Display</H3>
+
+<P>The "Refresh" button can be used to redraw the image windows. This
+can be useful if another application has modified the colour map or
+if it is desired to erase circles or crosses drawn by FIX.</P>
+
+<H3><A NAME="TOOLS"></A>Data Collection Tools</H3>
+
+<P>To facilitate collection of various data items from the current
+image, a set of toggle buttons is provided which determine the
+behaviour of the mouse buttons and pointer.</P>
+
+<UL>
+   <LI><STRONG>Points</STRONG><BR>
+   
+   "Points" mode causes the image in the magnification window to
+   track the position of the pointer in the main image window. Points
+   can be created by clicking the left-hand mouse button.
+   Alternatively, tracking of the pointer can be frozen by clicking
+   on the middle mouse button and the point can then be positioned in
+   the magnification window using the left-hand mouse button.
+   Tracking of the pointer can be restarted by clicking on the
+   right-hand mouse button in either the main image or magnification
+   windows. On creation, the point is numbered and displayed in the
+   Object Editor.
+   
+   <LI><STRONG>Lines</STRONG><BR>
+   
+   This mode allows lines to be created by holding down left-hand
+   mouse button and dragging the pointer to select the starting
+   point, the end point being selected in a similar way using the
+   middle mouse button. The line is not created until the right-hand
+   mouse button is pressed to indicate that the user is satisfied
+   with the start and end points selected. While the pointer is being
+   dragged, its position is tracked by the magnification window
+   unless the tracking has previously been frozen while the interface
+   was in "Points" mode. If this is the case, lines can also be
+   selected from the magnification window. On creation, the line is
+   numbered and displayed in the Line Editor.
+   
+   <LI><STRONG>Thick Lines</STRONG><BR>
+   
+   This is similar to "Lines" mode except that the line is now
+   considered to have a width and is drawn as a rectangular box. The
+   width of the box can be adjusted by holding down the &lt;shift&gt;
+   key while holding down the left-hand mouse button and dragging the
+   pointer.
+   
+   <LI><STRONG>Rectangles</STRONG><BR>
+   
+   This is essentially similar to "Lines" mode, except that the
+   left-hand mouse button selects the top left-hand corner of the
+   rectangle and the middle mouse button selects the bottom
+   right-hand corner of the rectangle. On creation, the centre of the
+   rectangle is marked with a cross and the rectangle is numbered (as
+   an object) and displayed in the Object Editor. Centring is
+   achieved by averaging data values along the perimeter of the
+   rectangle to obtain a background value. This value is then
+   subtracted from data points interior to the rectangle and the
+   centre of gravity of the modified values is calculated.
+   
+   <LI><STRONG>Polygons</STRONG><BR>
+   
+   This is similar to "Rectangle" mode except that the left-hand
+   mouse button selects a vertex, the middle mouse button deletes the
+   last vertex and the right-hand mouse button closes and creates the
+   polygon.
+   
+   <LI><STRONG>Sectors</STRONG><BR>
+   
+   This is essentially similar to "Rectangle" mode except that the
+   left-hand mouse button selects the starting angle and radius and
+   the middle mouse button selects the end angle and radius. Radii
+   are measured from the pattern centre as defined in the Parameter
+   Editor and angles are positive going anticlockwise on the image.
+   
+   <LI><STRONG>Scans</STRONG><BR>
+   
+   This is similar to "Sector" mode except that the parameters
+   describing the area chosen are stored so that scans can be
+   produced: a radial scan implies averaging over an arc defined by the 
+   azimuthal range for each radius while an azimuthal scan implies averaging 
+   over radius. On creation, the scan is numbered and displayed in the Scan 
+   Editor.
+   
+   <LI><STRONG>Zoom</STRONG><BR>
+   
+   This is essentially similar to "Rectangle" mode except that the
+   rectangle chosen is blown up to the current size of the main image
+   window using bilinear interpolation to find intermediate pixel
+   values.
+</UL>
+
+<H2>Plotting and Fitting</H2>
+
+<P>Lines and scans can be plotted and fitted using many of the
+interfaces developed for the <A HREF="xfit.html">XFIT</A> program which 
+utilizes <A HREF="http://astro.caltech.edu/~tjp/pgplot/index.html">PGPLOT</A> 
+graphics. Plotting is activated using the "Plot Lines/Scans" button in 
+the "Process" menu. In the following description, where the word "line" 
+is used, "scan" could be substituted.</P>
+
+<H3>Channel Selection</H3>
+
+<P>When a line is plotted the distance between the start and end
+points of the line is divided into a sequence of channels, the length
+of a channel corresponding to the size of a data pixel. The values
+placed into the channels are found by interpolation of the data
+values. The first and last channels for plotting can be entered in
+the Channel Dialog box which appears soon after plotting has been
+activated. Clicking on the "Cancel" button in the Channel Dialog box
+will cause XFIX to move on to the next line selected for plotting.
+</P>
+
+<H3>Plot Thresholds Selection</H3>
+
+<P>When the data for the line are plotted, the thresholds for the
+plot will be the minimum and maximum channel values present in the
+selected channels. If necessary, these can be altered by entering the
+appropriate values into the Threshold dialog box. Clicking on the
+"Cancel" button in the Threshold Dialog box will cause XFIX to move
+on to the next line selected for plotting.</P>
+
+<H3>Selection of the region to be used in the fit</H3>
+
+<P>If the data is to be fitted ("Fit Lines/Scans" has been selected
+in the "Options" menu), the user can choose to delimit the region to
+be used in the fit using the Limit Dialog box. The limits can then be
+selected by clicking on the plot with any mouse button. Once the limits 
+of the region have been selected, the plot will be redrawn using only 
+the required region.
+</P>
+
+<H3>Peak Type Selection</H3>
+
+<P>Six peak types are available:</P>
+
+<TABLE BORDER="2" CELLPADDING="1" CELLSPACING="2">
+   <TR><TH>Peak type                         <TH> Key <TH> Parameters
+
+   <TR><TD>Gaussian                          <TD ALIGN=center>  g  <TD ALIGN=center>  3
+
+   <TR><TD>Lorentzian                        <TD ALIGN=center>  c  <TD ALIGN=center>  3
+
+   <TR><TD>Pearson VII                       <TD ALIGN=center>  p  <TD ALIGN=center>  4
+
+   <TR><TD>Voigt                             <TD ALIGN=center>  v  <TD ALIGN=center>  4  
+
+   <TR><TD>Debye Gaussian chain scattering   <TD ALIGN=center>  d  <TD ALIGN=center>  3
+
+   <TR><TD>Double exponential                <TD ALIGN=center>  x  <TD ALIGN=center>  4
+</TABLE>
+
+<P>The selection is made by pressing the appropriate key while the
+focus is in the plot window. All subsequent peaks will be of the same
+type until a different peak type is selected. The default peak type
+is Gaussian.</P>
+
+<H3>Peak Parameters</H3>
+
+<P>The formulae used for the different peak types give different
+meanings to the descriptions width and shape. In what follows, the
+position of the peak is assumed to be at the origin of the x-axis, h
+is the height of the peak, w is the width and s is the shape. Peak widths
+are the full width at half maximum (FWHM) unless otherwise stated.</P>
+
+<UL>
+   <LI><STRONG>Gaussian</STRONG><BR>
+   
+   <MATH>y = he<SUP>-4ln2(x/w)2</SUP></MATH>
+   
+   <LI><STRONG>Lorentzian</STRONG><BR>
+   
+   <MATH>y = h/[1 + 4(x/w)<SUP>2</SUP>]</MATH>
+   
+   <LI><STRONG>Pearson VII</STRONG><BR>
+   
+   <MATH>y = h/[1 +
+   4(x/w)<SUP>2</SUP>(2<SUP>1/s</SUP>-1)]<SUP>s</SUP></MATH><BR>
+   
+   When s = 1, the Pearson VII is equivalent to a Lorentzian but as s
+   increases, the peak becomes more Gaussian in character.
+   
+   <LI><STRONG>Voigt</STRONG><BR>
+   
+   The Voigt is a convolution of a Lorentzian with a Gaussian. 
+   The shape parameter, s, corresponds to the ratio of the width of the 
+   Lorentzian to the width of the Gaussian, w. Therefore, when s = 0, the 
+   resulting curve is a Gaussian of width w. This can be expressed as:<BR>
+   <MATH>y = h Integral <BOX>e<SUP>-4ln2(t/w)<SUP>2</SUP></SUP>/
+   [(x+(2<SQRT>ln2</SQRT>/w)<SUP>2</SUP> + ln2s<SUP>2</SUP>]</BOX>dt
+</MATH>
+<P>
+   An approximation is used:<BR>
+   
+   <MATH>y = h 
+   <BOX> 
+   [&Sigma;<SUB>i=1</SUB><SUP>4</SUP> 
+   <BOX> 
+   (C<SUB>i</SUB>(s/2 - A<SUB>i</SUB>) + D<SUB>i</SUB>(2<SQRT>ln2</SQRT>x/w - B<SUB>i</SUB>)) 
+   /<ATOP> (
+   (s/2 - A<SUB>i</SUB>)<SUP>2</SUP> + (2<SQRT>ln2</SQRT>x/w - B<SUB>i</SUB>)<SUP>2</SUP>) 
+   </BOX>] 
+   /<ATOP>
+   [&Sigma;<SUB>i=1</SUB><SUP>4</SUP> 
+   <BOX> 
+   (C<SUB>i</SUB>s/2 - C<SUB>i</SUB>A<SUB>i</SUB> + D<SUB>i</SUB>B<SUB>i</SUB>) 
+   /<ATOP>
+   (s<SUP>2</SUP>/4 - sA<SUB>i</SUB> + A<SUB>i</SUB><SUP>2</SUP> + B<SUB>i</SUB><SUP>2</SUP>) 
+   </BOX>] 
+   </BOX> </MATH><BR>
+   
+   where the constants have the following values, 
+   
+   <TABLE BORDER="2" CELLPADDING="1" CELLSPACING="2">
+      
+      <TR><TH> i = <TH>    1    <TH>   2     <TH>   3     <TH>   4
+         
+      <TR><TH>  A  <TD> -1.2150 <TD> -1.3509 <TD> -1.2150 <TD> -1.3509
+         
+      <TR><TH>  B  <TD>  1.2359 <TD>  0.3786 <TD> -1.2359 <TD> -0.3786
+         
+      <TR><TH>  C  <TD> -0.3085 <TD>  0.5906 <TD> -0.3085 <TD>  0.5906
+
+      <TR><TH>  D  <TD>  0.0210 <TD> -1.1858 <TD> -0.0210 <TD>  1.1858
+         
+   </TABLE>
+   
+   <LI><STRONG>Debye Gaussian Chain Scattering</STRONG><BR>
+   
+   <MATH>y = 2h[e<SUP>-(x/w)2</SUP> - (1-(x/w)<SUP>2</SUP>)]/(x/w)<SUP>4</SUP></MATH><BR>
+   
+   Here, w corresponds to 1/R<SUB>g</SUB> if the x-axis corresponds
+   to a q-axis. The central (guinier) region of the peak is Gaussian in
+   character while the tail (power law) region is Lorentzian in character. 
+   
+   <LI><STRONG>Double Exponential</STRONG><BR>
+   
+   <MATH>y = 2h/[e<SUP>-x/w</SUP> + e<SUP>+x/s</SUP>]</MATH><BR>
+   
+   This peak is asymmetric; w corresponds to the rate at which the
+   peak grows, approaching from the left, while s corresponds to the
+   rate of growth, approaching from the right.
+</UL>
+
+<H3>Peak Parameter Selection</H3>
+
+<P>A peak of the current type is initialized for fitting to the data
+when the left mouse button is pressed. The position of the peak is
+determined by the X coordinate of the cursor when the button is
+pressed. The width of the peak is determined simultaneously by the Y
+coordinate of the cursor. The height of the peak is given by the Y
+value of the data point nearest to the peak position.</P>
+
+<H3>Background Selection</H3>
+
+<P>A polynomial of degree 4 or less, expressed as<BR>
+
+<MATH>a<SUB>0</SUB> + a<SUB>1</SUB>x + a<SUB>2</SUB>x<SUP>2</SUP> +
+a<SUB>3</SUB>x<SUP>3</SUP> + a<SUB>4</SUB>x<SUP>4</SUP></MATH><BR>
+
+can be fitted as background to the data. The degree of the polynomial
+can be selected by using the keys &lt;1&gt;,...,&lt;4&gt; while the
+focus is in the plot window. The default polynomial degree is 3.</P>
+
+<P>An exponential component can be added into the background by
+pressing &lt;e&gt; while the focus is in the plot window. This will
+add two parameters to the fit to define the exponential curve,<BR>
+
+<MATH>e<SUB>1</SUB>e<SUP>e<SUB>2</SUB>x</SUP></MATH>.</P>
+
+<P>Once all the required peak and background parameters have been
+initialized, selection can be terminated by clicking on the right
+mouse button while the focus is in the plot window.</P>
+
+<H3>Controlling the fit</H3>
+
+<P>Some control over the fitting procedure can be excercised through
+the Setup Dialog box. This interface provides a list of all the
+parameters in the fit with their current values displayed in text
+fields so that they can be easily modified. There is also an option
+menu associated with each parameter. The following selections can be
+made from this menu:</P>
+
+<UL>
+   <LI><B>Free</B> - if a parameter has been previously constrained
+   using the other options, it is released to be a free parameter in
+   the fit.
+   
+   <LI><B>Set</B> - fix the value of a parameter to the value in the
+   text field. The parameter is effectively removed from the fit.
+   
+   <LI><B>Limit...</B> - this causes the Limit dialog box to appear.
+   This has a label to show you the parameter number you are limiting
+   and a brief description of the parameter. Two text fields are
+   available for setting limits on the value of the parameter. The
+   parameter number can be incremented by use of the arrow buttons
+   next to the parameter number. Activation of the arrow buttons has
+   the effect of applying the limits to the previous parameter.
+   
+   <LI><B>Tie...</B> - this causes the Tie dialog box to appear. This
+   has a label to show you which parameter you are tying and a brief
+   description of the parameter. A text field is available for
+   setting the parameter number to which the dependent parameter will
+   be tied. A brief description of the independent parameter is
+   updated when the apply button is activated. An option menu is
+   available to specify the type of constraint to be applied to the
+   dependent parameter. These are either an equality constraint or
+   simple lattice constraints, i.e. applying (h,k) indices for
+   hexagonal and tetragonal lattice positions or (h,k,l) indices for
+   cubic lattice positions. These must be relative to the (1,0) or
+   (1,0,0) positions, respectively. The parameter number can be
+   incremented by use of the arrow buttons next to the parameter
+   number. Activation of the arrow buttons has the effect of applying
+   the tie constraint for the previous parameter. N.B. xfit always
+   ties the higher parameter number to the lower one and modifies the
+   Tie dialog and Setup dialog boxes to reflect this. It is not
+   possible to make a compound tie constraint unless the constraint
+   is one of equality, e.g. to tie parameter 8 to parameter 5 as the
+   (1,1) hexagonal position and then tie parameter 5 to parameter to
+   parameter 2 as the (2,0) tetragonal position.
+</UL>
+
+<P>The three buttons at the bottom of the Setup dialog box have the
+following effects:</P>
+
+<UL>
+   <LI><B>PLOT</B> - this allows you to plot the curve corresponding
+   to the (modified) parameter set.
+<P>
+   
+   <LI><B>STEP</B> - this makes &lt;Step_its&gt; linearized least-squares 
+   iterations.
+   This is useful in seeing if the current model has a good chance of
+   converging to the global minimum. The refinement may converge
+   after a step. If the converged solution is satisfactory click on
+   "RUN" to continue.
+<P>
+   
+   <LI><B>RUN</B> - this allows the algorithm to continue to
+   convergence or to the maximum number of iterations (&lt;+Max_its&gt; 
+   + number of iterations already performed).
+<P>
+
+   The algorithm is deemed to have converged when the following two conditions 
+   are fulfilled:
+<P>
+<OL>
+<LI>&chi;<SUP>2</SUP><SUB>current</SUB> &lt; &chi;<SUP>2</SUP><SUB>previous</SUB>
+<LI>&chi;<SUP>2</SUP><SUB>previous</SUB> - &chi;<SUP>2</SUP><SUB>current</SUB>
+&lt; &chi;<SUP>2</SUP><SUB>current</SUB> * &lt;Chi-test&gt;
+</OL>
+<P>
+   After the "RUN" button has been activated, the parameter entries
+   and the buttons in the Setup dialog box will be made insensitive
+   and the Try Again confirm dialog box will appear.
+</UL>
+
+<H3>Trying Again</H3>
+
+<P>Clicking on "Yes" in the "Try Again" Confirm Dialog box will give
+you another attempt at fitting the current frame starting from the
+point where you select the peak types, positions, etc. The Setup
+Dialog box will disappear and the Information Dialog box will appear,
+reiterating the procedure for setting up the initial model. Clicking
+on "No" will cause XFIX to proceed onto the next line.</P>
+
+</BODY>
+</HTML>

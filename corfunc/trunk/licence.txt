@@ -1,0 +1,57 @@
+END-USER LICENCE AGREEMENT
+
+Whereas, the Licensed Software has been assembled with support from the Biotechnology and Biological Sciences Research Council (“BBSRC”) and the Engineering and Physical Sciences Research Council (“EPSRC”) of the UK, and their forebears, as part of the Collaborative Computational Project Number 13 (“CCP13”), for Fibre and Non-Crystalline Diffraction, first set up in January 1992. Any opinions, findings, conclusions or recommendations expressed in the Licensed Software are those of the authors of the software and do not necessarily reflect the views of the BBSRC or EPSRC. The Licensed Software is administered by the Council for the Central Laboratory of the Research Councils (“CCLRC”).
+
+The Licensee shall have the right to make unlimited copies of the Licensed Software for use on more than one computer system at its registered address. The Licensee shall have the right to grant access to the executable modules to any personnel, such as, but not limited to, employees, researchers or students of the Licensee based at its address, this includes executable modules installed on computer systems other than at the registered site, for example portable computer equipment such as laptop computers. Any such additional copies of the Software shall be subject to the terms and conditions of this Agreement.
+
+The Licensee shall not sell, give, disclose, lend, transfer or otherwise distribute the Licensed Software to third parties except as expressly permitted under this Agreement. Where not permitted to redistribute software, the Licensee shall immediately refer any requests for copies of the Software to CCP13.
+
+The Licensee may not sublicense, distribute or transfer the Licensed Software to any third party, except as expressly provided under this Agreement. Any attempt to intentionally sublicense, distribute or transfer the Licensed Software to a third party, except as otherwise permitted under this Agreement, is void, and will automatically terminate the Licensee’s rights to use the Licensed Software under this Agreement.
+
+The provision of any version of the Licensed Software under the terms and conditions specified herein does not imply that future versions will also be made available under the same terms and conditions.
+
+
+THIS LICENCE AGREEMENT DOES NOT EXTEND TO COMMERCIAL USE OF THE SOFTWARE. SHOULD THE LICENSEE WISH TO MAKE COMMERCIAL USE OF THE SOFTWARE, THE LICENSEE AGREES TO CONTACT CCP13 TO ARRANGE AN APPROPRIATE COMMERCIAL LICENCE FOR SUCH USE. 
+
+
+CCP13 warrants that the Licensed Software will conform substantially to its functional specification. Otherwise, the Licensed Software is supplied "as is" without any warranty, express or implied, including, but not limited to non-infringement of third parties, its merchantability or fitness for a particular purpose. Neither CCP13 nor the original authors make any further warranty as to its use, performance or results that the user may obtain by using the Licensed Software. CCP13 does not guarantee that the functions of the Licensed Software will be uninterrupted or completely error-free. CCP13 shall use all reasonable endeavours to ensure the Licensed Software contains no viruses at the time of distribution. This Agreement confers no additional responsibility or obligation upon CCP13.
+
+Neither CCP13 nor the original authors are under any obligation to maintain the Licensed Software or to respond to requests for information from the Licensee. Nevertheless, it remains the policy of CCP13 to improve and update programs and their documentation continuously and answer questions from users. Regular updates of programs and documentation will be provided, usually at annual intervals, to organisations that continue to be Licensees. Current information is available from CCP13 through an electronic mail bulletin-board service, an annual workshop, and the journal Fibre Diffraction Review. Where additional support services are required, it is suggested that they should be obtained on an individual basis. Technical suggestions, comments, and suggested improvements to the code are welcome, and may be sent to CCP13. 
+
+Neither Party excludes or limits its liability to the other party for death or personal injury.
+
+In no event shall CCP13 be liable for any indirect, special, incidental or consequential damages, either from the use of the Licensed Software or from any results obtained using it.
+
+The Licensee shall indemnify and hold CCP13 harmless against all damages, liability and costs of defending against any third party claim, or threat of claim, against CCP13 arising out of the Licensee’s use of the Licensed Software, as delivered to the Licensee.
+
+For all Licensed Software, all copyrights remain with the original authors of the code and/or their employer where that software was written as employees in the course of their employment, and is licensed to Licensee from CCP13 under the terms and conditions of the Agreement. The Licensor has made reasonable efforts to ascertain ownership of the component parts of the software.
+
+
+IF THE SOFTWARE IS USED TO OBTAIN A RESULT AND THAT RESULT IS PUBLISHED THE LICENSEE AGREES TO ACKNOWLEDGE ITS USE IN AN APPROPRIATE CITATION ALONG WITH ANY ADDITIONAL REFERENCES, REQUIRED BY THE ORIGINAL AUTHORS, PERTAINING TO INDIVIDUAL PROGRAMS WHERE THE USE OF THE PROGRAMS CONTRIBUTED TO AN INVESTIGATION.
+
+
+Neither Party shall assign, transfer, sub-contract or in any other manner make over to any third party the benefit or burden of this Agreement without prior written consent of the other and it is agreed that such consent may be withheld without giving reasons.
+
+CCP13 may without prejudice to any other right or remedy hereunder terminate this Agreement summarily by written notice to the Licensee in the event that:
+
+- the Licensee is in breach of any of the terms hereof (if capable of remedy) and fails to rectify such breach within thirty (30) days of receipt of written notice from CCP13 requesting the Licensee so to do; or
+
+- the Licensee commences to be wound up (otherwise than for the purposes of reconstruction or amalgamation) or put into administrative receivership, or carries on business under a receiver for the benefit of its creditors or compounds with or enters into any scheme or arrangement with any or all of its creditors or if such conditions exist as are substantially equivalent in effect to any of the foregoing.
+
+Upon termination of this Agreement, the Licensee shall forthwith cease to use the Licensed Software and shall immediately destroy all copies of the Licensed Software. Termination of this Agreement for any reason shall not affect the rights of either Party hereto accrued up to the date of such termination. 
+
+The terms and conditions set out in this Agreement may only be amended or added to by formal amendments issued in writing. No oral agreement shall be binding on either Party to the Agreement.
+
+The Parties hereto agree that:
+
+- this Agreement alone constitutes the agreement between CCP13 and the Licensee in relation to the use of the Licensed Software and supersedes and overrides all prior discussions between the Parties, their servants and agents and all conditions, warranties, guarantees, representations, proposals, quotations, communications and understandings with respect to the said use (whether given or made before or on the date hereof or whether oral or given in writing); and 
+
+- no modification expressed to be an amendment to this Agreement shall have any effect unless made in writing and signed by an authorised officer of CCP13 and by an authorised officer of the Licensee. 
+
+Nothing in this Agreement shall create any rights in third parties under the Contracts (Rights of Third Parties) Act 1999. No variation to this Agreement and no supplemental or ancillary agreement to this Agreement shall create any such rights unless expressly so stated in any such agreement by the Parties/parties to this Agreement.
+
+This Agreement is governed by English law and the parties hereby agree to the exclusive jurisdiction of the English courts.
+
+Further information can be obtained from the Secretary, CCP13.
+
+http://www.ccp13.ac.uk/

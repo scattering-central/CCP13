@@ -1,0 +1,53 @@
+<!doctype html public "-//w3c//dtd html 4.0 transitional//en">
+<html>
+<head>
+   <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+   <meta name="Author" content="Mark Shotton">
+   <meta name="GENERATOR" content="Microsoft FrontPage 6.0">
+   <title>Appendix</title>
+</head>
+<body>
+<b><font size="+1">Known Issues</font></b>
+<ol>
+  <li>
+    <p style="margin-bottom: 6">There is a tendency for an unattributed Java
+    &quot;Error&quot; pop-up box to appear when some actions involving the
+    executables are completed. This appears to be a bogus error and can be
+    dismissed.</li>
+  <li>
+    <p style="margin-bottom: 6">Sometimes the &quot;Message Window&quot; does
+    not display all the output that is sent to it, even though all actions have
+    completed successfully (probably a Java buffer flushing problem?).&nbsp; So
+    check the <i>CORFUNC</i> working directory for the expected journal and
+    output files!</li>
+	<li>
+    <p style="margin-bottom: 6">Although the file input browser window allows 
+	one to input data or a Q-axis from a subdirectory, the transform will 
+	**fail** if the data files to be processed are not in the same directory as 
+	the executable images (GETPATH.F and STRPATH.F were not properly modified 
+	following the port from Unix; they're still looking for Unix directory 
+	paths!).</li>
+</ol>
+&nbsp;
+<p><b><font size="+1">Known Bugs</font></b></p>
+<ol>
+  <li>
+    <p style="margin-bottom: 6">The ASCII input has been extended to recognise files ending
+    *.DAT, in addition to *.TXT (and both are intended to be files of single
+    column ASCII numbers). However, whilst these data appear to load ok - in as
+    much as the Java Graphics Window opens and displays something sensible - <i>CORFUNC</i>
+    has a tendency to &quot;hang&quot; (displaying a Java
+    &quot;Processing...&quot; pop-up box) if, for example, &quot;Actions&quot;
+    --&gt; &quot;Extrapolate&quot; is selected.</li>
+  <li>
+    <p style="margin-bottom: 6">The ASCII input has also been extended to
+    recognise files ending *.LOQ (as standard LOQ 1D data files - see <a href="http://www.isis.rl.ac.uk/LargeScale/LOQ/other/formats.htm">http://www.isis.rl.ac.uk/LargeScale/LOQ/other/formats.htm</a>).
+    The LOQ <i>COLETTE</i> subroutine LOQREAD.F has been compiled in, but at present this input brings up
+    a Java error of the type "Error: Each channel in data must contain the same number of frames" from
+    OtokoDataSet.Java. Commenting out this error message instead brings up the error
+    &quot;Java.lang.NumberFormatException: LOQ".  Since the characters &quot;LOQ&quot;
+    are the first thing in a LOQ 1D data file, it would seem that Java(?) is attempting to read the file in **before**
+    LOQREAD is called...</li>
+</ol>
+</body>
+</html>

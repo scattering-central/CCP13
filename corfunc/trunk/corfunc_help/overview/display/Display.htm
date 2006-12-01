@@ -1,0 +1,131 @@
+<!doctype html public "-//w3c//dtd html 4.0 transitional//en">
+<html>
+<head>
+   <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+   <meta name="Author" content="Mark Shotton">
+   <meta name="GENERATOR" content="Microsoft FrontPage 4.0">
+   <title>Display menu</title>
+</head>
+<body>
+<b><font size=+1>5 Display Menu</font></b>
+<blockquote>
+<p><img SRC="DisplayMenu.JPG" NOSAVE height=260 width=361>
+<p><b>Figure 1:</b> The Display menu
+<br>&nbsp;
+</blockquote>
+<p>The <b>Display</b> menu contains a list of checkboxes that allow the
+user to plot the results of any analysis. If a checkbox
+is selected, the appropriate graph will be displayed once it becomes available.
+De-selecting a checkbox will close the graph if it is already displayed.
+Closing the graph windows will cause the corresponding checkboxes to be
+de-selected. Certain graphs are only calculated when analysing more than
+one frame of data, and others are only calculated at the user's request. For
+example, a volume fraction profile (checkbox &quot;Hilbert&quot; cannot be
+displayed if correlation function analysis has been performed).
+<p>Always calculated:
+<br>&nbsp;
+<table COLS=3 WIDTH="1110" >
+<tr>
+<td width="176"><b>Data</b></td>
+
+<td width="351">The original scattering data</td>
+
+<td width="563">(see <a href="../file/file.htm">File</a>)</td>
+</tr>
+
+<tr>
+<td width="176"><b>Extrapolation</b></td>
+
+<td width="351">The extrapolated data</td>
+
+<td width="563">(see <a href="../actions/extrapolation/Extrapolation.htm">Extrapolation</a>)</td>
+</tr>
+
+</table>
+
+<p>Calculated when analysing more than one frame of data:
+<br>&nbsp;
+<table COLS=3 WIDTH="1110" >
+<tr>
+<td width="176"><b>Guinier radius</b></td>
+
+<td width="351">Guinier radius of gyration v. frame</td>
+
+<td width="563">(see <a href="../actions/extrapolation/Extrapolation.htm">Extrapolation</a>)</td>
+</tr>
+
+<tr>
+<td width="176"><b>Thermal background</b></td>
+
+<td width="351">Bonart thermal backround v. frame</td>
+
+<td width="563">(see <a href="../actions/extrapolation/Extrapolation.htm">Extrapolation</a>)</td>
+</tr>
+
+<tr>
+<td width="176"><b>Porod constant</b></td>
+
+<td width="351">Porod constant v. frame</td>
+
+<td width="563">(see <a href="../actions/extrapolation/Extrapolation.htm">Extrapolation</a>)</td>
+</tr>
+
+<tr>
+<td width="176"><b>Sigma</b></td>
+
+<td width="351">Sigma v. frame</td>
+
+<td width="563">(see <a href="../actions/extrapolation/Extrapolation.htm">Extrapolation</a>)</td>
+</tr>
+
+<tr>
+<td width="176"><b>Second moment</b></td>
+
+<td width="351">Second moment of the data v. frame</td>
+
+<td width="563">(see <a href="../actions/transform/Transform.htm">Transform</a>)</td>
+</tr>
+</table>
+
+<p>Calculated at request of user:
+<br>&nbsp;
+<table COLS=3 WIDTH="1110" >
+<tr>
+<td height="21" width="176"><b>Gamma1</b></td>
+
+<td height="21" width="351">The 1-D correlation function</td>
+
+<td height="21" width="563">(see <a href="../actions/transform/Transform.htm">Transform</a>)</td>
+</tr>
+<tr>
+<td height="22" width="176"><b>Hilbert</b></td>
+
+<td height="22" width="351">The Volume Fraction Profile</td>
+
+<td height="22" width="563">(see <a href="../actions/transform/Transform.htm">Transform</a>)</td>
+</tr>
+<tr>
+<td width="176"><b>Re-transform</b></td>
+
+<td width="351">The Fourier transform of the 1-D correlation function</td>
+
+<td width="563">(see <a href="../actions/transform/Transform.htm">Transform</a>)</td>
+</tr>
+
+<tr>
+<td width="176"><b>Interface distribution</b></td>
+
+<td width="351">The Interface Distribution Function</td>
+
+<td width="563">(see <a href="../actions/transform/Transform.htm">Transform</a>)</td>
+</tr>
+</table>
+
+<p>The extrapolated data and re-transform are superimposed on the original
+scattering data when displayed. All other graphs are displayed in separate windows.
+The use of <i>CORFUNC</i> graphics windows is explained in <a href="../graphics/GraphicsWindows.htm">Section
+6: Graphics Windows</a>.
+<br>&nbsp;
+<br>&nbsp;
+</body>
+</html>

@@ -1,0 +1,36 @@
+# COMPILE_CORFUNC_MINGW
+#
+# Download MinGW from http://www.mingw.org/
+#
+# NOTE: Compiling under MinGW removes the dependency of the executables on the Cygwin library CYGWIN1.DLL and circumvents
+# a runtime error in EXTRAPOLATE.EXE when the program tries to open the data file.
+#
+#
+# Invoke this file as ./compile_corfunc_mingw.txt
+#
+# -c is COMPILE but don't link
+#
+#
+#
+# FIRST COMPILE THE SUBROUTINES
+gcc -c *.c
+#
+g77 -c addstr.f corfunc_io.f covsrt.f getpath.f mrqmin.f savgol.f
+#
+g77 -c sig.f strpath.f syminv.f tbksb.f tqli.f tred2.f loqread.f
+#
+# THEN COMPILE AND LINK THE MAIN PROGRAMS
+g77 -ffixed-line-length-132 ftransform.f corfunc_io.o wrdlen.o getpath.o strpath.o endian.o writeascii.o -static -o ftransform
+# (does this need byte_order.o, MJR thought it did?)
+#
+g77 -ffixed-line-length-132 extrapolate.f tailfit.f tailjoin.f corfunc_io.o wrdlen.o getfiletype.o readascii.o getpath.o addstr.o byte_order.o mrqmin.o strpath.o tred2.o tqli.o syminv.o covsrt.o tbksb.o writeascii.o loqread.o -static -o extrapolate
+#
+g77 -ffixed-line-length-132 extract_par.f corfunc_io.o wrdlen.o getpath.o strpath.o -static -o extract_par
+#
+# NOW COPY UP THE EXECUTABLES AND OTHER OBJECT FILES
+cp /u/corfunc/corfunc_src/fortran/corfunc/corfunc_io.o /u/corfunc/corfunc_src/fortran/tropus/corfunc_io.o
+#
+mv /u/corfunc/corfunc_src/fortran/corfunc/ftransform.exe /u/corfunc/corfunc_src/ftransform.exe
+mv /u/corfunc/corfunc_src/fortran/corfunc/extrapolate.exe /u/corfunc/corfunc_src/extrapolate.exe
+mv /u/corfunc/corfunc_src/fortran/corfunc/extract_par.exe /u/corfunc/corfunc_src/extract_par.exe
+#

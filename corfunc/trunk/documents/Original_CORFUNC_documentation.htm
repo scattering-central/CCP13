@@ -1,0 +1,714 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<!-- saved from url=(0052)http://www.ccp13.ac.uk/software/program/corfunc.html -->
+<!-- saved from url=(0050)http://www.dl.ac.uk/SRS/CCP13/program/corfunc.html --><HTML><HEAD><TITLE>CCP13 Documentation: CORFUNC</TITLE>
+<META http-equiv=Content-Type content="text/html; charset=windows-1252">
+<META content="MSHTML 6.00.2800.1498" name=GENERATOR></HEAD>
+<BODY text=black background=Original_CORFUNC_documentation_files/backgrnd.gif>
+<H2>SAXS CORRELATION FUNCTION ANALYSIS:<BR>NOTES ON THE SOFTWARE AT DARESBURY 
+<HR>
+</H2>
+<H3>1. Introduction</H3>A set of programs for performing correlation function 
+analysis of one dimensional SAXS patterns has recently been written. The 
+programs are based on the SUN network at Daresbury, but have also been copied 
+across to UMIST. From a given SAXS image they calculate the one and three 
+dimensional correlation functions, and analyse the one dimensional function in 
+terms of an ideal lamellar morphology1. The two correlation functions (called 
+&#915;<SUB>1</SUB> and &#915;<SUB>3</SUB> respectively) are essentially Fourier 
+transforms of the given one dimensional SAXS curve2. They are often interpreted 
+in terms of an imaginary rod moving through the structure of the material from 
+which the SAXS curve was obtained. &#915;<SUB>1</SUB>(R) is the probability that a 
+rod of length R moving through the material has equal electron densities at 
+either end. Hence a frequently occurring spacing within a structure shows up as 
+a peak in the one dimensional correlation function. The difference between 
+&#915;<SUB>1</SUB> and G<SUB>3</SUB> lies in the assumptions made about the 
+experimental material. The interpretation of &#915;<SUB>1</SUB> assumes that, within 
+the SAXS length scale, spacings occur along one fixed axis, but that the axis 
+assumes all possible directions throughout the material. Similarly, 
+&#915;<SUB>3</SUB> assumes that spacings can occur in all three dimensions within the 
+SAXS length scale. 
+<P>The task of calculating and interpreting the correlation functions can be 
+broken down into three logical parts: 
+<P>
+<OL>
+  <LI><STRONG>Extrapolation of the experimental SAXS curve to q=infinity and 
+  q=0.</STRONG> <BR>This is a mathematical requirement for the Fourier transform 
+  to be performed. Any SAXS experiment gives a finite number of intensity values 
+  at finite values of q necessitating this extrapolation and a numerical 
+  integration to calculate the transforms. Two programs perform this 
+  extrapolation: tailfit and tailjoin. It should be stressed right from the 
+  start that extrapolation to q=infinity (tail fitting) is the most problematic 
+  task of correlation function analysis, and can greatly influence results 
+  obtained. 
+  <P></P>
+  <LI><STRONG>Fourier transformation of the extrapolated 
+  data.</STRONG><BR>&#915;<SUB>1</SUB> is based on a cosine Fourier transform, while 
+  &#915;<SUB>3</SUB> is based on a sine transform. The two functions are related by a 
+  simple expression<SUP>2</SUP>. The program transform performs the Fourier 
+  transformations, and is relatively simple. It can also re-transform 
+  &#915;<SUB>1</SUB> back into a smoothed copy of the extrapolated data. 
+  <P></P>
+  <LI><STRONG>Interpretation of &#915;<SUB>1</SUB> based on an ideal lamellar 
+  morphology.</STRONG><BR>A model is required for the interpretation of features 
+  of &#915;<SUB>1</SUB> to be possible. The program extract performs this analysis. 
+  Note that no interpretation of &#915;<SUB>3</SUB> is performed. 
+  <P></P></LI></OL>Correlation functions are extremely valuable tools in the 
+interpretation of one dimensional SAXS patterns, particularly those for which 
+features are either weak or obscured (for example shoulders). However, as with 
+any involved method of analysis, care should be taken to ensure results are 
+genuine and meaningful. 
+<P>
+<H3>2. Program structure.</H3>The programs were written in a modular form to 
+enable other programmers to adapt the code to their own needs. The programs also 
+had to be transportable between systems. Each program is run from a UNIX shell 
+script corfunc.sh that can be invoked from any directory by typing corfunc. The 
+shell script runs each of the programs in turn, and also controls graphics 
+output. The first program run is tailinput. This prompts the user for all the 
+information required for the analysis. No user input is required once tailinput 
+has finished. Tailinput is not given its own section in these notes, but each 
+input will be discussed in the context of the analysis program that uses it. The 
+programs invoked by corfunc have to communicate with each other. They do this 
+via a system of dummy files. For example tailfit passes fit information to 
+tailjoin in the file tailinfo.dat. If everything is running smoothly, the user 
+should be unaware of the creation of these files. In general, deletion of a 
+dummy file is not important, providing it does not occur during an analysis 
+session. The most important dummy file is corfunc.dat, the file containing all 
+the information provided by the user in tailinput. 
+<P>Graphical output of results is catered for, and is one of the options 
+controlled by tailinput. The programming behind this is complicated, but was 
+written to ease transport of the programs. To plot a graph, a program creates 
+otoko format files containing the data, and a set of shell scripts. The shell 
+scripts run otoko and force it to plot the data contained in the files just 
+created. The name used for dummy otoko files is O99000.TMP, or something 
+similar. The shell scripts created by the programs are invoked by corfunc, and 
+delete themselves once plotting is over. They use the otoko ".pnt" command that 
+requires the user to click with the middle mouse button to clear the graph - any 
+of the standard plotting commands would leave no delay between plotting the 
+graph and clearing it, when run from a shell script. This may seem an 
+unnecessarily complicated way of producing plots, but it can be used on any 
+system that supports the Xwindows version of otoko, and in general works 
+seemlessly. Note however that should any changes be made to otoko, the programs 
+might not be able to produce graphics. In this case, the graphics option can 
+either be toggled off, or some minor alterations made to the Fortran code to 
+enable the programs to use some other graph plotting program. 
+<P>Before discussing each of the analysis programs in turn, we will consider the 
+first few inputs made to tailinput. The user is prompted for the name of the 
+directory containing the otoko files to be analysed. This can be any UNIX path 
+name such as /img8/ajr/aug94, or ../jul94, or you can simply press return if the 
+current directory contains your data. The user is the prompted for a file name. 
+All file names should be in the form X??000.!!!, where ?? is a file number and 
+!!! a file extension. Using any other name format will result in error messages 
+like 
+<P><TT>Software error with subroutine changeotok: fatal...</TT> 
+<P>or 
+<P><TT>Error in subroutine swapexten: fatal...</TT> 
+<P>at some point in the analysis. Whenever a fatal error occurs all the programs 
+stop. The user is also prompted for a Q axis filename, before tailinput checks 
+all the data. If the file supplied contains realtime data, the user is then 
+prompted for the number of the first frame to be analysed, the last frame to be 
+analysed, and the increment between frames. If the user, when prompted, chooses 
+the absolute intensities option, the programs assume the intensities are in 
+reciprocal centimetres. Using absolute units is recommended, as more information 
+will be available when interpreting the correlation functions. Note that 
+pressing the return key when prompted by tailinput selects the default for that 
+input. Tailinput keeps a record of defaults, speeding up user input. Tailinput 
+is case sensitive! 
+<P>
+<H3>3. Program tailfit.</H3>
+<UL>
+  <LI><STRONG>Task.</STRONG><BR>Tailfit fits either a Porod3 or sigmoid4 profile 
+  to the tail of the intensity data. It then passes the fit parameters to 
+  tailjoin for extrapolation of the data to q=infinity. The sigmoid profile 
+  should generally be used. It uses an intensity profile of the form: 
+  <P><MATH>I(q) = B + (K / q<SUP>4</SUP>) * e<SUP>( - q<SUP>2</SUP>&#963;<SUP>2</SUP> 
+  )</SUP></MATH> 
+  <P>where B is a Bonart thermal background, K is the Porod constant, and &#963; 
+  describes the electron density profile at the interface between crystalline 
+  and amorphous sections. 
+  <P><EM>Sigmoid tail interface width.</EM> 
+  <P><IMG src="Original_CORFUNC_documentation_files/fig3.gif"> 
+  <P>The parameter &#963; is in Angstroms, and is a measure of the width of the 
+  distribution that gives rise to the sigmoid electron density profile. Fitting 
+  with a sigmoid profile is a non-linear problem, and requires a robust fitting 
+  algorithm: a Levenburg-Marquart method5 is used. An initial guess is made at 
+  the fit parameters by performing least squares fits to certain graphs and 
+  measuring gradients. 
+  <P>The Porod tail profile has the form: 
+  <P><MATH>I(q) = B + (K / q<SUP>4</SUP>)</MATH> 
+  <P>where B is a Bonart thermal background and K is the Porod constant. Using a 
+  Porod profile usually gives poor quality correlation functions, and is 
+  included for completeness. However, if a Porod profile is used, a greater 
+  number of structural parameters can be extracted, including interface surface 
+  to volume ratios and the Porod characteristic chord length. Fitting becomes a 
+  linear problem, and so can be less problematic than fitting to a sigmoid 
+  profile. The parameters K and B are measured from a standard Porod-type plot 
+  of I(q) vs. 1 / q4. 
+  <P></P>
+  <LI><STRONG>User input.</STRONG><BR>The most important parameters controlled 
+  by the user are those concerning which data are used for the tail fitting. The 
+  user is prompted by tailinput for a channel number at which to start fitting, 
+  and a channel number at the end of the tail. If realtime data is being 
+  analysed, the user can input different channel numbers for each frame by 
+  typing "n" at the prompt: 
+  <P><TT>Same channel limits on each frame for tailfit [y/n] [y] --&gt;</TT> 
+  <P>Choosing limits can be difficult, and some experimentation may be required. 
+  As a general rule, the start channel should have a q value about twice that at 
+  which any peak occurred in the intensity data. The end channel should be as 
+  large as possible, but should avoid any detector noise. More will be said 
+  about tail fit channel limits below. Tailfit can also search through a range 
+  of start channels to optimise the fit. The user is prompted: 
+  <P><TT>Enter start channel optimisation range (type n for no opt.) [0] 
+  --&gt;</TT> 
+  <P>Typing "n", pressing return, or entering zero will result in no 
+  optimisation. If the user entered, say, a value of five, tailfit would work 
+  through the channels from five to the left of the start channel specified by 
+  the user, to five channels to the right, searching for the best fit. This 
+  option is perhaps best ignored as the optimum starting point is invariably as 
+  far as possible to the right of the start channel specified by the user. 
+  <P>Tailinput also prompts the user for a number of iterations. Usually the 
+  default value of 100 is fine, but if start channel optimisation is being 
+  performed, or if warning messages appear during tail fitting, the number 
+  should be increased. 
+  <P></P>
+  <LI><STRONG>Possible errors</STRONG>.<BR>Any of the programs may produce 
+  errors concerning dummy files, often called status files or transfer files by 
+  the programs themselves. If one of these error messages occurs it will be 
+  fatal and the programs will stop. They should only occur if a dummy file has 
+  been deleted by the user during the analysis session, or if there are problems 
+  with the file system, for example ownership problems or a server crashing. The 
+  only action is to run corfunc again from the start. 
+  <P>However, several non-fatal errors can occur in tailfit and these should be 
+  looked out for. If a single frame is being analysed using a sigmoid profile, 
+  you may see a message like: 
+  <P><TT>Warning! positive gradient during estimation of sigma.</TT> 
+  <P>This refers to the graph used to gain an initial estimate of s. When this 
+  message appears, the initial guess at s will be poor, and this may affect the 
+  non-linear fitting. If the same error occurs during fitting to realtime data, 
+  no error message will appear. Following this error message, if the fits are 
+  poor, the analysis should be performed again with different tail channel 
+  limits. 
+  <P>Another message that may occur is: 
+  <P><TT>Warning: ran out of iterations before convergence...</TT> 
+  <P>If, for a static image, this gives a poor quality fit, the analysis should 
+  be run again with a larger number of iterations specified in tailinput. For 
+  realtime data, if the message appears for several frames, again the number of 
+  iterations should be increased. The number of iterations required should never 
+  be higher than 500: if it is, something is wrong. 
+  <P>The most serious message that can occur is: 
+  <P><TT>Fitting problem: singular alpha matrix...</TT> 
+  <P>This will only occur during sigmoid profile fitting. The error message 
+  refers to a problem with the Levenburg-Marquart algorithm that isn't properly 
+  understood. When this error occurs, the program automatically sets s to zero, 
+  and performs a linear least squares fit for the background and Porod constant. 
+  Changing fit channel limits or removing frames from realtime data may get 
+  around the problem. 
+  <P></P>
+  <LI><STRONG>Files created</STRONG> <BR>(assuming intensity file A01000.XSH and 
+  q-axis file X00000.QAX). 
+  <P>
+  <TABLE>
+    <TBODY>
+    <TR>
+      <TH align=left>For all files: 
+    <TR>
+      <TD>Tailinfo.dat 
+      <TD>Text file containing fit parameters. 
+    <TR>
+      <TH align=left>For realtime data: 
+    <TR>
+      <TD>A01000.BAK 
+      <TD>Otoko file containing thermal background vs. frame. 
+    <TR>
+      <TD>A01000.POR 
+      <TD>Otoko file containing Porod constant vs. frame. 
+    <TR>
+      <TD>A01000.SIG 
+      <TD>Otoko file containing sigma value vs. frame. 
+    <TR>
+      <TD>A01000.FAX 
+      <TD>Otoko file containing frame no.s for use as an axis with the files 
+        above.</TD></TR></TBODY></TABLE>
+  <P></P>
+  <LI><STRONG>Graphics output.</STRONG><BR>For fitting to static images an 
+  overplot of the experimental tail and calculated tail is plotted. For realtime 
+  data, graphs of each of the fit parameters vs. frame number will be plotted. 
+  <LI><STRONG>Notes.</STRONG><BR>Since the experimental data is extrapolated to 
+  very high q, the majority of the data used in the Fourier transform comes from 
+  the tail fit. It's therefore very important to check that the tail fit is 
+  good. The tail affects points on the correlation function at low values of R 
+  (real space coordinate) to the greatest extent, but these points are the most 
+  important in the extraction of ideal lamellar morphology parameters. Hence the 
+  results from an analysis session depend greatly on the tail fit. 
+  <P>In particular, watch out for values of s below 1. When realtime data is 
+  analysed, s will often be approximately zero for a large proportion of frames. 
+  This is an indication that the tail fitting is failing, and that your channel 
+  limits could be changed. Moving the start channel towards the beamstop usually 
+  increases s, but moving the limit in too far while keeping the end limit at 
+  high q will result in very poor fits. 
+  <P>Choosing channel limits is a payoff between using as many points as 
+  possible to ensure a good fit, but wanting to keep as many points as possible 
+  from your experimental data in the extrapolated data that is passed to the 
+  Fourier transform. A noisy tail on the experimental data will result in poor 
+  tail fits, possibly making correlation function analysis impossible. 
+  <P></P></LI></UL>
+<H3>4. Program tailjoin.</H3>
+<UL>
+  <LI><STRONG>Task.</STRONG><BR>Tailjoin extrapolates the experimental data back 
+  to q=0 using a Guinier model. It then creates otoko files containing 
+  intensities from q=0 to beyond q=0.6 using the parameters found by tailfit. 
+  Due to the nature of the tail fitting, the join between experimental data and 
+  data in the calculated tail usually involves a step that could cause ripples 
+  in the correlation function. Hence this join is smoothed. 
+  <P>The intensity profile used by the Guinier model has the form: 
+  <P><MATH>I(q) = A * e<SUP>(B * q<SUP>2</SUP>)</SUP></MATH> 
+  <P>where B is negative. The Guinier model assumes the small angle scattering 
+  arises from particles and the parameter B is related to the radius of gyration 
+  of those particles. This obviously has dubious applicability to polymer 
+  systems. However, the correlation function is affected by the Guinier 
+  back-extrapolation to the greatest extent at large values of R, and so the 
+  back-extrapolation only has a small effect on the analysis. The Guinier 
+  profile is fitted to the first few genuine scattering points after the 
+  beamstop. If your experimental data does not contain an upturn in intensity at 
+  low q, back extrapolation may fail. As an alternative to the Guinier profile, 
+  a Vonk profile can also be used: 
+  <P><MATH>I(q) = H<SUB>1</SUB> - H<SUB>2</SUB> * q<SUP>2</SUP></MATH> 
+  <P>Little work has been performed using the Vonk model. 
+  <P>The channel at which tail fitting started also marks the point at which 
+  calculated data takes over from experimental data in the extrapolated data 
+  file. This region is smoothed using a Savitzky-Golay5 smoothing algorithm that 
+  smoothes the join without greatly altering higher moments of the data. Note 
+  that no smoothing is employed for the back-extrapolation as so few points are 
+  involved. The join between data sets will give rise to ripples in the 
+  correlation functions with a period matching the D-spacing at which the join 
+  occurs. These aren't usually visible. 
+  <P>The point in q to which extrapolation is performed affects the correlation 
+  functions, particularly if it is too small. The value of q=0.6 used by the 
+  programs was decided on after experimentation, and gives smooth correlation 
+  functions without loss of speed. The lower the truncation point is, the 
+  rougher the correlation functions, while the higher the truncation point is, 
+  the slower the transform. A truncation point of q=0.6 corresponds to 
+  fluctuations in the correlation functions of about 10 . These are usually not 
+  observable. 
+  <P></P>
+  <LI><STRONG>User input.</STRONG><BR>User input for tailjoin occurs in 
+  tailinput. Firstly the back-extrapolation model must be specified: a Guinier 
+  model is best. Then tailinput searches for the first genuine data point after 
+  the beamstop by comparing intensities with that at q=0 and by waiting for the 
+  sudden decrease in intensity after the beamstop. The process doesn't always 
+  work, so at the prompt: 
+  <P><TT>Enter channel at start of genuine data [73] --&gt;</TT> 
+  <P>press return only if the default value is sensible. If tailjoin is not 
+  passed a sensible channel number the program will crash. 
+  <P></P>
+  <LI><STRONG>Possible errors.</STRONG><BR>The most frequent errors are caused 
+  by an incorrect value for the start of genuine data being passed to tailjoin 
+  or the absence of an upturn in intensity as you approach the beamstop. A 
+  message like: 
+  <P><TT>Guinier back-extrapolation failed!</TT> 
+  <P>or 
+  <P><TT>Back-extrapolae channel optimisation has failed: fatal...</TT> 
+  <P>indicates problems with the first genuine data point. The user should 
+  inspect the intensities near the beamstop before running corfunc again. The 
+  fatal error message: 
+  <P><TT>Problem with channel limits...</TT> 
+  <P>will only occur if one of the start or end channel limits for the tail fit 
+  is very close to the beginning or end of the experimental data. A serious 
+  fatal error occurs if the experimental data contains negative intensities 
+  close to the point at which the experimental data is joined to the 
+  extrapolated tail: 
+  <P><TT>Error: negative intensities in experimental data: fatal...</TT> 
+  <P>If this occurs the user should add some arbitrarily large constant to the 
+  experimental data using otoko, and re-perform the tail fitting. Tailfit will 
+  automatically subtract any constant background added to the data, and no 
+  problems will occur in tailjoin. Finally, if the experimental work was 
+  performed at very long camera lengths, more than 2048 points may be needed to 
+  extrapolate the data to beyond q=0.6. If this occurs a warning message is 
+  displayed and the program stops. A re-program would be necessary to get around 
+  this problem. 
+  <P></P>
+  <LI><STRONG>Files created</STRONG><BR>(assuming intensity file A01000.XSH and 
+  q-axis file X00000.QAX). 
+  <P>
+  <TABLE>
+    <TBODY>
+    <TR>
+      <TH align=left>For all data: 
+    <TR>
+      <TD>A01000.FUL 
+      <TD>Otoko file containing extrapolated intensities. 
+    <TR>
+      <TD>X00000.FLX 
+      <TD>Otoko file containing extrapolated q values used as a q-axis for the 
+        above. 
+    <TR>
+      <TH align=left>For realtime data: 
+    <TR>
+      <TD>A01000.RAD 
+      <TD>Otoko file containing the Guinier radius of gyration vs. frame 
+    no.</TD></TR></TBODY></TABLE>
+  <P></P>
+  <LI><STRONG>Graphics output.</STRONG><BR>For static data, the full 
+  extrapolated dataset is displayed, followed by a plot of the smoothed 
+  intensities around the join area. For realtime data, a plot of the Guinier 
+  radius of gyration obtained from the back-extrapolation is displayed. This can 
+  largely be ignored. 
+  <P></P>
+  <LI><STRONG>Notes.</STRONG><BR>Check correlation functions for fluctuations 
+  with periods corresponding to the truncation point of q=0.6 (ie. period of 
+  10) and to the point at which extrapolated data meets experimental data. The 
+  latter effect will be most noticeable when the SAXS curve is featureless, for 
+  example during a melt. When inspecting the smoothed joined, don't be alarmed 
+  by strange bulges in the data. The point of smoothing is to avoid large steps 
+  in the data, as these give rise to the sharpest fluctuations in the 
+  correlation functions. On the other hand, always make sure these bulges 
+  haven't introduced ripples. 
+  <P></P></LI></UL>
+<H3>5. Program transform.</H3>
+<UL>
+  <LI><STRONG>Task.</STRONG><BR>Transform performs the integrations necessary to 
+  calculate the correlation functions and second moment of the data. It also has 
+  the capability of re-transforming &#915;<SUB>1</SUB> back into a scattering curve. 
+  <P>&#915;<SUB>1</SUB> and &#915;<SUB>3</SUB> are given by: 
+  <P><IMG src="Original_CORFUNC_documentation_files/gamma1.gif"> 
+  <P>and 
+  <P><IMG src="Original_CORFUNC_documentation_files/gamma3.gif"> 
+  <P>where j (q) is the scattering intensity and Q is the second moment or 
+  invariant of j (q) given by: 
+  <P><IMG src="Original_CORFUNC_documentation_files/q.gif"> 
+  <P>Hence &#915;<SUB>1</SUB>(0) = &#915;<SUB>3</SUB> (0) = 1. Notice that every point in 
+  the extrapolated dataset will be used to calculate each point on the 
+  correlation functions, leading to a smooth correlation function. Of course, 
+  the integration is numerical and is only performed up to q=0.6 as discussed in 
+  the last section. Together with the fluctuations introduced by this 
+  truncation, fluctuations are also introduced into the correlation functions by 
+  the finite gap between points in the extrapolated dataset - we don't have 
+  intensity as a continuous function of q. As a final comment, note that the 
+  numerical integration takes the form of a trapezium approximation. 
+  <P></P>
+  <LI><STRONG>User input.</STRONG><BR>As usual, all user input occurs in 
+  tailinput. The user must provide a maximum value of R to which the correlation 
+  functions should be calculated, and a step in R that is the horizontal 
+  separation of points calculated on the correlation functions. The smaller the 
+  step in R or the further out in R you want to calculate, the slower the 
+  calculation of the transform. Try to anticipate the size of the spacings in 
+  your material before performing the correlation function analysis so that the 
+  correlation function shows up these features. The user is also prompted as to 
+  whether &#915;<SUB>1</SUB> should be re-transformed back to intensity data. This 
+  option is included as a way of verifying the transformation has worked, and to 
+  smooth the data for display purposes. There is also an option for ascii output 
+  of the correlation functions in the form G vs. R for capture and display on 
+  another machine (for example a Macintosh). 
+  <P></P>
+  <LI><STRONG>Possible errors.</STRONG><BR>Errors are unlikely to occur. If 
+  large camera lengths were used in the experimental session, the extrapolated 
+  data may not go beyond q=0.6. This was discussed in the last section. 
+  <P></P>
+  <LI><STRONG>Files created </STRONG><BR>(assuming intensity file A01000.XSH and 
+  q-axis file X00000.QAX). 
+  <P>
+  <TABLE>
+    <TBODY>
+    <TR>
+      <TH align=left>For all data: 
+    <TR>
+      <TD>A01000.CF1 
+      <TD>Otoko file containing &#915;<SUB>1</SUB> . 
+    <TR>
+      <TD>A01000.CF3 
+      <TD>Otoko file containing &#915;<SUB>3</SUB> . 
+    <TR>
+      <TD>A01000.RAX 
+      <TD>Otoko file containing real axis for the files above. 
+    <TR>
+      <TH align=left>For realtime data: 
+    <TR>
+      <TD>A01000.MO2 
+      <TD>Otoko file containing the second moment vs. frame number. 
+    <TR>
+      <TH align=left>For the re-transform option: 
+    <TR>
+      <TD>A01000.SMO 
+      <TD>Otoko file containing re-transformed intensities. Use the original 
+        q-axis file as an axis. 
+    <TR>
+      <TH align=left>For the ascii output option: 
+    <TR>
+      <TD>A01$$$.ASC 
+      <TD>Text file containing correlation functions vs. R for frame $$$ of 
+        the dataset.</TD></TR></TBODY></TABLE></P>
+  <LI><STRONG>Graphics output.</STRONG><BR>For static data, &#915;<SUB>1</SUB>, 
+  &#915;<SUB>3</SUB>, and the re-transformed data (if available) are displayed. For 
+  realtime data the second moment vs. frame number is plotted. 
+  <P></P>
+  <LI><STRONG>Notes.</STRONG><BR>Always inspect the correlation functions for 
+  artefacts introduced by the programs. In particular, for &#915;<SUB>1</SUB> check 
+  that: 
+  <P>
+  <UL>
+    <LI>&#915;<SUB>1</SUB> tends to zero as q tends to infinity: otherwise the 
+    background subtraction is faulty. 
+    <P></P>
+    <LI>&#915;<SUB>1</SUB> smoothly curves into the ordinate ie. at R=0 the gradient 
+    should be zero. Zero s values often cause problems at low R: when sigma is 
+    zero &#915;<SUB>1</SUB> will meet the ordinate at a sharp angle. 
+    <P></P>
+    <LI>there are no ripples corresponding to the q truncation point (ie. 
+    ripples with a period of 10). 
+    <P></P>
+    <LI>there are no ripples corresponding to the q value at which the 
+    extrapolated data meets the experimental data. 
+    <P></P>
+    <LI>peaks correspond to anticipated spacings within the material. 
+    <P></P></LI></UL></LI></UL>
+<H3>6. Program extract.</H3>
+<UL>
+  <LI><STRONG>Task.</STRONG><BR>Extract interprets &#915;<SUB>1</SUB> in terms of an 
+  ideal lamellar morphology, and extracts structural parameters. The program 
+  also displays the results of calculating the moments of the experimental SAXS 
+  curve, and Porod results. If tail fitting was performed using a Porod instead 
+  of a sigmoid profile, a more detailed Porod analysis is performed. 
+  <P>The program first decides whether a lamellar interpretation can be applied. 
+  It searches for the first local minimum with a negative &#915;<SUB>1</SUB> 
+  coordinate and the first local maximum with a positive &#915;<SUB>1</SUB> 
+  coordinate. If these cannot be found, extraction of the lamella structural 
+  parameters is abandoned (for that particular frame). If these features are 
+  found extraction can be performed, and will employ these two features. Note 
+  these criteria very carefully: local minima above the abscissa will be ignored 
+  and not used in the calculation of structural parameters. Similarly, local 
+  maxima below the abscissa will not be used in the calculation of structural 
+  parameters. Indeed, the interpretation of any one dimensional correlation 
+  function deviating from the ideal lamellar model is not yet properly 
+  understood. 
+  <P><EM>A diagram of the one dimensional correlation function from an ideal 
+  lamellar morphology is given above. It consists of a gradually decaying 
+  oscillation, with an initial linear section at low values of R. Structural 
+  parameters are derived from the positions of the first local minimum and local 
+  maximum, and the position and gradient of the linear section.</EM> 
+  <P><IMG src="Original_CORFUNC_documentation_files/fig1.gif"> 
+  <P>
+  <TABLE>
+    <TBODY>
+    <TR>
+      <TH align=left>Parameter 
+      <TH align=left>Symbol 
+      <TH align=left>Measurement 
+    <TR>
+      <TD>Long period 
+      <TD>L<SUB>p</SUB> 
+      <TD>As in diagram 
+    <TR>
+      <TD>Bulk crystallinity 
+      <TD>&#966; 
+      <TD>&#915;min / (&#915;min + G*) 
+    <TR>
+      <TD>Av. hard block thickness 
+      <TD>L<SUB>c</SUB> 
+      <TD>As in diagram 
+    <TR>
+      <TD>Av. soft block thickness 
+      <TD>L<SUB>a</SUB> 
+      <TD>L<SUB>p</SUB> - L<SUB>c</SUB> 
+    <TR>
+      <TD>Local crystallinity 
+      <TD>&#966;<SUB>l</SUB> 
+      <TD>L<SUB>c</SUB> / L<SUB>p</SUB> 
+    <TR>
+      <TD>Average core thickness 
+      <TD>D<SUB>0</SUB> 
+      <TD>As in diagram 
+    <TR>
+      <TD>Average interface thickness 
+      <TD>D<SUB>tr</SUB> 
+      <TD>As in diagram 
+    <TR>
+      <TD>Polydispersity 
+      <TD>
+      <TD>&#915;min / &#915;max 
+    <TR>
+      <TD>Electron density contrast 
+      <TD>&#916;&#961; 
+      <TD>Q / &#966; (1-&#966;) 
+    <TR>
+      <TD>Specific inner surface 
+      <TD>
+      <TD>2f / Lc 
+    <TR>
+      <TD>Non-ideality 
+      <TD>
+      <TD>(Lp - Lp*)<SUP>2</SUP> / Lp2</TD></TR></TBODY></TABLE>
+  <P>Most of these parameters are given in reference 1. The polydispersity 
+  measurement was suggested by Guy Eeckhaut. The problem of determining 
+  D<SUB>tr</SUB> and D<SUB>0</SUB> has not been straightforward. Algorithms have 
+  been developed with consistency as a priority, so that even if the structural 
+  interpretation of these parameters is dubious, the line they specify gives 
+  consistent values to the bulk crystallinity, hard block thickness and so on. 
+  This has not been an easy task, made harder by the fact that poor tail fits 
+  radically alter the appearance of &#915;<SUB>1</SUB> at low R. Early algorithms 
+  involved polynomial interpolation and algebraic differentiation to determine 
+  the first derivative of &#915;<SUB>1</SUB> in the region of the linear section. The 
+  linear section was then taken to be some region surrounding the point with 
+  greatest gradient. However, when low s values arise from tail fitting, 
+  &#915;<SUB>1</SUB> often has its steepest gradient at very low R in the form of an 
+  upturn next to the ordinate. This distracted the derivative-based algorithms 
+  away from the genuine linear section. 
+  <P>The present algorithm has been slightly more successful, but still does not 
+  work very well. It considers every possible value of D<SUB>tr</SUB> and 
+  D<SUB>0</SUB>, and for each pair of values constructs a calculated 
+  &#915;<SUB>1</SUB> profile. This is done by performing a linear least squares fit 
+  to the points between D<SUB>tr</SUB> and D<SUB>0</SUB> and then connecting 
+  this linear region back to the ordinate and to the first local minimum with a 
+  polynomial. The position of the linear section defines these polynomials 
+  uniquely, as we know two points on each polynomial, and the gradient at those 
+  points. A goodness of fit parameter is then assigned to the calculated 
+  profile. The algorithm finds the values of D<SUB>tr</SUB> and D<SUB>0</SUB> 
+  that give rise to the best calculated profile. 
+  <P>Once extraction of the lamellar structural parameters is complete, Porod 
+  analysis is performed. If the lamellar interpretation of &#915;<SUB>1</SUB> failed, 
+  a crystallinity provided by the user in tailinput is used to calculate the 
+  electron density contrast, otherwise this was given in the lamellar parameter 
+  extraction. If a Porod profile was used for tail fitting, a detailed Porod 
+  analysis is performed. Those frames for which lamellar interpretation 
+  succeeded are analysed using the bulk crystallinity measurement from the 
+  lamella interpretation. Those frames for which lamellar interpretation failed 
+  are analysed using the user's estimate of crystallinity. The parameters 
+  calculated by the Porod analysis are given below. 
+  <P><EM>The calculated profile fitted to &#915;<SUB>1</SUB> for extraction of 
+  D<SUB>tr</SUB> and D<SUB>0</SUB>.</EM> 
+  <P><IMG src="Original_CORFUNC_documentation_files/fig2.gif"> 
+  <P>
+  <TABLE>
+    <TBODY>
+    <TR>
+      <TH align=left>Parameter 
+      <TH align=left>Symbol 
+      <TH align=left>Measurement 
+    <TR>
+      <TD>Porod const. 
+      <TD>K 
+      <TD>Performed in tailfit 
+    <TR>
+      <TD>Surface to volume ratio 
+      <TD>
+      <TD>&#960; K &#966; (1 - &#966;) / Q 
+    <TR>
+      <TD>Characteristic chord length 
+      <TD>l<SUB>p</SUB> 
+      <TD>4Q / &#960; K 
+    <TR>
+      <TD>Crystalline chord length 
+      <TD>
+      <TD>l<SUB>p</SUB> / (1 - &#966;) 
+    <TR>
+      <TD>Amorphous chord length 
+      <TD>
+      <TD>l<SUB>p</SUB> / &#966;</TD></TR></TBODY></TABLE>
+  <P>where Q is the second moment and &#966; is a crystallinity measurement (either 
+  obtained from the correlation function, or user-supplied). 
+  <P></P>
+  <LI><STRONG>User input.</STRONG><BR>Extract is an exception to the rule that 
+  all user input occurs in tailinput. When tailinput is run, however, the user 
+  is prompted for an estimate of crystallinity which is used in the Porod 
+  analysis should lamellar interpretation of the correlation function fail. 
+  Extract specifies for each frame whether the crystallinity it uses in 
+  calculations is user supplied or provided by the correlation function. 
+  <P>Tailinput also prompts the user: 
+  <P><TT>Do you want user control of extraction process [y/n] [n] --&gt;</TT> 
+  <P>This refers to the selection of the linear section of the correlation 
+  function. The first time you analyse a dataset you will probably want extract 
+  to select the linear section automatically. However, if the measurements of 
+  D<SUB>tr</SUB> and D<SUB>0</SUB> made by extract are inconsistent (ie. vary 
+  widely within a realtime dataset) you may want to re-run the analysis by 
+  supplying values for D<SUB>tr</SUB> and D<SUB>0</SUB> yourself. If user 
+  control is selected during tailinput, extract will prompt the user for 
+  D<SUB>tr</SUB> and D<SUB>0</SUB> for every frame. A system of defaults makes 
+  this a reasonably rapid process. Having performed an analysis with automatic 
+  selection of the linear section, you may want to re-perform the extraction 
+  process with the user selecting the linear section, but without having to 
+  tailfit and transform the data over again. This can be done by editing the 
+  file corfunc.dat and changing the line that reads "user" to read "auto". Then 
+  run extract directly (ie. not from within corfunc.sh). Corfunc.dat resides in 
+  the directory that contains the correlation function analysis programs. 
+  <P></P>
+  <LI><STRONG>Possible errors.</STRONG><BR>Unlikely to occur. 
+  <P></P>
+  <LI><STRONG>Files created</STRONG><BR>(assuming intensity file A01000.XSH and 
+  q-axis file X00000.QAX). 
+  <P>
+  <TABLE>
+    <TBODY>
+    <TR>
+      <TH align=left>For all datasets: 
+    <TR>
+      <TD>A01000.OUT 
+      <TD>Text file containing a copy of the information echoed to the 
+      screen.</TD></TR></TBODY></TABLE>
+  <P></P>
+  <LI><STRONG>Graphics output</STRONG><BR>None. 
+  <P></P>
+  <LI><STRONG>Notes.</STRONG><BR>The user should always check the values of 
+  D<SUB>tr</SUB> and D<SUB>0</SUB> measured by extract. If they vary widely 
+  within a realtime dataset, or inspection of &#915;<SUB>1</SUB> suggests different 
+  values, extraction should be re-performed with user supplied values based on 
+  the appearance of &#915;<SUB>1</SUB>. Checks should also be made on the appearance 
+  of &#915;<SUB>1</SUB> at low values of R, particularly when tail fitting has given 
+  s as zero. Finally, remember that the parameters calculated by extract are 
+  based on the assumption of an ideal lamellar morphology. If &#915;<SUB>1</SUB> 
+  differs from the type of correlation function expected for such a morphology 
+  (for example if the first local maximum lies below the abscissa) parameters 
+  calculated by extract may be meaningless. 
+  <P></P></LI></UL>
+<H3>7. Conclusion and recommendations.</H3>
+<UL>
+  <LI><STRONG>Tail fitting.</STRONG><BR>The crux of the problem lies in tail 
+  fitting. The Fourier transformation of data seems to be error free, and 
+  artefacts introduced by the extrapolation, while certainly present, don't 
+  often affect the correlation functions noticeably. But the appearance of the 
+  correlation functions, and the structural parameters extracted, do depend 
+  greatly on the tail fit. Hence great care should be taken when selecting 
+  channel limits for the tail fit. For realtime data it may be worthwhile to go 
+  through the dataset frame by frame, using the graphics option to check each 
+  fitted tail. 
+  <P></P>
+  <LI><STRONG>Extract.</STRONG><BR>It's clear that the selection of the linear 
+  section of &#915;<SUB>1</SUB> in extract is yet to be perfected. While this is an 
+  annoying problem, it is not a vital aspect of the analysis programs since the 
+  user can always intervene. 
+  <P></P>
+  <LI><STRONG>Interpretation of &#915;<SUB>3</SUB>.</STRONG><BR>Extraction of 
+  structural parameters has concentrated on &#915;<SUB>1</SUB> up to the present. If 
+  possible, a program equivalent to extract should be written to analyse 
+  &#915;<SUB>3</SUB>. 
+  <P></P></LI></UL>
+<H3>References.</H3>
+<OL>
+  <LI>Strobl, G. R.; Schneider, M. J. Polym. Sci. 1980, 18, 1343-1359. 
+  <LI>Balt‡ Calleja, F. J.; Vonk, C. G. X-ray Scattering of Synthetic Poylmers; 
+  Elsevier:Amsterdam, 1989; pp.247-251. 
+  <LI>Balt‡ Calleja, F. J.; Vonk, C. G. X-ray Scattering of Synthetic Poylmers; 
+  Elsevier:Amsterdam, 1989; pp.257-261. 
+  <LI>Koberstein, J.; Stein R. J. Polym. Sci. Phys. Ed. 1983, 21, 2181-2200. 
+  <LI>Press, W. H. et al. Numerical Recipes: the Art of Scientific Computing; 
+  Cambridge University Press, 1986. 
+  <LI>Balt‡ Calleja, F. J.; Vonk, C. G. X-ray Scattering of Synthetic Poylmers; 
+  Elsevier: Amsterdam, 1989; pp.260-270. </LI></OL>
+<HR>
+
+<TABLE id=Bottem width="100%" align=left>
+  <TBODY>
+  <TR>
+    <TD vAlign=top align=left width=30><A 
+      href="http://www.srs.ac.uk/srs/"><IMG height=30 alt=SRS 
+      src="Original_CORFUNC_documentation_files/srs.gif" width=30></A> </TD>
+    <TD vAlign=top align=left width=30><A 
+      href="http://www.srs.dl.ac.uk/NCD/"><IMG height=30 alt=NCD 
+      src="Original_CORFUNC_documentation_files/ncd.gif" width=30></A> </TD>
+    <TD vAlign=top align=left width=30><A href="http://www.clrc.ac.uk/" 
+      target=_top><IMG height=30 alt=CCLRC 
+      src="Original_CORFUNC_documentation_files/org.gif" width=40></A> </TD>
+    <TD vAlign=top align=left width=40><A href="http://www.dl.ac.uk/" 
+      target=_top><IMG height=30 alt=DL 
+      src="Original_CORFUNC_documentation_files/dr.gif" width=40></A> </TD>
+    <TD vAlign=top align=left width=30><A 
+      href="http://www.ccp13.ac.uk/index.htm"><IMG height=30 alt=ccp13 
+      src="Original_CORFUNC_documentation_files/ccp13.gif" width=30></A> </TD>
+    <TD align=right>Last update 18 February 
+2003</TD></TR></TBODY></TABLE><BR></BODY></HTML>

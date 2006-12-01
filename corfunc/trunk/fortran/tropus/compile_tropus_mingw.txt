@@ -1,0 +1,22 @@
+# COMPILE_TROPUS_MINGW
+#
+# Download MinGW from http://www.mingw.org/
+#
+# NOTE: Compiling under MinGW removes the dependency of the executables on the Cygwin library CYGWIN1.DLL and circumvents
+# a runtime error in EXTRAPOLATE.EXE when the program tries to open the data file.
+#
+#
+# Invoke this file as ./compile_tropus_mingw.txt
+#
+# -c is COMPILE but don't link
+# -o is make executable of the following name
+#
+#
+#
+# COMPILE AND LINK THE MAIN PROGRAM
+g77 -ffixed-line-length-132 tropus.f tropus_io.f polint.f corfunc_io.o -static -o tropus
+#
+# NOW COPY UP THE EXECUTABLES
+mv /u/corfunc/corfunc_src/fortran/tropus/tropus.exe /u/corfunc/corfunc_src/tropus.exe
+#
+

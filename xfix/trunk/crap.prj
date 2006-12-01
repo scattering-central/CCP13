@@ -1,0 +1,99 @@
+! UIMX ascii 2.9 key: 7888                                                      
+
+*crap.class: Project
+*crap.PjName: crap
+*crap.PjDoMain: 1
+*crap.PjDoMake: 1
+*crap.PjWriteAll: 1
+*crap.PjRunMake: 0
+*crap.PjRunExecutable: 0
+*crap.PjUserData: 0
+*crap.PjMode: -1
+
+*parameterDialog_PJinterface.class: PJinterface
+*parameterDialog_PJinterface.PjName: parameterDialog_PJinterface
+*parameterDialog_PJinterface.PjSwName: parameterDialog
+*parameterDialog_PJinterface.PjParent: crap
+*parameterDialog_PJinterface.PjFileName: parameterDialog.i
+*parameterDialog_PJinterface.PjShowFlag: 2
+*parameterDialog_PJinterface.PjGuiDate: 852836369
+*parameterDialog_PJinterface.PjDate: 0
+*parameterDialog_PJinterface.PjMode: -1
+
+*tieDialog_PJinterface.class: PJinterface
+*tieDialog_PJinterface.PjName: tieDialog_PJinterface
+*tieDialog_PJinterface.PjSwName: tieDialog
+*tieDialog_PJinterface.PjParent: crap
+*tieDialog_PJinterface.PjFileName: tieDialog.i
+*tieDialog_PJinterface.PjShowFlag: 2
+*tieDialog_PJinterface.PjGuiDate: 852839224
+*tieDialog_PJinterface.PjDate: 0
+*tieDialog_PJinterface.PjMode: -1
+
+*parRowColumn_PJinterface.class: PJinterface
+*parRowColumn_PJinterface.PjName: parRowColumn_PJinterface
+*parRowColumn_PJinterface.PjSwName: parRowColumn
+*parRowColumn_PJinterface.PjParent: crap
+*parRowColumn_PJinterface.PjFileName: par_rowColumn.i
+*parRowColumn_PJinterface.PjShowFlag: 2
+*parRowColumn_PJinterface.PjGuiDate: 850818331
+*parRowColumn_PJinterface.PjDate: 0
+*parRowColumn_PJinterface.PjMode: -1
+
+*setupDialog_PJinterface.class: PJinterface
+*setupDialog_PJinterface.PjName: setupDialog_PJinterface
+*setupDialog_PJinterface.PjSwName: setupDialog
+*setupDialog_PJinterface.PjParent: crap
+*setupDialog_PJinterface.PjFileName: setupDialog.i
+*setupDialog_PJinterface.PjShowFlag: 2
+*setupDialog_PJinterface.PjGuiDate: 852836377
+*setupDialog_PJinterface.PjDate: 0
+*setupDialog_PJinterface.PjMode: -1
+
+*uxmain.class: PJuxmain
+*uxmain.PjName: uxmain
+*uxmain.PjParent: crap
+*uxmain.PjFileName: crap.c
+*uxmain.PjDate: 0
+*uxmain.PjMode: -1
+
+*xtmain.class: PJxtmain
+*xtmain.PjName: xtmain
+*xtmain.PjParent: crap
+*xtmain.PjFileName: crap.c
+*xtmain.PjDate: 0
+*xtmain.PjMode: -1
+
+*uilmain.class: PJuilmain
+*uilmain.PjName: uilmain
+*uilmain.PjParent: crap
+*uilmain.PjFileName: crap.c
+*uilmain.PjDate: 0
+*uilmain.PjMode: -1
+
+*uxmake.class: PJuxmake
+*uxmake.PjName: uxmake
+*uxmake.PjParent: crap
+*uxmake.PjFileName: crap.mk
+*uxmake.PjExecutable: Untitled
+*uxmake.PjTarget: all
+*uxmake.PjDate: 0
+*uxmake.PjMode: -1
+
+*xtmake.class: PJxtmake
+*xtmake.PjName: xtmake
+*xtmake.PjParent: crap
+*xtmake.PjFileName: crap.mk
+*xtmake.PjExecutable: Untitled
+*xtmake.PjTarget: all
+*xtmake.PjDate: 0
+*xtmake.PjMode: -1
+
+*uilmake.class: PJuilmake
+*uilmake.PjName: uilmake
+*uilmake.PjParent: crap
+*uilmake.PjFileName: crap.mk
+*uilmake.PjExecutable: Untitled
+*uilmake.PjTarget: all
+*uilmake.PjDate: 0
+*uilmake.PjMode: -1

@@ -1,0 +1,152 @@
+<!doctype html public "-//w3c//dtd html 4.0 transitional//en">
+<html>
+<head>
+   <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+   <meta name="Author" content="Mark Shotton">
+   <meta name="GENERATOR" content="Microsoft FrontPage 6.0">
+   <title>Extraction</title>
+</head>
+<body>
+<b><font size=+1>4.3 Extraction of Parameters</font></b>
+<br>&nbsp;
+<p><b>4.3.1 Interpretation of the 1-D Correlation Function</b>
+<p>Once the <a href="../transform/Transform.htm">1-D correlation function</a>
+has been calculated by Fourier transforming the <a href="../extrapolation/Extrapolation.htm">extrapolated
+data</a>, the user may interpret the correlation function by selecting
+the <b>Extract parameters</b> item from the <b><a href="../Actions.htm">Actions</a></b>
+menu. The correlation function is interpreted in terms of an <a href="../../appendix/Appendix.htm">ideal
+lamellar morphology</a> <a href="../../references/References.htm">[7]</a> and structural parameters are obtained as shown
+in Figure 1 below. It should be noted that a small beam size is assumed; no de-smearing is performed.
+<blockquote>
+<p><img SRC="fig1.GIF" height=504 width=504>
+<br><b>Figure 1: </b>Interpretation of the 1-D correlation function &#915;<font size=-2>1</font>(R)
+assuming an ideal lamellar morphology. The structural parameters obtained
+(see <a href="../../references/References.htm">[1]</a>) are :
+<p>Long period&nbsp; = L<font size=-2>p</font>
+<br>Average hard block thickness = L<font size=-2>c</font>
+<br>Average core thickness = D<font size=-2>0</font>
+<br>Average interface thickness = D<font size=-2>tr</font>
+<br>Average soft block thickness = L<font size=-2>a </font>= L<font size=-2>p</font>
+- L<font size=-2>c</font>
+<br>Local crystallinity = &#966;<font size=-2>1</font> = L<font size=-2>c</font>
+/ L<font size=-2>p</font>
+<br>Bulk crystallinity = &#966; = &#915;<font size=-2>min</font> / (&#915;<font size=-2>min</font>
++ &#915;*)
+<br>Polydispersity = &#915;<font size=-2>min</font> / &#915;<font size=-2>max</font>
+<br>Electron density contrast = (&#961;<font size=-2>c</font> - &#961;<font size=-2>a</font>)&sup2; = (&#916;&#961;)&sup2; = Q &#915;*/ (&#966; (1 - &#966;))
+<br>Specific inner surface = O<font size=-2>s</font> = 2&#966; / L<font size=-2>c</font>
+<br>Non-ideality = (L<font size=-2>p</font> - L<font size=-2>p</font>*)&sup2;
+/ L<font size=-2>p</font>&sup2;
+<p>where Q = Invariant (see <a href="../transform/Transform.htm">Transform</a>)
+</blockquote>
+<p>&nbsp;<p><b>4.3.1.1 Important Considerations</b>
+<p>(1) It is important to note that, according to
+Babinet's principle, in a two-phase structure such as the ideal lamellar
+morphology, the electron (or neutron scattering length) densities of the two phases (crystalline and amorphous)
+may be interchanged without affecting the scattering curve or correlation
+function <a href="../../references/References.htm">[6]</a>. Therefore, from correlation function analysis alone, we cannot
+distinguish between:
+<blockquote>
+<p>L<font size=-2>c</font> and L<font size=-2>a</font>
+<br>&#966; and (1 - &#966;)
+<br>&#961;<font size=-2>c</font> and &#961;<font size=-2>a</font>
+</blockquote>
+<p>and these parameters may be interchanged. <i>This will affect the values of
+any parameters derived from them!</i>
+<p>(2) The <i>CORFUNC</i> program will attempt to
+determine D<font size=-2>tr</font> and D<font size=-2>O</font> (the start
+and end of the linear section of &#915;<font size=-2>1</font>(R) (see Figure 1) automatically.
+However, if these values appear to be incorrect on inspection, the user
+should select the values of D<font size=-2>tr</font> and D<font size=-2>o</font>
+manually for each frame in the dataset (see <a href="../../edit/extraction/Extractionpar.htm">Extraction
+parameters</a>, derived from the <b>Parameters...</b> item in the <a href="../../edit/Edit.htm">Edit</a>
+menu). <i> These parameters affect almost all other structural parameters that
+are extracted</i>.
+<p>(3) It is also important to check that a horizontal section in the first minimum of the 1-D correlation function
+(-&#915;<font size=-1>min</font>) exists, as shown in Figure 2. This horizontal
+region is usually present when the sample crystallinity is &lt;30% or >70%.
+In the intermediate region between 30% and 70% crystallinity, there may
+be no horizontal region, and in this case, the equation for the bulk crystallinity:
+<blockquote>
+<p>Bulk crystallinity = &#966; = &#915;<font size=-2>min</font> / (&#915;<font size=-2>min</font>
++ &#915;*)
+</blockquote>
+<p>no longer strictly applies, yielding a less accurate
+value for &#966; and affecting the other parameters derived from it (<i>i.e.</i> 
+polydispersity, &#916;&#961; and O<font size=-2>s</font>).
+In order to obtain reliable results for this intermediate crystallinity,
+other data is needed to complement the correlation function analysis <a href="../../references/References.htm">[6]</a>.
+<p>If a local minimum below the abscissa followed
+by a local maximum above the abscissa are not found, the interpretation
+based on the ideal lamellar morphology is abandoned for that frame of data.</font>
+<blockquote>
+<p><img SRC="corfunc.gif" height=509 width=503>
+<br><b>Figure 2:</b> The 1-D correlation function
+shown in blue has a horizontal section in the first minimum, yielding the
+bulk crystallinity from the base line -&#915;<font size=-2>min</font>
+. The first minimum of the 1-D correlation function shown in magenta has
+no horizontal section and the equation for bulk crystallinity given above
+no longer strictly applies.
+<br>&nbsp;
+</blockquote>
+<p><b>4.3.2 Porod Analysis</b>
+<p>If a Porod profile was used for tail-fitting,
+Porod analysis is performed after extraction of the lamellar structure
+parameters. If the lamellar interpretation of &#915;<font size=-2>1</font>
+failed, the crystallinity estimate provided by the user (see <a href="../../edit/extraction/Extractionpar.htm">Extraction
+parameters</a>, derived from the <b>Parameters...</b> item in the <a href="../../edit/Edit.htm">Edit</a>
+menu) is used in the analysis, otherwise the bulk crystallinity described
+in section 4.3.1 above is used. The parameters calculated by the Porod
+analysis are given below:
+<br>&nbsp;
+<table WIDTH="56%" >
+<tr>
+<td>Porod constant K</td>
+<td>(see <a href="../extrapolation/Extrapolation.htm">Extrapolation</a>)</td>
+</tr>
+
+<tr>
+<td>Surface to volume ratio&nbsp;</td>
+<td>= &#960; K &#966; (1 - &#966;) / Q</td>
+</tr>
+
+<tr>
+<td>Characteristic chord length l<font size=-2>p</font></td>
+<td>= 4Q / &#960; K</td>
+</tr>
+
+<tr>
+<td>Crystalline chord length&nbsp;</td>
+<td>l<sub>p</sub> / (1 - &#966;)</td>
+</tr>
+
+<tr>
+<td>Amorphous chord length&nbsp;</td>
+<td>l<sub>p</sub> / &#966;</td>
+</tr>
+</table>
+
+<p>where Q = Invariant (see <a href="../transform/Transform.htm">Transfrom</a>)
+<br><b></b>&nbsp;<b></b>
+<p><b>4.3.3 <a href="Normalisation.htm">Normalisation</a></b><p>(This
+is only applicable if <i>CORFUNC</i> is being used to generate volume fraction
+profiles - see <a href="../../Overview.htm">Overview</a>)
+<br>
+<p><b>4.3.4 Output</b>
+<p>The parameters described in sections 4.3.1 and
+4.3.2 are output to the <b>Message window</b> and are also saved in an
+external ASCII file named:
+<p>A01000.LIS
+<p>(assuming scattering data filename A01000.nnn where
+n is any alphanumeric character)
+<p>An ASCII text file EXTRACT.TXT is also written. This contains the parameters
+used in the extraction process.
+<br>&nbsp;
+<p><b>4.3.5 Errors and warnings</b>
+<p>See the <a href="../errors/Errors.htm">Errors
+and Warnings</a> section.
+<br>&nbsp;
+<br>
+<br>
+</body>
+</html>

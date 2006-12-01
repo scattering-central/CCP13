@@ -1,0 +1,146 @@
+<!doctype html public "-//w3c//dtd html 4.0 transitional//en">
+<html>
+<head>
+   <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+   <meta name="Author" content="Mark Shotton">
+   <meta name="GENERATOR" content="Microsoft FrontPage 4.0">
+   <title>Overview</title>
+</head>
+<body text="#000000" bgcolor="#FFFFFF" link="#0000EE" vlink="#551A8B" alink="#FF0000">
+<b><font size=+1>1 Overview</font></b>
+<p>The <i>CORFUNC</i> program is part of the <a href="http://www.ccp13.ac.uk/">CCP13</a>
+(Collaborative Computational Project 13 for Fibre Diffraction / Non-Crystalline
+Diffraction) suite of software. It performs <a href="#Correlation_function"> correlation function analysis</a>
+of one-dimensional SAXS or SANS patterns, or generates a <i>model-independent</i>
+ <a href="#Volume_fraction_profile">
+volume fraction profile</a> from a one-dimensional SANS pattern from an adsorbed
+layer.
+<p style="line-height: 100%; margin-top: 0; margin-bottom: 0">&nbsp;
+<p style="line-height: 100%; margin-top: 0; margin-bottom: 0">Click <a href="#Quick_start">here</a>
+for the Quick-Start Guide.
+<p style="line-height: 100%; margin-top: 0; margin-bottom: 0">&nbsp;
+<p>&nbsp;
+<p><b><a name="Correlation_function"></a>Correlation Function</b>
+<p>The correlation function is the Fourier
+transform of the scattering curve and may be analysed in terms of an <a href="appendix/Appendix.htm">ideal lamellar morphology</a> <a href="references/References.htm">[7]</a> to obtain structural parameters
+describing the sample. This is illustrated graphically in Figure 1 and Figure 2 below:
+<blockquote>
+<p><img SRC="SAXScurve.jpg" height=300 width=450>
+<br><img SRC="1Dcorfunc.jpg" height=300 width=450>
+<br><b>Figure 1 (upper) :</b> One-dimensional SAXS data, <b>(lower) : </b>One-dimensional
+correlation function calculated from the SAXS data using <i>CORFUNC.</i>
+<p><img SRC="corfuncfig.gif" height=504 width=504>
+<p><b>Figure 2:</b>  Schematic representation of the one-dimensional correlation function
+showing the parameters that may be obtained:
+<p>Long period&nbsp; = L<font size=-2>p</font>
+<br>Average hard block thickness = L<font size=-2>c</font>
+<br>Average core thickness = D<font size=-2>0</font>
+<br>Average interface thickness = D<font size=-2>tr</font>
+<br>Average soft block thickness = L<font size=-2>a </font>= L<font size=-2>p</font>
+- L<font size=-2>c</font>
+<br>Local crystallinity = &#966;<font size=-2>1</font> = L<font size=-2>c</font>
+/ L<font size=-2>p</font>
+<br>Bulk crystallinity = &#966; = &#915;<font size=-2>min</font> / (&#915;<font size=-2>min</font>
++ &#915;*)
+<br>Polydispersity = &#915;<font size=-2>min</font> / &#915;<font size=-2>max</font>
+<br>Electron density contrast = (&#961;<font size=-2>c</font> - &#961;<font size=-2>a</font>)&sup2; = (&#916;&#961;)&sup2; = Q &#915;*/ (&#966; (1 - &#966;))
+<br>Specific inner surface = O<font size=-2>s</font> = 2&#966; / L<font size=-2>c</font>
+<br>Non-ideality = (L<font size=-2>p</font> - L<font size=-2>p</font>*)&sup2;
+/ L<font size=-2>p</font>&sup2;
+<p>where Q is the Invariant (see <a href="actions/transform/Transform.htm">Transform</a>)
+<br>
+</blockquote>
+<p style="line-height: 100%">The analysis is performed in 3 stages (see <a href="actions/Actions.htm">Actions</a>):
+<blockquote>
+<p style="line-height: 100%">(a) <a href="actions/extrapolation/Extrapolation.htm">Extrapolation</a>
+of the experimental scattering curve to q = 0 and q = infinity,
+<br>(b) <a href="actions/transform/Transform.htm">Fourier transform</a>
+of the extrapolated data to give the 1-D correlation function, and
+<br>(c) <a href="actions/extraction/Extraction.htm">Interpretation</a> of the
+1-D correlation function based on ideal lamellar morphology.
+<br>
+</blockquote>
+<p style="line-height: 100%">&nbsp;
+<p style="line-height: 100%"><b><a name="Volume_fraction_profile"></a>Volume Fraction Profile</b><p>The volume
+fraction profile is a distribution function that describes how the number
+density of an adsorbed species (typically a surfactant or polymer) varies with
+distance from an interface (such as a particle surface) <a href="references/References.htm">[8]</a>
+<a href="references/References.htm">[9]</a>. It may be analysed <a href="references/References.htm">[10]</a>
+<a href="references/References.htm">[11]</a> to obtain
+parameters describing the extent (thickness) of the adsorbed layer, the amount
+of material adsorbed, and what proportion is &quot;bound&quot; at the interface.
+It is obtained by a Hilbert transformation of the scattering data.&nbsp;
+<p> This is illustrated graphically in Figure 3 and Figure 4 below:
+<blockquote>
+<p><img SRC="SANScurve.jpg" height=300 width=450>
+<br><img SRC="tropusfig.jpg" height=300 width=450>
+<br><b>Figure 3 (upper) :</b> One-dimensional SANS data, <b>(lower) : </b>Volume
+fraction profile generated from the SANS data using <i>CORFUNC.</i>
+<p>&nbsp;
+</blockquote>
+<p style="line-height: 100%"><img border="0" src="profile2.gif" width="600" height="459">
+<p style="line-height: 100%"><img border="0" src="profile1.gif" width="600" height="463">
+<blockquote>
+  <b>Figure 4: </b> Representative volume
+      fraction profile types showing the parameters that may be obtained:
+      <p>Adsorbed amount = &#915;
+<br>Bound fraction = &lt;<i>p</i>&gt;
+<br>Hydrodynamic layer thickness (or extent) = <img border="0" src="delta_h.jpg" align="middle" width="19" height="24">
+<br>Second moment thickness = <img border="0" src="sigma.jpg" align="middle" width="16" height="15"></p>
+      <p><i>Possible other parameters that may be derived include:</i></p>
+      <p>Surface coverage = <img border="0" src="theta.jpg" align="middle" width="13" height="19">
+<br>Distance between grafting points = <i>D</i>
+</blockquote>
+<p style="line-height: 100%">&nbsp;
+<p style="line-height: 100%">The analysis is performed in 3 stages (see <a href="actions/Actions.htm">Actions</a>):
+<blockquote>
+<p style="line-height: 100%">(a) <a href="actions/extrapolation/Extrapolation.htm">Extrapolation</a>
+of the experimental scattering curve to q = 0 and q = infinity,
+<br>(b) <a href="actions/transform/Transform.htm">Hilbert transform</a>
+of the extrapolated data to give a segment density distribution, and
+<br>(c) <a href="actions/extraction/Normalisation.htm">Normalisation</a> of the
+segment density profile to give the volume fraction profile.
+<br>
+</blockquote>
+<p>&nbsp;
+<p><b><a name="Quick_start"></a>Quick-Start Guide</b>
+<p>The following sections in these Help Pages describe the use of the <i>CORFUNC</i>
+graphical user interface (GUI) and are categorised according to the menu
+items shown in the main GUI window. These are:
+<blockquote>
+<p>(1) <a href="file/File.htm">File</a>
+<br>(2) <a href="edit/Edit.htm">Edit</a>
+<br>(3) <a href="actions/Actions.htm">Actions</a>
+<br>(4) <a href="display/Display.htm">Display</a>
+<br>&nbsp;
+<br>&nbsp;
+</blockquote>
+<p><b>File</b> ==&gt;<b> Load data...</b></p>
+<p><b>File</b> ==&gt; <b>Load q-axis...</b></p>
+<p>Move limit markers as appropriate</p>
+<p><b>Edit</b> ==&gt; <b>Parameters...</b></p>
+<blockquote>
+  <p><b>General</b>: select <b>Data scale</b></p>
+  <p><b>Fit</b>: select <b>Back extrapolation</b> (generally Vonk for
+  correlation function analysis, Guinier for volume fraction profile) </p>
+  <p><b>Fit</b>: select <b>Tail fit</b> (generally Sigmoid for correlation
+  function analysis, Porod for volume fraction profile)</p>
+  <p><b>Transform</b>: select <b>Transform type</b> (Standard for correlation
+  function analysis, Hilbert for volume fraction profile)</p>
+  <blockquote>
+    <p><b>Transform</b>: if <b>Standard</b>, check <b>Calculate re-transform</b></p>
+    <p><b>Extraction</b>: check <b>Calculate interface distribution function</b></p>
+    <p><b>Hilbert</b>: select <b>q-axis dimensions</b></p>
+    <p><b>Hilbert</b>: enter <b>Bulk density</b></p>
+    <p><b>Hilbert</b>: enter <b>Adsorbed amount</b></p>
+    <p><b>Hilbert</b>: enter <b>Normalisation accuracy</b></p>
+  </blockquote>
+  <p><b>Apply</b></p>
+</blockquote>
+<p><b>Actions</b> ==&gt; <b>Extrapolate</b></p>
+<p><b>Actions</b> ==&gt; <b>Transform</b></p>
+<p><b>Actions</b> ==&gt; <b>Extract parameters</b> (correlation function
+analysis <i>only</i>)</p>
+<p>&nbsp;</p>
+</body>
+</html>

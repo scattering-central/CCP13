@@ -1,0 +1,247 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<!-- saved from url=(0092)http://developer.apple.com/releasenotes/Java/java141/resolvedIssues/chapter_5_section_3.html -->
+<HTML><HEAD><TITLE>Java: Java 1.4.1 Release Notes: Java Engine</TITLE>
+<META content="MSHTML 6.00.2800.1458" name=GENERATOR>
+<META content="v100.1&#10;" name=GeneratorVersion>
+<META http-equiv=content-type content=text/html;charset=iso-8859-1>
+<META content="Copyright 2004 Apple Computer, Inc. All Rights Reserved." 
+name=Copyright><LINK 
+href="Java Java 1_4_1 Release Notes Java Engine_files/frameset_styles.css" 
+type=text/css rel=stylesheet>
+<STYLE type=text/css></STYLE>
+
+<SCRIPT language=JavaScript 
+src="Java Java 1_4_1 Release Notes Java Engine_files/page.js"></SCRIPT>
+</HEAD>
+<BODY bgColor=#ffffff onload=initialize_page();><A title="Java Engine" 
+name=//apple_ref/doc/uid/TP30000286-TPXREF103 turn_anchor="yes"></A><A 
+name=top></A><!-- start of header --><!-- googleoff: index -->
+<TABLE cellSpacing=0 cellPadding=0 width="100%" align=center border=0>
+  <TBODY>
+  <TR>
+    <TD><!-- top table containing developer connnection image and search form -->
+      <TABLE cellSpacing=0 cellPadding=0 width="100%" border=0><!-- shim row to hold cells open -->
+        <TBODY>
+        <TR>
+          <TD width=496><IMG height=1 alt="" 
+            src="Java Java 1_4_1 Release Notes Java Engine_files/1dot.gif"></TD>
+          <TD><IMG height=1 alt="" 
+            src="Java Java 1_4_1 Release Notes Java Engine_files/1dot.gif" 
+            width=1></TD>
+          <TD width=184><IMG height=1 alt="" 
+            src="Java Java 1_4_1 Release Notes Java Engine_files/1dot.gif"></TD>
+          <TD width=10><IMG height=1 alt="" 
+            src="Java Java 1_4_1 Release Notes Java Engine_files/1dot.gif"></TD></TR>
+        <TR>
+          <TD width=496><IMG height=25 alt="" 
+            src="Java Java 1_4_1 Release Notes Java Engine_files/1dot.gif"></TD>
+          <TD width="99%">&nbsp;</TD>
+          <TD vAlign=bottom align=right width=184 rowSpan=3><!-- search form and table -->
+            <FORM name=MidSearch 
+            action=http://developer.apple.com/cgi-bin/simpsearch.pl method=post 
+            target=_top>
+            <TABLE 
+            style="FONT-SIZE: 10px; FONT-FAMILY: lucida grande, geneva, helvetica, arial, sans-serif" 
+            cellSpacing=0 cellPadding=0 align=right border=0>
+              <TBODY>
+              <TR>
+                <TD><INPUT onblur="if (value == '') {value = 'Search'}" 
+                  onfocus="if (value == 'Search') {value =''}" value=Search 
+                  name=Search></TD>
+                <TD><INPUT type=image alt=Search 
+                  src="Java Java 1_4_1 Release Notes Java Engine_files/btn-search.gif"></TD></TR>
+              <TR>
+                <TD colSpan=2><IMG height=5 alt="" 
+                  src="Java Java 1_4_1 Release Notes Java Engine_files/1dot.gif" 
+                  width=1></TD></TR>
+              <TR>
+                <TD colSpan=2><IMG height=5 alt="" 
+                  src="Java Java 1_4_1 Release Notes Java Engine_files/1dot.gif" 
+                  width=1></TD></TR>
+              <TR>
+                <TD colSpan=2><A href="http://developer.apple.com/search/" 
+                  target=_top>Advanced Search</A></TD></TR>
+              <TR>
+                <TD colSpan=2><IMG height=5 alt="" 
+                  src="Java Java 1_4_1 Release Notes Java Engine_files/1dot.gif" 
+                  width=1></TD></TR></TBODY></TABLE></FORM><!--end search form--></TD>
+          <TD width=10><IMG height=1 alt="" 
+            src="Java Java 1_4_1 Release Notes Java Engine_files/1dot.gif" 
+            width=1></TD></TR><!--ADC Logo-->
+        <TR>
+          <TD align=left colSpan=2><IMG height=1 alt="" 
+            src="Java Java 1_4_1 Release Notes Java Engine_files/1dot.gif" 
+            width=11><A href="http://developer.apple.com/index.html" 
+            target=_top><IMG height=30 alt="Apple Developer Connection" 
+            src="Java Java 1_4_1 Release Notes Java Engine_files/developer_connection_title.gif" 
+            width=245 border=0></A></TD>
+          <TD width=10><IMG height=1 alt="" 
+            src="Java Java 1_4_1 Release Notes Java Engine_files/1dot.gif" 
+            width=1></TD></TR>
+        <TR>
+          <TD colSpan=2><IMG height=30 alt="" 
+            src="Java Java 1_4_1 Release Notes Java Engine_files/1dot.gif" 
+            width=1></TD>
+          <TD width=10><IMG height=1 alt="" 
+            src="Java Java 1_4_1 Release Notes Java Engine_files/1dot.gif" 
+            width=1></TD></TR></TBODY></TABLE></TD></TR></TBODY></TABLE>
+<TABLE cellSpacing=0 cellPadding=0 width="100%" border=0>
+  <TBODY>
+  <TR>
+    <TD width="100%"><!-- gray bar table with member log in and other links -->
+      <TABLE cellSpacing=0 cellPadding=0 width="100%" border=0>
+        <TBODY>
+        <TR>
+          <TD width=27><IMG height=1 alt="" 
+            src="Java Java 1_4_1 Release Notes Java Engine_files/1dot.gif" 
+            width=27></TD>
+          <TD><IMG height=1 alt="" 
+            src="Java Java 1_4_1 Release Notes Java Engine_files/1dot.gif"></TD>
+          <TD><IMG height=1 alt="" 
+            src="Java Java 1_4_1 Release Notes Java Engine_files/1dot.gif"></TD></TR><!-- member login -->
+        <TR 
+        style="FONT-SIZE: 10px; FONT-FAMILY: lucida grande, geneva, helvetica, arial, sans-serif" 
+        bgColor=#dbdbdb>
+          <TD align=right><A href="http://connect.apple.com/" target=_top><IMG 
+            height=24 alt="Member Login" 
+            src="Java Java 1_4_1 Release Notes Java Engine_files/member_login_arrow_button.gif" 
+            width=25 border=0></A></TD>
+          <TD style="PADDING-TOP: 2px" align=left><A 
+            href="http://connect.apple.com/" target=_top>Log In</A> | <A 
+            href="http://developer.apple.com/membership/" target=_top>Not a 
+            Member?</A></TD>
+          <TD style="PADDING-TOP: 2px" align=right><A 
+            href="http://developer.apple.com/contact/" target=_top>Contact 
+            ADC</A><IMG height=1 alt="" 
+            src="Java Java 1_4_1 Release Notes Java Engine_files/1dot.gif" 
+            width=7></TD></TR>
+        <TR bgColor=#919598>
+          <TD width=27><IMG height=1 alt="" 
+            src="Java Java 1_4_1 Release Notes Java Engine_files/1dot.gif" 
+            width=27></TD>
+          <TD><IMG height=1 alt="" 
+            src="Java Java 1_4_1 Release Notes Java Engine_files/1dot.gif"></TD>
+          <TD><IMG height=1 alt="" 
+            src="Java Java 1_4_1 Release Notes Java Engine_files/1dot.gif"></TD></TR></TBODY></TABLE></TD></TR></TBODY></TABLE><!-- googleon: index --><!-- end of header --><!-- start of path -->
+<DIV class=breadcrumb><A href="http://developer.apple.com/" target=_top>ADC 
+Home</A> &gt; <A 
+href="http://developer.apple.com/referencelibrary/index.html#//apple_ref/doc/uid/TP30000943" 
+target=_top logicalPath="//apple_ref/doc/uid/TP30000943">Reference Library</A> 
+&gt; <A 
+href="http://developer.apple.com/releasenotes/index.html#//apple_ref/doc/uid/TP30000872" 
+target=_top logicalPath="//apple_ref/doc/uid/TP30000872">Release Notes</A> &gt; 
+<A 
+href="http://developer.apple.com/releasenotes/Java/index.html#//apple_ref/doc/uid/TP30000872-TP30000425" 
+target=_top logicalPath="//apple_ref/doc/uid/TP30000872-TP30000425">Java</A> 
+&gt; <A 
+href="http://developer.apple.com/releasenotes/Java/java141/about/chapter_1_section_1.html#//apple_ref/doc/uid/TP30000282" 
+logicalPath="//apple_ref/doc/uid/TP30000282">Java 1.4.1 Release Notes</A> &gt; 
+<A 
+href="http://developer.apple.com/releasenotes/Java/java141/resolvedIssues/chapter_5_section_1.html#//apple_ref/doc/uid/TP30000286" 
+logicalPath="//apple_ref/doc/uid/TP30000286">Resolved Issues Since Java 1.4.1 
+Developer Preview 10</A> &gt; </DIV><BR><!-- end of path -->
+<TABLE class=mini_nav_text cellSpacing=0 cellPadding=0 width="100%" border=0>
+  <TBODY>
+  <TR>
+    <TD scope=row align=left><!-- insert Show/Hide frames -->
+      <SCRIPT language=JavaScript type=text/javascript><!--
+  
+        if (self != top) {
+            // loaded in frames
+            document.write('<a href="'+self.location+'" target="_top"><img src="../../../../documentation/Resources/Images/show_toc_icon.gif" width="15" height="14" border="0" style="margin-bottom: -2px;" alt=""></a> <a href="'+self.location+'" target="_top">Hide TOC</a>');
+        }
+        else {
+            // not loaded frames
+            document.write('<a href="../index.html?'+self.location+'" target="_top"><img src="../../../../documentation/Resources/Images/show_toc_icon.gif" width="15" height="14" border="0" style="margin-bottom: -2px;" alt=""></a> <a href="../index.html?'+self.location+'" target="_top">Show TOC</a>');
+        }
+        //--></SCRIPT>
+<!-- end Show/Hide frames --></TD>
+    <TD align=right><A 
+      href="http://developer.apple.com/releasenotes/Java/java141/resolvedIssues/chapter_5_section_2.html" 
+      target=_self>&lt; Previous Page</A><SPAN style="MARGIN-LEFT: 8px"><A 
+      href="http://developer.apple.com/releasenotes/Java/java141/resolvedIssues/chapter_5_section_4.html" 
+      target=_self>Next Page &gt;</A></SPAN> </TD></TR></TBODY></TABLE>
+<HR>
+<A title="Java Engine" name=//apple_ref/doc/uid/TP30000286/TPXREF103 
+turn_anchor="no"></A><A title="Java Engine" name=TPXREF103 
+turn_anchor="no"></A><BR>
+<H2>Java Engine</H2><A name=//apple_ref/doc/uid/TP30000286-TPXREF105 
+turn_anchor="yes"></A><A name=//apple_ref/doc/uid/TP30000286/TPXREF105 
+turn_anchor="no"></A><A name=TPXREF105 turn_anchor="no"></A>
+<P>
+<HR align=left width=290>
+
+<H4>Radar #<SPAN class=content_text>3165467</SPAN></H4>
+<P>Java 1.3.1 code compiled with Java 1.4.1 compiler fails.</P>
+<P><B>Description: </B></P>
+<P>Compiling some Java 1.3.1 code with the 1.4.1 version of javac causes a 
+<TT>java.lang.NoSuchMethodError</TT> when it is run. Java 1.4.1 adds an 
+<CODE>append(StringBuffer)</CODE> method to the <CODE>StringBuffer</CODE> class. 
+If you have code that calls <CODE>append</CODE> with a StringBuffer as an 
+argument, the Java 1.3.1 version of <TT>javac</TT> compiles this to 
+<CODE>append(Object)</CODE>. The Java 1.4.1 version of <TT>javac</TT> compiles 
+the same code to <CODE>append(StringBuffer)</CODE>. Running the version compiled 
+with the Java 1.4.1 version of <TT>javac</TT> in a Java 1.3.1 environment 
+returns a <TT>java.lang.NoSuchMethodError</TT>.</P>
+<P><B>Resolution: </B></P>
+<P>To get your code to run on Java 1.3.1, just cast your argument to 
+<CODE>java.lang.Object</CODE>. For example,<TT> append((Object) 
+stringBufArg)</TT></P>
+<P></P><BR><BR>
+<TABLE class=mini_nav_text cellSpacing=0 cellPadding=0 width="100%" border=0>
+  <TBODY>
+  <TR>
+    <TD scope=row align=left><!-- insert Show/Hide frames -->
+      <SCRIPT language=JavaScript type=text/javascript><!--
+           
+        if (self != top) {
+            // loaded in frames
+            document.write('<a href="'+self.location+'" target="_top"><img src="../../../../documentation/Resources/Images/show_toc_icon.gif" width="15" height="14" border="0" style="margin-bottom: -2px;" alt=""></a> <a href="'+self.location+'" target="_top">Hide TOC</a>');
+        }
+        else {
+            // not loaded frames
+            document.write('<a href="../index.html?'+self.location+'" target="_top"><img src="../../../../documentation/Resources/Images/show_toc_icon.gif" width="15" height="14" border="0" style="margin-bottom: -2px;" alt=""></a> <a href="../index.html?'+self.location+'" target="_top">Show TOC</a>');
+        }
+        //--></SCRIPT>
+<!-- end Show/Hide frames --></TD>
+    <TD align=right><A 
+      href="http://developer.apple.com/releasenotes/Java/java141/resolvedIssues/chapter_5_section_2.html" 
+      target=_self>&lt; Previous Page</A><SPAN style="MARGIN-LEFT: 8px"><A 
+      href="http://developer.apple.com/releasenotes/Java/java141/resolvedIssues/chapter_5_section_4.html" 
+      target=_self>Next Page &gt;</A></SPAN> </TD></TR></TBODY></TABLE><BR>
+<HR>
+
+<P class=content_text>Last updated: 2003-06-11</P><!-- start of footer --><!-- googleoff: index --><!-- START FOOTER TABLE --><!-- This is special for TechPubs -->
+<TABLE cellSpacing=0 cellPadding=0 width="100%" align=center border=0>
+  <TBODY>
+  <TR>
+    <TD width=25 rowSpan=4><IMG height=1 alt="" 
+      src="Java Java 1_4_1 Release Notes Java Engine_files/1dot.gif" 
+width=25></TD>
+    <TD><IMG height=48 alt="" 
+      src="Java Java 1_4_1 Release Notes Java Engine_files/1dot.gif" width=1></TD>
+    <TD width=25 rowSpan=4><IMG height=1 alt="" 
+      src="Java Java 1_4_1 Release Notes Java Engine_files/1dot.gif" 
+  width=25></TD></TR>
+  <TR>
+    <TD width="100%" bgColor=#919699><IMG height=1 alt="" 
+      src="Java Java 1_4_1 Release Notes Java Engine_files/1dot.gif" 
+  width=1></TD></TR>
+  <TR>
+    <TD><IMG height=15 alt="" 
+      src="Java Java 1_4_1 Release Notes Java Engine_files/1dot.gif" 
+  width=1></TD></TR>
+  <TR 
+  style="FONT-SIZE: 10px; FONT-FAMILY: lucida grande, geneva, helvetica, arial, sans-serif">
+    <TD>
+      <DIV align=center>Get information on <A href="http://www.apple.com/" 
+      target=_top>Apple</A> products.<BR>Visit the Apple Store <A 
+      href="http://store.apple.com/" target=_top>online</A> or at <A 
+      href="http://www.apple.com/retail/" target=_top>retail</A> 
+      locations.<BR>1-800-MY-APPLE<BR><BR>Copyright © 2004 Apple Computer, Inc. 
+      <BR><A href="http://www.apple.com/legal/" target=_top>All rights 
+      reserved.</A> | <A href="http://www.apple.com/legal/" target=_top>Terms of 
+      use</A> | <A href="http://www.apple.com/legal/privacy/" 
+      target=_top>Privacy Notice</A> 
+      <P></P></DIV></TD>
+    <TD></TD></TR></TBODY></TABLE><!--END FOOTER TABLE--><!-- googleon: index --><!-- end of footer --></BODY></HTML>

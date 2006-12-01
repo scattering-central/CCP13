@@ -1,0 +1,16 @@
+javac XYDataPoint.java 
+javac ReadTextFile.java 
+javac GetDouble.java 
+javac GetDoublePairs.java 
+javac GetIdxShift.java 
+javac GetPlotXFromX.java 
+javac GetPlotYFromY.java 
+javac OrderVector.java 
+javac GetUnorderedXYDataFileVector.java 
+javac GetOrderedXYDataFileVector.java 
+javac GetUnorderedYDataFileVector.java 
+javac GetOrderedYDataFileVector.java 
+javac SetPlottable.java 
+javac CreateFullPointCurve.java 
+javac bslp_single_panel.java 
+javac bslp_single_panel_test.java 

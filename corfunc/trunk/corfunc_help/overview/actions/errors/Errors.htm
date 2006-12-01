@@ -1,0 +1,147 @@
+<!doctype html public "-//w3c//dtd html 4.0 transitional//en">
+<html>
+<head>
+   <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+   <meta name="Author" content="Mark Shotton">
+   <meta name="GENERATOR" content="Microsoft FrontPage 4.0">
+   <title>Errors</title>
+</head>
+<body>
+<b><font size=+1>4.4 Errors and Warnings</font></b>
+<blockquote>
+<p><img SRC="Warning.JPG" height=119 width=290>
+<p><b>Figure 1: </b>Warning dialog: non-fatal
+<br>&nbsp;
+<p><img SRC="Error.JPG" height=119 width=356>
+<p><b>Figure 2:</b> Error dialog: fatal
+<br>&nbsp;
+<p><img SRC="MessageWindow.JPG" height=276 width=534>
+<p><b>Figure 3: </b>Warning messages detailed in the Message window
+<br>&nbsp;
+</blockquote>
+<p>During any of the processes <a href="../extrapolation/Extrapolation.htm">Extrapolate</a>,
+<a href="../transform/Transform.htm">Transform</a> or <a href="../extraction/Extraction.htm">Extract
+parameters</a>, which can be executed by selecting the required item from
+the <a href="../Actions.htm">Actions</a> menu, the user may be
+presented with a warning (see Figure 1) or error dialog (see Figure 2).
+In both cases, the warning or error message will be recorded at the point
+it occurred in the <b>Message window </b>(see Figure 3). A warning message
+indicates a non-fatal error <i>i.e.</i> the process has been completed
+despite the warning. An error dialog indicates that the process was terminated
+before completion and must be executed again, once the necessary changes
+have been made to the input parameters.
+<p>The most common warnings and errors occur during <a href="../extrapolation/Extrapolation.htm">Extrapolation</a>
+and are described below:
+<br>&nbsp;
+<p><b>4.4.1 Common Warnings</b>
+<br>&nbsp;
+<table BORDER="1" COLS=3 WIDTH="100%" >
+<tr>
+<td><b>Warning message</b></td>
+
+<td><b>Cause</b></td>
+
+<td><b>Remedy</b></td>
+</tr>
+
+<tr>
+<td><font color="#FF0000">Ran out of iterations before convergence</font></td>
+
+<td>Maximum number of tail-fitting iterations reached and no convergence
+achieved</td>
+
+<td>If necessary, increase the maximum number of iterations allowed (see
+<a href="../extrapolation/Extrapolation.htm">Extrapolation</a>)</td>
+</tr>
+
+<tr>
+<td><font color="#FF0000">Positive gradient during estimation of sigma</font></td>
+
+<td>Initial guess at sigma before fitting the sigmoid tail was poor</td>
+
+<td>If necessary, change the tail-fitting limits (see <a href="../extrapolation/Extrapolation.htm">Extrapolation</a>)</td>
+</tr>
+
+<tr>
+<td><font color="#FF0000">POLINT failed</font></td>
+
+<td>Two q values in the extrapolated dataset were identical within rounding
+  errors</td>
+
+<td>Adjust the input data accordingly</td>
+</tr>
+</table>
+<font color="#FF0000"></font>
+<p>&nbsp;
+<p><b><font color="#000000">4.4.2 Common Errors</font></b>
+<br><font color="#000000"></font>&nbsp;
+<table BORDER="1" COLS=3 WIDTH="100%" >
+<tr>
+<td><b><font color="#FF0000">Error message</font></b></td>
+
+<td><b>Cause</b></td>
+
+<td><b>Remedy</b></td>
+</tr>
+
+<tr>
+<td><font color="#FF0000">Back-extrapolate channel optimisation has failed</font></td>
+
+<td>Problems with back-extrapolation (e.g. due to no upturn in intensity
+as the beamstop is approached)</td>
+
+<td>Change the start of data limit (see <a href="../extrapolation/Extrapolation.htm">Extrapolation</a>)</td>
+</tr>
+
+<tr>
+<td><font color="#FF0000">Negative intensities in experimental data, <i>or</i>
+  Data contains negative intensities</font></td>
+
+<td>The scattering data contains negative intensities</td>
+
+<td>Edit the values or add a constant to the data using <a href="http://srs.dl.ac.uk/NCD/computing/manual.otoko.html">OTOKO</a></td>
+</tr>
+
+<tr>
+<td><font color="#FF0000">X axis should be a static image dynamic found, <i>or</i>
+  Expecting static Q axis received dynamic</font></td>
+
+<td>The q-axis file contains multiple frames</td>
+
+<td>Check that the correct file is being used (if necessary a &quot;dummy&quot;
+  q-axis file can be generated with the <a href="http://srs.dl.ac.uk/NCD/computing/manual.otoko.html">OTOKO</a>
+  .XAX command</td>
+</tr>
+
+<tr>
+<td><font color="#FF0000">READASCII_ returning IRC=0</font></td>
+
+<td>There is a problem with the file that the program is attempting to access
+  (check the Message Window for any additional details)</td>
+
+<td>&nbsp;</td>
+</tr>
+
+<tr>
+<td><font color="#FF0000">Exceeded maximum number of steps for F.T.</font></td>
+
+<td>The maximum number of steps for the Fourier transform is 511</td>
+
+<td>Change the <i>maximum value of d</i> and/or the <i>step in d</i> in the <b>Edit</b>
+  - <b>Parameters...</b> - <b>Transform</b> tab</td>
+</tr>
+
+<tr>
+<td><font color="#FF0000">More than 2048 channels in extrapolation</font></td>
+
+<td>The subroutines for generating a volume fraction profile cannot handle data
+  with more than 2048 q-points</td>
+
+<td>Adjust the input data accordingly</td>
+</tr>
+</table>
+<font color="#FF0000"></font>
+<br><font color="#FF0000"></font>&nbsp;
+<br><font color="#FF0000"></font>&nbsp;
+</body>
+</html>
