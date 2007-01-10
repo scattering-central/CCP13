@@ -1,3 +1,6 @@
+#ifdef WIN32
+#include "stdafx.h"
+#endif
 #include "map.h"
 
 #ifdef UNIX
@@ -8,8 +11,10 @@ const int MemMap::pageSize = 1;
 
 void MemMap::init (unsigned long ulOS, int nProt, int nShare, caddr_t pAddr)
 {
+#ifndef _WIN32
   nFileDescriptor = fileno (pFile);
   stFileSize = getFileSize ();
+#endif
 
 #ifdef UNIX
 
@@ -72,9 +77,17 @@ void MemMap::init (unsigned long ulOS, int nProt, int nShare, caddr_t pAddr)
       THROW_ERR("Error allocating memory");
     }
 #endif
-
+	
+#ifdef WIN32
+	int c=0;//,totol=0;
+//	if ((c= fread (mapAddress, 1, stMapSize, pFile))!=stMapSize)
+	if (!fread (mapAddress, 1, stMapSize, pFile))
+#else
   if (fread (mapAddress, 1, stMapSize, pFile) != stMapSize)
+#endif
     {
+      delete[] mapAddress;
+       mapAddress=NULL;
       THROW_ERR("Error reading file");
     }
 
@@ -113,6 +126,6 @@ void MemMap::destroy ()
 #ifdef UNIX
   munmap (mapAddress, stMapSize);
 #else
-  delete[] mapAddress;
+	  delete[] mapAddress;
 #endif
 }

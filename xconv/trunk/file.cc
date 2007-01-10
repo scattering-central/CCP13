@@ -1,7 +1,9 @@
-#include "file.h"
-#include "mainWS.h"
+#ifdef WIN32
+#include "stdafx.h"
+#endif
 #include "tiffio.h"
 #include "pck.h"
+#include "file.h"
 inline unsigned char bswap (unsigned char ucIn)
 {
   return ucIn;
@@ -116,7 +118,7 @@ inline double bswap (double dIn)
     float d;
   } u;
   
-  u.d = dIn;
+  u.d =(float) dIn;
   u.n=bswap(u.n);
 
   return u.d;
@@ -131,14 +133,20 @@ void ConvFile::putdtype(int type)
 {
   dtype=type;
 }
-/*void ConvFile::putcurrentdir(int dir)
-{
-   currentdir=dir;
-}*/
+
  int ConvFile:: getdircount()
     {
       return dircount;
     }
+int ConvFile:: bslind()
+    {
+      return bslind10;
+    }
+int ConvFile:: bslfilNo()
+    {
+      return bslfilN;
+    }
+
 
 void InConvFile::openFile ()
 {
@@ -154,8 +162,13 @@ void InConvFile::openFile ()
 
 strng InConvFile::getNthFileName (const strng& sName, int n)
 {
-  char cTmp[16];
+  
+#ifndef WIN32
+	char cTmp[16];
   ostrstream out (cTmp, sizeof (cTmp));
+#else 
+  char out[16];
+#endif
   size_t nOff;
   strng sN;
   strng sNth = sName;
@@ -163,8 +176,12 @@ strng InConvFile::getNthFileName (const strng& sName, int n)
 
   if ((nOff = sNth.find ("%")) != NPS)
     {
+	#ifndef WIN32
       out << n << ends;
       sN = strng (out.str ());
+    #else
+    sprintf(out,"%d", n);
+   #endif
       sNth.replace (nOff, nLen, sN);
     }
   else if ((nOff = sNth.find ("#")) != NPS)
@@ -177,22 +194,67 @@ strng InConvFile::getNthFileName (const strng& sName, int n)
 	      break;
 	    }
 	}
+  
+#ifndef WIN32
+       out << setfill ('0') << setw (nLen) << n << ends;
+	   sN = strng (out.str ());
+#else
+	switch (nLen)
+	{
+	   case 2:
+			 if (n<10)
+				{
+				 sprintf(out,"0%d", n);
+				}
+			else   sprintf(out,"%d", n);
+			break;
+		case 3:
+			 if (n<10)
+				{
+				 sprintf(out,"00%d", n);
+				}
+			else if (n<100)
+				{
+			 sprintf(out,"0%d", n);
+				}
+			else
+			sprintf(out,"%d", n);
+			break;
+		default :
+  			sprintf(out,"%d", n);
+			break;
+	}
 
-      out << setfill ('0') << setw (nLen) << n << ends;
-      sN = strng (out.str ());
+
+     sN = out;
+#endif
+	 
       sNth.replace (nOff, nLen, sN);
     }
 
   return sNth;
 }
+strng InConvFile::getQAxFileName (const strng& sName)
+{
 
+  size_t nOff;
+  strng sNth = sName;
+  
+  if ((nOff = sNth.find (".")) != NPS)
+    {
+	    sNth.replace (nOff+1, 3, "QAX");
+    }
+
+  return sNth;
+}
 BinaryInFile::BinaryInFile (const char* pszN,
 			    myBool bSwp = IS_FALSE,
 			    int nOff = 0, double dAsp = 1.0) :
-  InConvFile (pszN),
-  bSwap (bSwp),
-  ulOffset ((unsigned long) nOff), dAspect (dAsp)
+  InConvFile (pszN,bSwp,nOff,dAsp)
 {
+  
+  pMap=NULL;
+  pfLine=NULL;
   openFile ();
 }
 
@@ -258,22 +320,22 @@ MemMap* BinInFile<T>::map ()
 ///////////////////////tiff///////////
 void TiffFile::openFile ()
 {
-
-  pFile=NULL;
-  char* errmsg=new char[200];
-
+	 pFile=NULL;
+     char* errmsg=new char[200];
+     TIFFSetErrorHandler(NULL); 
      in =TIFFOpen(sFileName.data(), "r");
-
+    
      if (!in)
        {
-	 sprintf(errmsg,"Error opening file %s: %s",sFileName.data(),strerror(errno));
-      THROW_ERR(errmsg);
+		 sprintf(errmsg,"Error opening Tiff file %s",sFileName.data());
+	  	 THROW_ERR(errmsg);
        }
-     delete []errmsg;
+      delete []errmsg;
 }
 void TiffFile::TIFFReadDirect()
 {  dircount=0;
-	 do {
+	 do {   //TIFFWarningHandler
+  TIFFSetWarningHandler(NULL);
                dircount++;
            } while (TIFFReadDirectory(in));
 
@@ -288,10 +350,9 @@ void TiffFile ::readtiff ()
   uint16 config;
   uint16 photometric;
   uint16 bps; //bitspersample
-   typedef void (*TIFFWarningHandler)(const char* module, const char* fmt, va_list ap);
-   TIFFWarningHandler TIFFSetWarningHandler(NULL);
-
-
+   //typedef void (*TIFFWarningHandler)(const char* module, const char* fmt, va_list ap);
+   //TIFFWarningHandler
+  TIFFSetWarningHandler(NULL);
    TIFFGetField(in, TIFFTAG_IMAGEWIDTH, &imageWidth);
    TIFFGetField(in, TIFFTAG_IMAGELENGTH, &imageLength);
    TIFFGetField(in, TIFFTAG_PHOTOMETRIC, &photometric);
@@ -309,9 +370,9 @@ void TiffFile ::readtiff ()
      case PHOTOMETRIC_MINISWHITE:
        break;
      default:
+		 TIFFClose(in);
+		   in=NULL;
          THROW_ERR("Can not handle colour tiff image");
-         TIFFClose(in);
-
      }
 
    switch (bps) {
@@ -331,15 +392,17 @@ void TiffFile ::readtiff ()
      datatype=32;
      break;
    default:
+	   TIFFClose(in);
+	     in=NULL;
 	   THROW_ERR("Can not handle image tdatatype");
-           TIFFClose(in);
+          
    }
 
-
+ 
    tdata_t  buf;
-   buf=(char*)malloc(imageWidth*datatype/8*sizeof(char));
+   //buf=(char*)malloc(imageWidth*datatype/8*sizeof(char));
   imagedata=(char*)malloc(imageWidth*imageLength*datatype/8*sizeof(char));
-  //buf = _TIFFmalloc(TIFFTileSize(tif));
+  buf = _TIFFmalloc(TIFFTileSize(in));
   //imagedata = _TIFFmalloc(imageWidth*imageLength*datatype/8);
 
   if (config == PLANARCONFIG_CONTIG) {
@@ -352,19 +415,19 @@ void TiffFile ::readtiff ()
   }else
 	{
 	  TIFFClose(in);
-	  _TIFFfree(buf);
+	    in=NULL;
+	 _TIFFfree(buf);
 	  THROW_ERR("Can not handle colour tiff image");
 	}
 
-
-      _TIFFfree(buf);
-      TIFFClose(in);
+    _TIFFfree(buf);
+     TIFFClose(in);
+	   in=NULL;
 
 }
 
 
 /////////////BRUKER////////////
-
 void BrukerFile ::readimage_gfrm()
 {
 
@@ -468,23 +531,32 @@ if(strstr(line,"NOVERFL")) //read number of overflow
  datatype=datatype*8;
 //cout<< nInPixels<<"--"<<nInRasters<<"--"<<Header_size<<"--"<<datatype<<"--"<<memsize<<endl;
  fseek( pFile,Header_size , SEEK_SET );
-
+#ifdef WIN32
+  if (!fread (imagedata, 1,memsize, pFile))
+#else
  if (fread (imagedata, 1,memsize, pFile)!=memsize)
+#endif
    {
       delete [] (char*)imagedata;
       imagedata=NULL;
       THROW_ERR("Error reading file");
     }
-
+ fseek( pFile,(Header_size+memsize) , SEEK_SET );
  if ((noverfl>0)&&(datatype<32))
    {
      OFoffset=(long int*)malloc(noverfl*sizeof(long int));
      OFintensity=(int*)malloc(noverfl*sizeof(int));
+   //char str[4096];
+    // fgets(str,256,pFile);
+	 		// AfxMessageBox(str);
+
      for (i=0; i<noverfl; i++ )
        {
 	 fscanf(pFile,"%d",(OFintensity+i)) ;
 	 fscanf(pFile,"%ld",(OFoffset+i)) ;
+	 
        }
+	   
    }
  if(ConvFile::getEndian())
    bSwap=0;
@@ -591,38 +663,26 @@ OFintensity =(int*)malloc(memsize*sizeof(int));
 
 
 /////////////MAR345////////////
-
 void Mar345File ::readimage()
 {
-  nInPixels= getimagesize(pFile);
+  nInPixels= getimagesize(sFileName.data());
   nInRasters=nInPixels;
   dAspect =1.0;
   datatype=16;
-  imagedata=(short int *)openpckfile(pFile);
-
+  imagedata=(short int *)openpckfile(sFileName.data());
 }
 /////////////BSL Input////////////
-
-BslFile::BslFile(const char* pszN,int nfr) : NewBinaryFile(pszN),cFrame(nfr)
-{
-  char *sptr1,*sptr2;
-  sptr1=strdup(sFileName.data());
-  if( (sptr2=strrchr(sptr1,'/')) !=NULL )
-     sptr2++;
-   else
-    sptr2=sptr1;
-    sptr2[5]='1';
-  sBinary = strng(sptr1);
-}
-
 void BslFile ::readbslHeader()
 {
    char line[255];
-   fgets(line,80, pFile);
-   fgets(line,80, pFile);
-
+   int i;
+   for(i=0; i<(Bcount+1); i++)
+   {
+   fgets(line,255, pFile);
+   fgets(line,255, pFile);
+   }
    int para[10];
-   for(int i=0; i<10; i++)
+   for(i=0; i<10; i++)
    {
      fscanf(pFile,"%d",&para[i]);
      }
@@ -632,15 +692,55 @@ void BslFile ::readbslHeader()
     dAspect =1.0;
     datatype=para[4];
     dircount=para[2];
+	bslind10=para[9]; //bsl file indice 10
+ 
  if(ConvFile::getEndian()&& para[3])
   {
   bSwap=0;
   }
  else bSwap=1;
-//cout<<"Inpixel "<<nInPixels<<" raster "<<nInRasters<<" dtype "<<datatype<<" swap "<<bSwap;
+ 
+ fgets(line,255, pFile);
+ fgets(line,255, pFile);
+
+ char *sptr3;
+ sptr3=line;
+ char test[1];
+ test[0]= sptr3[5];
+ bslfilN = atoi(test);
+
+ char *sptr1,*sptr2;
+  sptr1=strdup(sFileName.data());
+#ifdef _WIN32
+    if( (sptr2=strrchr(sptr1,'\\')) !=NULL )
+#else
+  if( (sptr2=strrchr(sptr1,'/')) !=NULL )
+#endif
+   sptr2++;
+   else
+    sptr2=sptr1;
+  if (bslfilN==1)
+    sptr2[5]='1';
+  else if (bslfilN==2)
+	  sptr2[5]='2';
+  else if (bslfilN==3)
+	  sptr2[5]='3';
+  else if (bslfilN==4)
+	  sptr2[5]='4';
+  else if (bslfilN==5)
+	  sptr2[5]='5';
+  else if (bslfilN==6)
+	  sptr2[5]='6';
+  sBinary = strng(sptr1);
+  
+//char* errmsg=new char[200];
+//sprintf(errmsg,"Error opening Binary file %s: %d",sBinary.data(),bslfilN);
+//AfxMessageBox(errmsg);
+//AfxMessageBox(sBinary.data());
 
 fclose(pFile);
 char* errmsg=new char[200];
+
   if ((pFile = fopen (sBinary.data(), "r")) == 0)
     {
       sprintf(errmsg,"Error opening Binary file %s: %s",sBinary.data(),strerror(errno));
@@ -687,8 +787,11 @@ char* errmsg=new char[200];
 //cout<<cFrame<<endl;
 
  fseek( pFile,(cFrame*memsize), SEEK_SET);
-
- if (fread(imagedata, 1,memsize, pFile)!=memsize)
+#ifdef WIN32
+  if (!fread (imagedata, 1,memsize, pFile))
+#else
+ if (fread (imagedata, 1,memsize, pFile)!=memsize)
+#endif
    {
      delete [] (char*)imagedata;
      imagedata=NULL;
@@ -696,37 +799,171 @@ char* errmsg=new char[200];
    }
 
 }
+/////////////SANS////////////
+void SANSFile ::readimage()
+{
+ 	char strp[255] ;
+    
+   /* Skip less important details of experimental run */
+    if (fgets(strp, 255,pFile) == NULL)
+      {
+	   THROW_ERR("Cannot read from file" );
+      }
+      
+    /* Skip less important details of experimental run */
+	if (fgets(strp,255, pFile) == NULL)
+      {
+	   THROW_ERR("Cannot read from file" );
+      }
+	else if( strstr(strp,"ILL  SANS")==NULL)
+	{
+		THROW_ERR("Input file is not a  ILL  SANS format file" );
+	}
+	int IRUN, EXT, NDATA1, NDATA2, NSKIP, NSKIPP,  IVERS, NTXT ,NPAR, NPARX ,NPDFX;
+
+	fgets(strp,255, pFile) ;
+    sscanf(strp,"%d%d%d%d%d%d", &IRUN, &EXT, &NDATA1, &NDATA2, &NSKIP, &NSKIPP); 
+	fgets(strp,255, pFile) ;
+    sscanf(strp,"%d%d%d%d%d%d", &IVERS, &NTXT ,&NPAR, &NPARX ,&NPDFX, &IERRS); 
+	
+	/* Skip less important details of experimental run */
+	for (int i = 1; i < NSKIP-1; i++){
+		fgets(strp,255, pFile) ;
+		
+	}
+	bslfilN=IERRS;
+
+    nInPixels=NDATA1;
+    nInRasters=NDATA2;
+    dAspect =1.0;
+
+  imagedata=(char*)malloc(NDATA1*NDATA2*4);
+	float x,y,z;
+
+  if(NDATA2>1)
+	  {
+		  for (int i=0;i<NDATA1*NDATA2;i++)
+  			{
+	 		 fscanf(pFile,"%E", &x);
+			 *(((float*)imagedata )+i) =x;
+			  }
+			/*if(fileNo==2)
+			{
+				for (int i=0;i<NDATA1*NDATA2;i++)
+				{
+	 				 fscanf(pFile,"%E", &x);
+					 *(((float*)imagedata )+i) =x;
+				} 
+			}*/
+			if(fileNo==3)
+			{
+				for (int i=0;i<NDATA1*NDATA2;i++)
+  				{
+	 			 fscanf(pFile,"%E", &x);
+				*(((float*)imagedata )+i) =x;
+				}
+			}
+	  }
+  else
+  {
+	  for (int i=0;i<NDATA1*NDATA2;i++)
+	  {
+		 x=fileNo;
+		  
+		  if(IERRS==1)
+		  fscanf(pFile,"%E%E%E", &x,&y,&z);
+		  else
+		  fscanf(pFile,"%E%E", &x,&y);
+			if(fileNo==2)
+			{
+				 *(((float*)imagedata )+i) =x;
+			}
+			else if(fileNo==3)
+			{
+				 *(((float*)imagedata )+i) =z;
+			}
+			else if(fileNo==0)
+			{
+				*(((float*)imagedata )+i) =y;
+			}
+	  }
+  }
+    datatype=0;
+    
+   
+}
+
 /////////////LOQ 1D////////////
 void LOQFile ::readimage1d()
 {
-  strp =longtitle1 ;
-    if (fgets(strp, MAXLINE + 1, pFile) == NULL)
+ 	char *strp ;
+    strp =longtitle1 ;
+
+    if (fgets(strp, MAXLEN, pFile) == NULL)
       {
 	THROW_ERR("Cannot read from file" );
       }
-
+      
     /* Skip less important details of experimental run */
     strp = line1d ;
-    for (int i = 2; i < 7; i++) fgets(strp, MAXLINE1D + 1, pFile) ;
-
+	for (int i = 2; i < 6; i++){
+		fgets(strp, MAXLEN , pFile) ;
+		
+	}
+  
     /* Read data */
-    nInPixels = 0 ;
+	q=0.0;
+	c=0.0;
+	LOQFile::nInPixels = 0 ;
     while (fscanf(pFile,"%f%E%E", &q, &c, &ce) != EOF)
        {
-	 cross1d[nInPixels] = c ;
-	 nInPixels++ ;
+	     xy[nInPixels]=q;
+		 cross1d[nInPixels] = c ;
+		 error_cross1d[nInPixels] = ce ;
+		 nInPixels++ ;
        }
+   imagedata=(unsigned char*)malloc(nInPixels*4);
+    if (fileNo==2)//calibration data 
+	{
+		memcpy(imagedata,xy,nInPixels*4);
+	
+		//imagedata=xy;
+	}
+	else if(fileNo==3)// error data
+	{
+		memcpy(imagedata,error_cross1d,nInPixels*4);
+		//imagedata=error_cross1d;
+	}
+	else //image data
+	{
+		memcpy(imagedata,cross1d,nInPixels*4);
+		//imagedata=cross1d;
+	}
 
     nInRasters=1;
     dAspect =1.0;
     datatype=0;
-    imagedata=cross1d;
+    
+   
+//for(int i=0; i< nInPixels; i++)
+	//sprintf(strp,"%f ,%d ",*((float*)imagedata+i),nInPixels);
+	/*
+if((x1d[1]-x1d[0])!=((x1d[nInPixels-1]-x1d[0])/(nInPixels-1)))
+{
+  q=x1d[1]-x1d[0];
+c=(x1d[nInPixels-1]-x1d[0])/(nInPixels-1);
+if (q==c)AfxMessageBox("equivql");
+ sprintf(strp,"%f ,%f , %f  %f", x1d[0],  x1d[nInPixels-1],q,c);
+AfxMessageBox(strp);
 
+}*/
+	  strp=NULL;
 }
 /////////////LOQ 2D////////////
-
 void LOQFile ::readimage2d()
 {
+	char *strp ;
+    float *dataptr, *errorptr ;
     int ncdata = 0, nedata = 0, nlines = 0, nrest = 0 ;
     int mpout = 0, mrout = 1;
     int i,j,k,l;
@@ -792,31 +1029,93 @@ void LOQFile ::readimage2d()
                                       xy[l] = 0.5*(xy[k] + xy[k+1]) ;
 	}
       if (iflag == DATA_ONLY || iflag == FIRST_DATA_THEN_ERROR)
-	{
+	  {
          dataptr = cross2d ;
          j = nInRasters * nInPixels ;
          for (i=0; i < j; i++, dataptr++, ncdata++)
          {
-	   fscanf(pFile,"%E",dataptr) ;
-	 }
+	     fscanf(pFile,"%E",dataptr) ;
+	     }
        }
       if (iflag == DATA_ERROR_MIXED)
-	{
-	  for (j=0; j < nInRasters; j++)
+	  {
+	     for (j=0; j < nInRasters; j++)
          {
            dataptr = cross2d ;
+		   errorptr =  error_cross2d;
            for (i=0; i < nInPixels; dataptr++,ncdata++) fscanf(pFile,"%E",dataptr) ;
-           for (i=0; i < nInPixels; nedata++) fscanf(pFile,"%E",errorptr) ;
-	         }
-	}
+           for (i=0; i < nInPixels; errorptr++,nedata++) fscanf(pFile,"%E",errorptr) ;
+	      }
+	   }
+	  if (iflag == FIRST_DATA_THEN_ERROR)
+	  {errorptr =  error_cross2d;
+        j = nInRasters * nInPixels ;
+		for (i=0; i < j; i++, errorptr++, ncdata++)
+         {
+	     fscanf(pFile,"%E",errorptr) ;
+	     }
+	  }
+
 
   dAspect =1.0;
   datatype=0;
-  imagedata=cross2d;
+
+    if (fileNo==2)//calibration data 
+	{
+		nInRasters=2;
+		imagedata=(unsigned char*)malloc(nInPixels*2*4);
+		//imagedata=xy;
+		memcpy(imagedata,xy,nInPixels*nInRasters*4);
+	}
+	else if(fileNo==3) //error data
+	{
+	imagedata=(unsigned char*)malloc(nInPixels*nInRasters*4);	
+		memcpy(imagedata,error_cross2d,nInPixels*nInRasters*4);
+		//imagedata=error_cross2d;
+	}
+	else //image data
+	{
+		imagedata=(unsigned char*)malloc(nInPixels*nInRasters*4);	
+		memcpy(imagedata,cross2d,nInPixels*nInRasters*4);
+		//imagedata=cross2d;
+	}
+  
+  strp=NULL;
+  dataptr=NULL;
+  errorptr=NULL;
+	
+}
+
+void InConvFile::convert (txtOutFile& txtFile )
+{
+   int i,j;
+  nOutPixels = txtFile.pixels ();
+  nOutRasters = txtFile.rasters ();
+  dRatio = double (nInPixels) / double (nOutPixels);
+  pfLine = new float[nOutPixels];
+  FILE *out =txtFile.txtout_file();
+  
+      for (i = 0; i < nOutRasters; i++)
+        {
+              float *tmp2=transformLine(i);
+              for (j = 0; j < nOutPixels; j++)
+              {
+              fprintf( out, "%f,", *tmp2 );     
+              tmp2++;
+              }
+			fprintf( out, "\n");
+  
+	     }
+  fprintf( out, "END OF DATA\n");
+  if(pfLine){
+    delete[] pfLine;
+    pfLine=NULL;
+  }
 
 }
-template <class T>
-void BinInFile<T>::tiffconvert (tiffOutFile& tiffFile )
+/////////////////////////////////////////////////////
+
+void InConvFile::convert (tiffOutFile& tiffFile )
 {
    int i,j;
   nOutPixels = tiffFile.pixels ();
@@ -832,7 +1131,10 @@ void BinInFile<T>::tiffconvert (tiffOutFile& tiffFile )
       TIFFSetField(out, TIFFTAG_IMAGELENGTH,nOutRasters);
       TIFFSetField(out, TIFFTAG_PLANARCONFIG, PLANARCONFIG_CONTIG);
       TIFFSetField(out, TIFFTAG_PHOTOMETRIC,PHOTOMETRIC_MINISBLACK);
-      TIFFSetField(out, TIFFTAG_BITSPERSAMPLE,(dtype));
+      if(dtype==11)     
+	  TIFFSetField(out, TIFFTAG_BITSPERSAMPLE,8);
+	  else
+	  TIFFSetField(out, TIFFTAG_BITSPERSAMPLE,16);
 
   for ( i = 0; i<nInRasters; i++)
             {
@@ -846,7 +1148,7 @@ void BinInFile<T>::tiffconvert (tiffOutFile& tiffFile )
 		   }
 	     }
 
-   if( dtype==8)
+   if( dtype==11)
       {
       unsigned char*tmp8;
 	tmp8=new unsigned char[nOutPixels];
@@ -866,7 +1168,7 @@ void BinInFile<T>::tiffconvert (tiffOutFile& tiffFile )
               tmp8=NULL;
 	      }
          }
-      if( dtype==16)
+      if( dtype==12)
       {
 	unsigned short *tmp16;
 	tmp16=new unsigned short[nOutPixels];
@@ -895,8 +1197,8 @@ TIFFWriteDirectory(out);
 }
 /////////////////////////////////////////////////////
 
-template <class T>
-void BinInFile<T>::convert (BSLHeader& headerFile, BinaryOutFile& binaryFile)
+
+void InConvFile::convert (BSLHeader& headerFile, BinaryOutFile& binaryFile)
 {
   int i;
 
@@ -1107,16 +1409,16 @@ void BinInFile<T>::convert (BSLHeader& headerFile, BinaryOutFile& binaryFile)
     delete[] pfLine;
     pfLine=NULL;
   }
-  if(pMap){
+ /* if(pMap){
     delete pMap;
     pMap=NULL;
   }
-
+*/
 
 }
 
-template <class T>
-float* BinInFile<T>::transformLine (int nLine)
+
+float* InConvFile::transformLine (int nLine)
 {
   double x, y;
   int i;
@@ -1214,7 +1516,6 @@ double RAxisInFile::extract (unsigned short t)
 ///////////////////////////////////////
 double RAxis4InFile::extract (unsigned short t)
 {
-  
   int tmp = (int) short (bSwap ? bswap (t) : t);
   return double (tmp < 0 ? (tmp + 32768)*8 : tmp);
 
@@ -1230,9 +1531,9 @@ void MARFile::readimage( )
   nInRasters=0;
   datatype=-1;
   char line[1024];
-  char c;
+  
 
-  do
+ /* do
     {
       fscanf(pFile,"%c",&c) ;
       header_bytes++;
@@ -1240,7 +1541,7 @@ void MARFile::readimage( )
 	THROW_ERR("Error reading header");
     }while(!(c=='}'));
   header_bytes++;
-  fseek( pFile,0 , SEEK_SET );
+  fseek( pFile,0 , SEEK_SET );*/
   do
     {
       fgets(line,80, pFile) ;
@@ -1347,9 +1648,14 @@ void MARFile::readimage( )
  dAspect=1.0;
  memsize=nInRasters*nInPixels*bpp;
  imagedata=(char*)malloc(memsize*sizeof(char));
-fseek( pFile,header_bytes, SEEK_SET);
+fseek( pFile,-memsize, SEEK_END);
+ #ifdef WIN32
  
+   if (!fread (imagedata, 1,memsize, pFile))
+#else
+// fseek( pFile,-memsize, SEEK_SET);
  if (fread (imagedata, 1,memsize, pFile)!=memsize)
+#endif
    {
      delete [] (char*)imagedata;
      imagedata=NULL;
@@ -1462,10 +1768,31 @@ void SMVFile::readimage( )
    memsize=nInRasters*nInPixels*bpp;
  imagedata=(char*)malloc(memsize*sizeof(char));
  fseek( pFile,header_bytes, SEEK_SET);
- 
+#ifdef WIN32
+/* int x=fread (imagedata, 1,memsize, pFile);
+
+//////////testing /////////
+ //*int x=fread (imagedata, 1,1000, pFile);
+char* errmsg=new char[200];
+   if (ferror (pFile))
+   {
+	  sprintf(errmsg,"Error ferror %d  %d",x,memsize);
+	  THROW_ERR(errmsg);
+   }
+   if (feof(pFile)) 
+ { sprintf(errmsg,"Error feof %d  %d",x,memsize);
+	 THROW_ERR(errmsg);
+   }
+  sprintf(errmsg,"Error test %d  %d",x,memsize);
+THROW_ERR(errmsg);*/
+  if (!fread (imagedata, 1,memsize, pFile))
+#else
  if (fread (imagedata, 1,memsize, pFile)!=memsize)
+#endif
+
   {
     delete [] (char*)imagedata;
+	
     imagedata=NULL;
     THROW_ERR("Error reading file");
   }
@@ -1532,7 +1859,7 @@ void RisoInFile::ReadText()
   for(i=0;i<nInPixels*nInRasters;i++)
   {
   *pIn>>AsciiData[i];
-  }
+  } 
 }
 
 void TextInFile::openFile ()
@@ -1544,333 +1871,6 @@ void TextInFile::openFile ()
 
 
 ///////////////////////////tiff////////////////////////////
-void NewBinaryFile::tiffconvert (tiffOutFile& tiffFile)
-
-{
-  int i;
-  nOutPixels = tiffFile.pixels ();
-  nOutRasters = tiffFile.rasters ();
-  dRatio = double (nInPixels) / double (nOutPixels);
-  pfLine = new float[nOutPixels];
-  TIFF *out;
-  float min,max,tmp1;
-  min=0; max=0;
-	out =tiffFile.tiffout_file();
-
-  for (long m = 0; m<nInPixels*nInRasters; m++)
-            {
-                tmp1=extract((unsigned long )m);
-                if (tmp1>max)
-		   max=tmp1;
-		 if (tmp1<min)
-		   min=tmp1;
-	     }
-
-     TIFFSetField(out, TIFFTAG_IMAGEWIDTH,nOutPixels );
-      TIFFSetField(out, TIFFTAG_IMAGELENGTH,nOutRasters);
-      TIFFSetField(out, TIFFTAG_PLANARCONFIG, PLANARCONFIG_CONTIG);
-      TIFFSetField(out, TIFFTAG_PHOTOMETRIC,PHOTOMETRIC_MINISBLACK);
-      TIFFSetField(out, TIFFTAG_BITSPERSAMPLE,dtype);
-	
-
-   if( dtype==8)
-      {
-      unsigned char*tmp8;
-	tmp8=new unsigned char[nOutPixels];
-           for (i = 0; i < nOutRasters; i++)
-            {
-              float *tmp2=transformLine(i);
-              for (int j = 0; j < nOutPixels; j++)
-              {
-
-	        tmp8[j]=(unsigned char)(((*tmp2-min)/(max-min))*(float)255);
-                tmp2++;
-              }
-	       TIFFWriteScanline(out, tmp8,i, 0);
-	     }
-            if(tmp8){
-              delete[] tmp8;
-              tmp8=NULL;
-	      }
-         }
-      if( dtype==16)
-      {
-	unsigned short *tmp16;
-	tmp16=new unsigned short[nOutPixels];
-           for (i = 0; i < nOutRasters; i++)
-            {
-              float *tmp2=transformLine(i);
-              for (int j = 0; j < nOutPixels; j++)
-              {
-	        tmp16[j]=( unsigned short)(((*tmp2-min)/(max-min))*(float)65535);
-                tmp2++;
-              }
-	       TIFFWriteScanline(out, tmp16,i, 0);
-	     }
-            if(tmp16){
-              delete[] tmp16;
-              tmp16=NULL;
-	      }
-         }
-/*
-if( dtype==16)
-      {
-	unsigned int *tmp32;
-	tmp32=new unsigned int[nOutPixels];
-           for (i = 0; i < nOutRasters; i++)
-            {
-              float *tmp2=transformLine(i);
-              for (int j = 0; j < nOutPixels; j++)
-              {
-	        tmp32[j]=( unsigned int)(((*tmp2-min)/(max-min))*(float)4294967296);  
-                tmp2++;
-              }
-	       TIFFWriteScanline(out, tmp32,i, 0);
-	     }
-          	if(tmp32){
-              	delete[] tmp32;
-              	tmp32=NULL;
-	      	}
-         }*/
- TIFFWriteDirectory(out);
-  if(pfLine){
-    delete[] pfLine;
-    pfLine=NULL;
-  }
-
-}
-/////////converter By Raj *******************///////
-void NewBinaryFile::convert (BSLHeader& headerFile, BinaryOutFile& binaryFile)
-{
-  int i;
-
-  BSL_CHAR8* tmpc8;
-  BSL_UCHAR8* tmpuc8;
-  BSL_INT16* tmpi16;
-  BSL_UINT16* tmpui16;
-  BSL_INT32* tmpi32;
-  BSL_UINT32* tmpui32;
-  BSL_INT64* tmpi64;
-  BSL_UINT64* tmpui64;
-  BSL_FLOAT32* tmpf32;
-  BSL_FLOAT64* tmpf64;
-
-  nOutPixels = headerFile.pixels ();
-  nOutRasters = headerFile.rasters ();
-  dRatio = double (nInPixels) / double (nOutPixels);
-  pfLine = new float[nOutPixels];
-
-  switch(dtype)
-  {
-    case TFLOAT32:
-
-	    tmpf32 = new BSL_FLOAT32 [nOutPixels];
-
-            for (i = 0; i < nOutRasters; i++)
-            {
-              float *tmp2=transformLine(i);
-              for (int j = 0; j < nOutPixels; j++)
-              {
-                tmpf32[j]=(BSL_FLOAT32)*tmp2;
-                tmp2++;
-              }
-              binaryFile.write ((char*) tmpf32, nOutPixels * sizeof (BSL_FLOAT32));
-            }
-            if(tmpf32){
-              delete[] tmpf32;
-              tmpf32=NULL;
-	      }
-            break;
-
-    case TCHAR8:
-            tmpc8 = new BSL_CHAR8 [nOutPixels];
-
-            for (i = 0; i < nOutRasters; i++)
-            {
-              float *tmp2=transformLine(i);
-              for (int j = 0; j < nOutPixels; j++)
-              {
-                tmpc8[j]=(BSL_CHAR8)*tmp2;
-                tmp2++;
-              }
-              binaryFile.write ((char*) tmpc8, nOutPixels * sizeof (BSL_CHAR8));
-            }
-            if(tmpc8){
-              delete[] tmpc8;
-              tmpc8=NULL;
-            }
-            break;
-
-    case TUCHAR8:
-            tmpuc8 = new BSL_UCHAR8 [nOutPixels];
-            for (i = 0; i < nOutRasters; i++)
-            {
-              float *tmp2=transformLine(i);
-              for (int j = 0; j < nOutPixels; j++)
-              {
-                tmpuc8[j]=(BSL_UCHAR8)*tmp2;
-                tmp2++;
-              }
-              binaryFile.write ((char*) tmpuc8, nOutPixels * sizeof (BSL_UCHAR8));
-            }
-            if(tmpuc8){
-              delete[] tmpuc8;
-              tmpuc8=NULL;
-            }
-            break;
-
-    case TINT16:
-            tmpi16 = new BSL_INT16 [nOutPixels];
-            for (i = 0; i < nOutRasters; i++)
-            {
-              float *tmp2=transformLine(i);
-              for (int j = 0; j < nOutPixels; j++)
-              {
-                tmpi16[j]=(BSL_INT16)*tmp2;
-                tmp2++;
-              }
-              binaryFile.write ((char*) tmpi16, nOutPixels * sizeof (BSL_INT16));
-            }
-            if(tmpi16){
-              delete[] tmpi16;
-              tmpi16=NULL;
-            }
-            break;
-
-    case TUINT16:
-            tmpui16 = new BSL_UINT16 [nOutPixels];
-            for (i = 0; i < nOutRasters; i++)
-            {
-              float *tmp2=transformLine(i);
-              for (int j = 0; j < nOutPixels; j++)
-              {
-                tmpui16[j]=(BSL_UINT16)*tmp2;
-                tmp2++;
-              }
-              binaryFile.write ((char*) tmpui16, nOutPixels * sizeof (BSL_UINT16));
-            }
-            if(tmpui16){
-              delete[] tmpui16;
-              tmpui16=NULL;
-            }
-            break;
-
-    case TINT32:
-            tmpi32 = new BSL_INT32 [nOutPixels];
-            for (i = 0; i < nOutRasters; i++)
-            {
-              float *tmp2=transformLine(i);
-              for (int j = 0; j < nOutPixels; j++)
-              {
-                tmpi32[j]=(BSL_INT32)*tmp2;
-                tmp2++;
-              }
-              binaryFile.write ((char*) tmpi32, nOutPixels * sizeof (BSL_INT32));
-            }
-            if(tmpi32){
-              delete[] tmpi32;
-              tmpi32=NULL;
-            }
-            break;
-
-    case TUINT32:
-            tmpui32 = new BSL_UINT32 [nOutPixels];
-            for (i = 0; i < nOutRasters; i++)
-            {
-              float *tmp2=transformLine(i);
-              for (int j = 0; j < nOutPixels; j++)
-              {
-                tmpui32[j]=(BSL_UINT32)*tmp2;
-                tmp2++;
-              }
-              binaryFile.write ((char*) tmpui32, nOutPixels * sizeof (BSL_UINT32));
-            }
-            if(tmpui32){
-              delete[] tmpui32;
-              tmpui32=NULL;
-            }
-            break;
-
-    case TINT64:
-            tmpi64 = new BSL_INT64 [nOutPixels];
-            for (i = 0; i < nOutRasters; i++)
-            {
-              float *tmp2=transformLine(i);
-              for (int j = 0; j < nOutPixels; j++)
-              {
-                tmpi64[j]=(BSL_INT64)*tmp2;
-                tmp2++;
-              }
-              binaryFile.write ((char*) tmpi64, nOutPixels * sizeof (BSL_INT64));
-            }
-            if(tmpi64){
-              delete[] tmpi64;
-              tmpi64=NULL;
-            }
-            break;
-
-    case TUINT64:
-            tmpui64 = new BSL_UINT64 [nOutPixels];
-            for (i = 0; i < nOutRasters; i++)
-            {
-              float *tmp2=transformLine(i);
-              for (int j = 0; j < nOutPixels; j++)
-              {
-                tmpui64[j]=(BSL_UINT64)*tmp2;
-                tmp2++;
-              }
-              binaryFile.write ((char*) tmpui64, nOutPixels * sizeof (BSL_UINT64));
-            }
-            if(tmpui64){
-              delete[] tmpui64;
-              tmpui64=NULL;
-            }
-            break;
-
-    case TFLOAT64:
-            tmpf64 = new BSL_FLOAT64 [nOutPixels];
-            for (i = 0; i < nOutRasters; i++)
-            {
-              float *tmp2=transformLine(i);
-              for (int j = 0; j < nOutPixels; j++)
-              {
-                tmpf64[j]=(BSL_FLOAT64)*tmp2;
-                tmp2++;
-              }
-              binaryFile.write ((char*) tmpf64, nOutPixels * sizeof (BSL_FLOAT64));
-            }
-            if(tmpf64){
-              delete[] tmpf64;
-              tmpf64=NULL;
-            }
-            break;
-
-  }
-
-  if(pfLine){
-    delete[] pfLine;
-    pfLine=NULL;
-  }
-
-}
-float* NewBinaryFile::transformLine (int nLine)
-{
-  double x, y;
-  int i;
-
-  y = dAspect * dRatio * (double (nLine) + 0.5) - 0.5;
-
-  for (i = 0; i < nOutPixels; i++)
-    //  for (i = 0; i < nOutRasters; i++)
-    {
-      x = dRatio * (double (i) + 0.5) - 0.5;
-
-      *(pfLine + i) = interpolate (x, y);
-
-    }
-
-  return pfLine;
-}
 float NewBinaryFile::interpolate (double x, double y)
 {
   int iy = int (y);
@@ -1959,9 +1959,8 @@ double NewBinaryFile::extract(unsigned long  p)
 
 double BrukerFile ::extract(unsigned long  p)
 {
-  
+ 
   int i;
-  double tmp; 
   switch (datatype)
      {
      case 1:   //Ascii data
@@ -2034,9 +2033,6 @@ double BslFile::extract(unsigned long  p)
   }
 
 }
-
-
-
 double MARFile::extract(unsigned long  p)
 {
 
@@ -2075,315 +2071,7 @@ double MARFile::extract(unsigned long  p)
      }
 }
 
-void TextInFile::tiffconvert (tiffOutFile& tiffFile)
-{
-  int i,j;
-  nOutPixels = tiffFile.pixels ();
-  nOutRasters = tiffFile.rasters ();
-  dRatio = double (nInPixels) / double (nOutPixels);
-  pfLine = new float[nOutPixels];
-  TIFF *out;
-  float min,max,tmp1;
-  min=0; max=0;
-  out =tiffFile.tiffout_file();
-  
-       TIFFSetField(out, TIFFTAG_IMAGEWIDTH,nOutPixels );
-      TIFFSetField(out, TIFFTAG_IMAGELENGTH,nOutRasters);
-      TIFFSetField(out, TIFFTAG_PLANARCONFIG, PLANARCONFIG_CONTIG);
-      TIFFSetField(out, TIFFTAG_PHOTOMETRIC,PHOTOMETRIC_MINISBLACK);
-      TIFFSetField(out, TIFFTAG_BITSPERSAMPLE,dtype);
 
-  for ( i = 0; i<nInRasters; i++)
-            {
-	    for (j = 0; j<nInPixels;j++)
-		{
-		tmp1=interpolate ((double)i, (double)j);
-                if (tmp1>max)
-		   max=tmp1;
-		 if (tmp1<min)
-		   min=tmp1;
-		   }
-	     }
-
-   if( dtype==8)
-      {
-      unsigned char*tmp8;
-	tmp8=new unsigned char[nOutPixels];
-           for (i = 0; i < nOutRasters; i++)
-            {
-              float *tmp2=transformLine(i);
-              for (j = 0; j < nOutPixels; j++)
-              {
-
-	        tmp8[j]=(unsigned char)(((*tmp2-min)/(max-min))*(float)255);
-                tmp2++;
-              }
-	       TIFFWriteScanline(out, tmp8,i, 0);
-	     }
-            if(tmp8){
-              delete[] tmp8;
-              tmp8=NULL;
-	      }
-         }
-      if( dtype==16)
-      {
-	unsigned short *tmp16;
-	tmp16=new unsigned short[nOutPixels];
-           for (i = 0; i < nOutRasters; i++)
-            {
-              float *tmp2=transformLine(i);
-              for ( j = 0; j < nOutPixels; j++)
-              {
-	        tmp16[j]=( unsigned short)(((*tmp2-min)/(max-min))*(float)65535);
-                tmp2++;
-              }
-	       TIFFWriteScanline(out, tmp16,i, 0);
-	     }
-            if(tmp16){
-              delete[] tmp16;
-              tmp16=NULL;
-	      }
-         }
-TIFFWriteDirectory(out);
-  if(pfLine){
-    delete[] pfLine;
-    pfLine=NULL;
-  }
-
-}
-
-////////////////////////////////////
-
-void TextInFile::convert (BSLHeader& headerFile, BinaryOutFile& binaryFile)
-{
-  int i;
-
-  BSL_CHAR8* tmpc8;
-  BSL_UCHAR8* tmpuc8;
-  BSL_INT16* tmpi16;
-  BSL_UINT16* tmpui16;
-  BSL_INT32* tmpi32;
-  BSL_UINT32* tmpui32;
-  BSL_INT64* tmpi64;
-  BSL_UINT64* tmpui64;
-  BSL_FLOAT32* tmpf32;
-  BSL_FLOAT64* tmpf64;
-
-  nOutPixels = headerFile.pixels ();
-  nOutRasters = headerFile.rasters ();
-
-  dRatio = double (nInPixels) / double (nOutPixels);
-  pfLine = new float[nOutPixels];
-
-  switch(dtype)
-  {
-    case TFLOAT32:
-            tmpf32 = new BSL_FLOAT32 [nOutPixels];
-
-            for (i = 0; i < nOutRasters; i++)
-            {
-              float *tmp2=transformLine(i);
-              for (int j = 0; j < nOutPixels; j++)
-              {
-                tmpf32[j]=(BSL_FLOAT32)*tmp2;
-                tmp2++;
-              }
-              binaryFile.write ((char*) tmpf32, nOutPixels * sizeof (BSL_FLOAT32));
-            }
-            if(tmpf32){
-              delete[] tmpf32;
-              tmpf32=NULL;
-            }
-            break;
-
-    case TCHAR8:
-            tmpc8 = new BSL_CHAR8 [nOutPixels];
-
-            for (i = 0; i < nOutRasters; i++)
-            {
-              float *tmp2=transformLine(i);
-              for (int j = 0; j < nOutPixels; j++)
-              {
-                tmpc8[j]=(BSL_CHAR8)*tmp2;
-                tmp2++;
-              }
-              binaryFile.write ((char*) tmpc8, nOutPixels * sizeof (BSL_CHAR8));
-            }
-            if(tmpc8){
-              delete[] tmpc8;
-              tmpc8=NULL;
-            }
-            break;
-
-    case TUCHAR8:
-            tmpuc8 = new BSL_UCHAR8 [nOutPixels];
-            for (i = 0; i < nOutRasters; i++)
-            {
-              float *tmp2=transformLine(i);
-              for (int j = 0; j < nOutPixels; j++)
-              {
-                tmpuc8[j]=(BSL_UCHAR8)*tmp2;
-                tmp2++;
-              }
-              binaryFile.write ((char*) tmpuc8, nOutPixels * sizeof (BSL_UCHAR8));
-            }
-            if(tmpuc8){
-              delete[] tmpuc8;
-              tmpuc8=NULL;
-            }
-            break;
-
-    case TINT16:
-            tmpi16 = new BSL_INT16 [nOutPixels];
-            for (i = 0; i < nOutRasters; i++)
-            {
-              float *tmp2=transformLine(i);
-              for (int j = 0; j < nOutPixels; j++)
-              {
-                tmpi16[j]=(BSL_INT16)*tmp2;
-                tmp2++;
-              }
-              binaryFile.write ((char*) tmpi16, nOutPixels * sizeof (BSL_INT16));
-            }
-            if(tmpi16){
-              delete[] tmpi16;
-              tmpi16=NULL;
-            }
-            break;
-
-    case TUINT16:
-            tmpui16 = new BSL_UINT16 [nOutPixels];
-            for (i = 0; i < nOutRasters; i++)
-            {
-              float *tmp2=transformLine(i);
-              for (int j = 0; j < nOutPixels; j++)
-              {
-                tmpui16[j]=(BSL_UINT16)*tmp2;
-                tmp2++;
-              }
-              binaryFile.write ((char*) tmpui16, nOutPixels * sizeof (BSL_UINT16));
-            }
-            if(tmpui16){
-              delete[] tmpui16;
-              tmpui16=NULL;
-            }
-            break;
-
-    case TINT32:
-            tmpi32 = new BSL_INT32 [nOutPixels];
-            for (i = 0; i < nOutRasters; i++)
-            {
-              float *tmp2=transformLine(i);
-              for (int j = 0; j < nOutPixels; j++)
-              {
-                tmpi32[j]=(BSL_INT32)*tmp2;
-                tmp2++;
-              }
-              binaryFile.write ((char*) tmpi32, nOutPixels * sizeof (BSL_INT32));
-            }
-            if(tmpi32){
-              delete[] tmpi32;
-              tmpi32=NULL;
-            }
-            break;
-
-    case TUINT32:
-            tmpui32 = new BSL_UINT32 [nOutPixels];
-            for (i = 0; i < nOutRasters; i++)
-            {
-              float *tmp2=transformLine(i);
-              for (int j = 0; j < nOutPixels; j++)
-              {
-                tmpui32[j]=(BSL_UINT32)*tmp2;
-                tmp2++;
-              }
-              binaryFile.write ((char*) tmpui32, nOutPixels * sizeof (BSL_UINT32));
-            }
-            if(tmpui32){
-              delete[] tmpui32;
-              tmpui32=NULL;
-            }
-            break;
-
-    case TINT64:
-            tmpi64 = new BSL_INT64 [nOutPixels];
-            for (i = 0; i < nOutRasters; i++)
-            {
-              float *tmp2=transformLine(i);
-              for (int j = 0; j < nOutPixels; j++)
-              {
-                tmpi64[j]=(BSL_INT64)*tmp2;
-                tmp2++;
-              }
-              binaryFile.write ((char*) tmpi64, nOutPixels * sizeof (BSL_INT64));
-            }
-            if(tmpi64){
-              delete[] tmpi64;
-              tmpi64=NULL;
-            }
-            break;
-
-    case TUINT64:
-            tmpui64 = new BSL_UINT64 [nOutPixels];
-            for (i = 0; i < nOutRasters; i++)
-            {
-              float *tmp2=transformLine(i);
-              for (int j = 0; j < nOutPixels; j++)
-              {
-                tmpui64[j]=(BSL_UINT64)*tmp2;
-                tmp2++;
-              }
-              binaryFile.write ((char*) tmpui64, nOutPixels * sizeof (BSL_UINT64));
-            }
-            if(tmpui64){
-              delete[] tmpui64;
-              tmpui64=NULL;
-            }
-            break;
-
-    case TFLOAT64:
-            tmpf64 = new BSL_FLOAT64 [nOutPixels];
-            for (i = 0; i < nOutRasters; i++)
-            {
-              float *tmp2=transformLine(i);
-              for (int j = 0; j < nOutPixels; j++)
-              {
-                tmpf64[j]=(BSL_FLOAT64)*tmp2;
-                tmp2++;
-              }
-              binaryFile.write ((char*) tmpf64, nOutPixels * sizeof (BSL_FLOAT64));
-            }
-            if(tmpf64){
-              delete[] tmpf64;
-              tmpf64=NULL;
-            }
-            break;
-
-  }
-
-  if(pfLine){
-    delete[] pfLine;
-    pfLine=NULL;
-  }
-}
-
-float* TextInFile::transformLine (int nLine)
-{
-  double x, y;
-  int i;
-
-  y = dAspect * dRatio * (double (nLine) + 0.5) - 0.5;
-
-  for (i = 0; i < nOutPixels; i++)
-    {
-      x = dRatio * (double (i) + 0.5) - 0.5;
-
-      *(pfLine + i) = interpolate (x, y);
-
-    }
-
-  return pfLine;
-}
 
 float TextInFile::interpolate (double x, double y)
 {
@@ -2422,8 +2110,45 @@ float TextInFile::interpolate (double x, double y)
   return float (dInt);
 }
 
+void BSLHeader:: WriteHeader ( int nPix, int nRast, int dtype, int nFram,int ind10,int fileNo)
+{
+	nPixels=nPix;
+    nRasters=nRast;
+    nFrames=nFram;
+  char *sptr1,*sptr2;
+  sptr1=strdup(sFileName.data());
+#ifdef WIN32
+if( (sptr2=strrchr(sptr1,'\\')) !=NULL )
+#else
+  if( (sptr2=strrchr(sptr1,'/')) !=NULL )
+#endif
+  {
+    sptr2++;
+  }
+  else
+    sptr2=sptr1;
+  if (fileNo==2)
+  sptr2[5]='2';
+   if (fileNo==3)
+  sptr2[5]='3';
+    if (fileNo==4)
+  sptr2[5]='4';
+	 if (fileNo==5)
+  sptr2[5]='5';
+  sBinary = strng(sptr1);
+
+  pOut->unsetf (ios::left);
+  *pOut << setw(8) << nPixels << setw(8) << nRasters << setw(8) << nFrames
+	<< setw(8) << (int) ConvFile::getEndian() << setw(8) << dtype << setw(8) << (int) 0
+	<< setw(8) << (int) 0 << setw(8) << (int) 0 << setw(8) << (int) 0
+	<< setw(8) << (int) ind10 << "\n";
+
+
+  *pOut << setw(10) << sptr2 << "\n";
+}
+
 BSLHeader::BSLHeader (const char *pszN, int nPix, int nRast, int dtype, int nFram = 1,
-		      const char *pszHead1 = 0, const char *pszHead2 = 0) :
+		      const char *pszHead1 = 0, const char *pszHead2 = 0,int ind10 =0) :
 
   TextOutFile (pszN), sHeader1 (pszHead1), sHeader2 (pszHead2),
   nPixels (nPix), nRasters (nRast), nFrames (nFram)
@@ -2441,11 +2166,16 @@ BSLHeader::BSLHeader (const char *pszN, int nPix, int nRast, int dtype, int nFra
       throw;
     }
 
-
-  char *sptr1,*sptr2;
-  sptr1=strdup(sFileName.data());
+char *sptr1,*sptr2;
+sptr1=strdup(sFileName.data());
+#ifdef WIN32
+if( (sptr2=strrchr(sptr1,'\\')) !=NULL )
+#else
   if( (sptr2=strrchr(sptr1,'/')) !=NULL )
+#endif
+  {
     sptr2++;
+  }
   else
     sptr2=sptr1;
   sptr2[5]='1';
@@ -2460,7 +2190,7 @@ BSLHeader::BSLHeader (const char *pszN, int nPix, int nRast, int dtype, int nFra
   *pOut << setw(8) << nPixels << setw(8) << nRasters << setw(8) << nFrames
 	<< setw(8) << (int) ConvFile::getEndian() << setw(8) << dtype << setw(8) << (int) 0
 	<< setw(8) << (int) 0 << setw(8) << (int) 0 << setw(8) << (int) 0
-	<< setw(8) << (int) 0 << "\n";
+	<< setw(8) << (int) ind10 << "\n";
 
 
   *pOut << setw(10) << sptr2 << "\n";
@@ -2475,11 +2205,17 @@ void BSLHeader::legalValues () throw (XError)
 
   if (nFrames <= 0 )
     THROW_ERR("Invalid number of frames in BSL header");
+ 
 }
 #ifdef GNU
   template class BinInFile<float>;
   template class BinInFile<unsigned char>;
   template class BinInFile<unsigned short>;
   template class BinInFile<unsigned int>;
-
-#endif
+#endif 
+#ifdef WIN32
+  template class BinInFile<float>;
+  template class BinInFile<unsigned char>;
+  template class BinInFile<unsigned short>;
+  template class BinInFile<unsigned int>;
+#endif 

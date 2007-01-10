@@ -1,27 +1,30 @@
 #ifndef _CONV_FILE_H
 #define _CONV_FILE_H
-
+#ifdef WIN32
+#include <strstream>
+#include <fstream>
+#include <iomanip>
+#include<iostream>
+using namespace std;
+#else
 #include <strstream.h>
 #include <fstream.h>
 #include <iomanip.h>
-
+#include<iostream.h>
+#endif
 #include <stdio.h>
 #include <ctype.h>
 #include <math.h>
 #include <errno.h>
 #include <string.h>
-#include<iostream.h>
-
 #include "strng.h"
 #include "xerror.h"
 #include "map.h"
 #include "get_types.h"
-
 #include "tiffio.h"
 
 typedef int myBool;
 typedef int Endian;
-
 static const int TFLOAT32=0;
 static const int TCHAR8=1;
 static const int TUCHAR8=2;
@@ -32,22 +35,27 @@ static const int TUINT32=6;
 static const int TINT64=7;
 static const int TUINT64=8;
 static const int TFLOAT64=9;
+static const int txt=10;
+static const int tiff8=11;
+static const int tiff16=12;
 
 const int IS_FALSE=0;
 const int IS_TRUE=1;
-//const int BIG_ENDIAN=1;
-//const int LITTLE_ENDIAN=0;
 
 inline unsigned char bswap (unsigned char);
 inline unsigned short bswap (unsigned short);
 inline unsigned int bswap (unsigned int);
 inline float bswap (float);
+inline signed short bswap (signed short );
+inline signed int bswap (signed int);
+inline signed long bswap (signed long );
+inline unsigned long bswap (unsigned long );
+inline double bswap (double dIn);
 
-#define MAXLEN    132  /* max length of strings */
+#define MAXLEN    255  /* max length of strings */
 #define MAXLINE    80  /* max length of title lines */
 #define MAXLINE1D  80  /* max length of 1D data lines */
 #define MAXLINE2D 132  /* max length of 2D data lines */
-#define MAXSTRING  20  /* max No. of strings */
 #define DATA_ONLY                1  /* how the ASCII data is recorded */
 #define DATA_ERROR_MIXED         2  /*              "                 */
 #define FIRST_DATA_THEN_ERROR    3  /*              "                 */
@@ -58,18 +66,20 @@ class ConvFile
  public:
   ConvFile ()
     {
-      
     }
-  
-  ConvFile (const char* pszN) : sFileName (pszN)
+    ConvFile (const char* pszN) : sFileName (pszN)
     {
-
     }
-
+ virtual ~ConvFile ()
+    {   }
   static Endian getEndian ();
   void putdtype(int);
   int getdircount();
+  int bslind(); 
+  int bslfilNo();
   protected:
+  int bslind10; //bsl file indice 10
+  int bslfilN;//bsl binary file number
   int dtype;
   int dircount;
   strng sFileName;
@@ -78,120 +88,55 @@ class ConvFile
 class BSLHeader;
 class BinaryOutFile;
 class tiffOutFile;
+class txtOutFile;
 
 class InConvFile : public ConvFile
 {
  public:
   InConvFile () : ConvFile ()
-    {
-
-    }
-
-  ~InConvFile ()
+    {    }
+ ~InConvFile ()
     {
       if (pFile)
      {
        fclose(pFile);
      }
-
-    }
-
-  InConvFile (const char* pszN) : ConvFile (pszN)
-    {
-
+   }
+  InConvFile (const char* pszN,myBool bSwp = IS_FALSE,
+			     int nOff = 0,double dAsp = 1.0) : ConvFile (pszN), dAspect (dAsp),bSwap (bSwp),ulOffset ((unsigned long) nOff)
+  {
+          pFile=NULL;
     }
 
   char *GetTitle()
     {
       return Title;
     }
-
-  virtual void convert(BSLHeader&,BinaryOutFile&) = 0;
-  virtual void tiffconvert (tiffOutFile& tiffFile )=0;
-  virtual int pixels () = 0;
-  virtual int rasters() = 0;
-  virtual int rasters (int) =0;
-
+  virtual void convert(BSLHeader&,BinaryOutFile&) ;
+  virtual void convert (tiffOutFile& tiffFile );
+  virtual void convert(txtOutFile& txtFile );
+   int pixels ()   {
+      return nInPixels;
+    }
+  int rasters ()    {
+      return nInRasters;
+    }
+  int rasters (int nOutP)    {
+      return int (double (nOutP * nInRasters) /
+		  (dAspect * double (nInPixels)) + 0.5);
+    }
+ int recordlength()    {
+      return nRecordLength;
+    }
   static strng getNthFileName (const strng&, int);
-
- protected:
+  static strng getQAxFileName (const strng& );
+  protected:
+  virtual float* transformLine (int nLine);
+  virtual float interpolate (double x, double y) = 0;
   virtual void openFile ();
   FILE* pFile;
   int nFileDescriptor;
   char* Title;
-};
-
-class OutConvFile : public ConvFile
-{
- public:
-  OutConvFile () : ConvFile ()
-    {
-
-    }
-
-  OutConvFile (const char* pszN) : ConvFile (pszN)
-    {
-
-    }
-
-protected:
-  ofstream* pOut;
-};
-
-
-class BinaryInFile : public InConvFile
-{
- public:
-  BinaryInFile () : InConvFile ()
-    {
-
-    }
-
-  BinaryInFile (const char* pszN, myBool bSwp, int nOff, double dAsp);
-
-  BinaryInFile (BinaryInFile& b);
-
-  virtual ~BinaryInFile ()
-    {
-      if(pMap){
-        delete pMap;
-        pMap=NULL;
-      }
-      if(pfLine){
-        delete[] pfLine;
-        pfLine=NULL;
-      }
-    }
-  
-  virtual void convert (BSLHeader& headerFile, BinaryOutFile& binaryFile) = 0;
-   virtual void tiffconvert (tiffOutFile& tiffFile)=0;
-  int pixels ()
-    {
-      return nInPixels;
-    }
-  
-  int rasters ()
-    {
-      return nInRasters;
-    }
-
-  int rasters (int nOutP)
-    {
-      return int (double (nOutP * nInRasters) /
-		  (dAspect * double (nInPixels)) + 0.5);
-    }
-
- int recordlength()
-    {
-      return nRecordLength;
-    }
-
-protected:
-  virtual float* transformLine (int nLine) = 0;
-  virtual float interpolate (double x, double y) = 0;
-  virtual MemMap* map () = 0;
-
-  MemMap* pMap;
   float* pfLine;
   int nInPixels;
   int nInRasters;
@@ -204,6 +149,53 @@ protected:
   double dRatio;
 };
 
+class OutConvFile : public ConvFile
+{
+ public:
+  OutConvFile () : ConvFile ()
+    {
+    }
+  OutConvFile (const char* pszN) : ConvFile (pszN)
+    {
+    }
+protected:
+  ofstream* pOut;
+};
+
+
+class BinaryInFile : public InConvFile
+{
+ public:
+  BinaryInFile () : InConvFile ()
+  {
+pMap=NULL;
+pfLine=NULL;
+  }
+
+  BinaryInFile (const char* pszN, myBool bSwp, int nOff, double dAsp);
+
+  BinaryInFile (BinaryInFile& b);
+
+  virtual ~BinaryInFile ()
+    {
+      if(pMap){
+        delete pMap;
+        pMap=NULL;
+		 }
+	  if(pfLine){
+        delete[] pfLine;
+        pfLine=NULL;
+      }
+
+      
+    }
+protected:
+  virtual float interpolate (double x, double y) = 0;
+  virtual MemMap* map () = 0;
+  MemMap* pMap;
+  
+};
+
 template <class T>
 class BinInFile : public BinaryInFile
 {
@@ -212,15 +204,10 @@ public:
     {
 
     }
-
   BinInFile (const char* pszN, int nInP, int nInR, myBool bSwp, int nOff,
 	     double dAsp);
 
-  virtual void convert (BSLHeader& headerFile, BinaryOutFile& binaryFile);
-  virtual void tiffconvert (tiffOutFile& tiffFile);
-
   protected:
-  virtual float* transformLine (int nLine);
   virtual float interpolate (double x, double y);
   virtual double extract (T t);
   virtual MemMap* map ();
@@ -231,9 +218,7 @@ class SMarInFile : public BinInFile<unsigned short>
 public:
   SMarInFile (const char* pszN, myBool bSwp) :
     BinInFile<unsigned short> (pszN, 1200, 1200, bSwp, 2400, 1.0)
-    {
-
-    }
+    { }
 };
 
 class BMarInFile : public BinInFile<unsigned short>
@@ -241,9 +226,7 @@ class BMarInFile : public BinInFile<unsigned short>
 public:
   BMarInFile (const char* pszN, myBool bSwp) :
     BinInFile<unsigned short> (pszN, 2000, 2000, bSwp, 4000, 1.0)
-    {
-
-    }
+    { }
 };
 
 class FujiInFile : public BinInFile<unsigned short>
@@ -252,13 +235,10 @@ public:
   FujiInFile (const char* pszN, myBool bSwp, double dR) :
     BinInFile<unsigned short> (pszN, 2048, 4096, bSwp, 8192, 1.0),
     dDynamicRange (dR / 65536.0)
-    {
-
-    }
+    { }
 
 protected:
   virtual double extract (unsigned short t);
-
   double dDynamicRange;
 };
 
@@ -268,13 +248,10 @@ public:
   Fuji2500InFile (const char* pszN, myBool bSwp) :
     BinInFile<unsigned short> (pszN, 2000, 2500, bSwp, 0, 1.0),
     dDynamicRange (5.0 / 65536.0)
-    {
-
-    }
+    { }
 
 protected:
   virtual double extract (unsigned short t);
-
   double dDynamicRange;
 };
 
@@ -284,7 +261,6 @@ class RAxisInFile : public BinInFile<unsigned short>
 {
 public:
   RAxisInFile (const char* pszN, myBool bSwp);
-
 protected:
   virtual double extract (unsigned short t);
 };
@@ -294,10 +270,9 @@ class PSciInFile : public BinInFile<unsigned short>
 {
 public:
   PSciInFile (const char* pszN, myBool bSwp) :
-    BinInFile<unsigned short> (pszN, 768, 576, bSwp, 0, 1.0)
-    {
-
-    }
+  BinInFile<unsigned short> (pszN, 768, 576, bSwp, 0, 1.0)
+  {
+  }
 };
 //////RAxis4 by Raj/////////////
 class RAxis4InFile : public BinInFile<unsigned short>
@@ -305,11 +280,9 @@ class RAxis4InFile : public BinInFile<unsigned short>
  public:
     RAxis4InFile (const char* pszN, myBool bSwp):
      BinInFile<unsigned short> (pszN, 3000,3000, bSwp, 6000, 1.0)
-  {
-   }
+  {  }
  protected:
   virtual double extract (unsigned short t);
-
 };
 
 
@@ -318,9 +291,7 @@ class NewBinaryFile :  public InConvFile
 {
  public:
   NewBinaryFile () : InConvFile ()
-    {
-
-    }
+    {   }
   NewBinaryFile (const char* pszN) : InConvFile (pszN)
     {
       imagedata=NULL;
@@ -328,45 +299,26 @@ class NewBinaryFile :  public InConvFile
     }
   ~NewBinaryFile ()
     {
-      delete[] pfLine;
-      pfLine=NULL;
-      if(imagedata){
+    	if(imagedata){
 	delete[] (char*)imagedata;
 	imagedata=NULL;
+    }
+	if(pfLine){
+        delete[] pfLine;
+        pfLine=NULL;
       }
-
+        if (pFile)
+     {
+       fclose(pFile);
+     }
     }
-  virtual void convert (BSLHeader& headerFile, BinaryOutFile& binaryFile);
-  virtual void tiffconvert (tiffOutFile& tiffFile );
-    int pixels ()
-    {
-      return nInPixels;
-    }
-
-  int rasters ()
-    {
-      return nInRasters;
-    }
-
-  int rasters (int nOutP)
-    {
-      return int (double (nOutP * nInRasters) /
-		  (dAspect * double (nInPixels)) + 0.5);
-    }
+  
  protected:
- virtual float* transformLine (int nLine);
  virtual float interpolate (double x, double y);
  virtual double extract (unsigned long p);
-
- int datatype;
  void* imagedata;
- float* pfLine;
- int nInPixels;
- int nInRasters;
- int nOutPixels;
- int nOutRasters;
- double dAspect;
- double dRatio;
+ int datatype;
+ 
 };
 
 //************Bsl input file by Raj ************//
@@ -374,25 +326,21 @@ class NewBinaryFile :  public InConvFile
 
 class BslFile : public NewBinaryFile
 {
-
  public:
  BslFile (): NewBinaryFile()
-{
-}
- BslFile (const char* pszN,int cfr);// : NewBinaryFile(pszN);
-
-  ~BslFile ()
-    {
-
-      }
+  {  }
+BslFile::BslFile(const char* pszN,int nfr,int count) : NewBinaryFile(pszN),cFrame(nfr),Bcount(count)
+{}
+ ~BslFile ()
+   {  }
 
  protected:
  virtual  double extract (unsigned long p);
  void readbslHeader();
- myBool bSwap;
  strng sBinary;
  int nFrames;
  int cFrame;
+ int Bcount;
  FILE *BpFile;
  int Header_size;
  long int memsize;
@@ -402,36 +350,27 @@ class BslFile : public NewBinaryFile
 class BslInFile : public BslFile
 {
  public:
-  BslInFile (const char* pszN,int cfr) :  BslFile(pszN,cfr)
+  BslInFile (const char* pszN,int cfr,int count) :  BslFile(pszN,cfr,count)
     {
     openFile();
     readbslHeader();
-
     }
-
 };
 //********** tiff input file by Raj*************//
 
 class TiffFile : public NewBinaryFile
 {
-
  public:
   TiffFile (const char* pszN,int cdir) : NewBinaryFile(pszN),currentdir(cdir)
     {
       in=NULL;
-
     }
   ~TiffFile ()
     {
-      if (in)
+    if (in!=NULL)
 	TIFFClose(in);
-      if(imagedata){
-	_TIFFfree(imagedata);
-      }
     }
-
  void readtiff();
-
  protected:
  virtual void openFile();
  void TIFFReadDirect();
@@ -441,21 +380,21 @@ class TiffFile : public NewBinaryFile
 
 class TiffInFile : public TiffFile
 {
- public:
+  public:
   TiffInFile (const char* pszN,int cdir) :  TiffFile(pszN,cdir)
     {
       openFile ();
       TIFFReadDirect();
       readtiff();
-
     }
-
+~TiffInFile()
+{ 
+}
 };
 
 //***************BRUKER class By raj****************//
 class BrukerFile : public NewBinaryFile
 {
-  
  public:
   BrukerFile (const char* pszN) : NewBinaryFile(pszN)
     {
@@ -481,7 +420,6 @@ class BrukerFile : public NewBinaryFile
   long int *OFoffset;
   int *OFintensity;
   long int memsize;
-  myBool bSwap;
   char *lineptr;
   char line[81];
 };
@@ -509,61 +447,23 @@ class BrukerAscInFile : public BrukerFile
   
 };
 
-/////BRUKER PLOSTO///////////////////////////
-/*class BrukerPLOSTOFile : public NewBinaryFile
-{
-  
- public:
-  BrukerPLOSTOFile (const char* pszN) : NewBinaryFile(pszN)
-    {
-      
 
-    }
-  ~BrukerPLOSTOFile ()
-    {
-      
-    }
-  
-  void readimage();
-
- protected:
- // virtual  double extract (unsigned long p);
-  
-  int Header_size;
-  long int memsize;
-  myBool bSwap;
-  char *lineptr;
-  char line[80];
-};
-class BrukerPLOSTOInFile : public BrukerPLOSTOFile
-{
- public:
-  BrukerPLOSTOInFile (const char* pszN) :  BrukerPLOSTOFile(pszN)
-    {
-      openFile();
-      readimage();
-    }
-  
-};*/
 /////EPRSID2///////////////////////////
 class MARFile  : public NewBinaryFile
 {
  public:
   MARFile (const char* pszN) : NewBinaryFile(pszN)
     {
-      
     }
   ~MARFile()
-    {
-      
-    }
+    {   }
  protected:
   void readimage();
   virtual  double extract (unsigned long p);
   int bpp;
   unsigned long memsize;
   int header_bytes;
-  myBool bSwap;
+ // myBool bSwap;
 };
 class MARInFile  : public  MARFile
 {
@@ -574,9 +474,7 @@ class MARInFile  : public  MARFile
       readimage();
     }
 ~MARInFile()
-  {
-    
-  }
+  {  }
  
 };
 /////Smv///////////////////////////
@@ -584,20 +482,16 @@ class SMVFile  : public NewBinaryFile
 {
  public:
   SMVFile (const char* pszN) : NewBinaryFile(pszN)
-    {
-      
-    }
+    {    }
 ~SMVFile()
-  {
-    
-  }
+  {  }
  protected:
  void readimage();
  int bpp;
    
  unsigned long memsize;
  int header_bytes;
- myBool bSwap;	
+ //myBool bSwap;	
 };
 class SMVInFile  : public  SMVFile
 {
@@ -608,9 +502,7 @@ class SMVInFile  : public  SMVFile
       readimage();
     }
   ~SMVInFile()
-    {
-      
-    }
+    {    }
 
 };
 /////MAR345///////////////////////////
@@ -634,45 +526,56 @@ class Mar345InFile : public Mar345File
  public:
   Mar345InFile (const char* pszN) :  Mar345File(pszN)
     {
+		readimage();
+    }
+
+};
+
+/////SANS ///////////////////////////
+class SANSFile : public NewBinaryFile
+{
+  
+ public:
+	 SANSFile (const char* pszN,int file) : NewBinaryFile(pszN),fileNo(file)
+    {   }
+  ~SANSFile ()
+    {    }
+
+public:
+int IERRS;
+protected:
+void readimage();
+int fileNo;
+ };
+class SANSInFile : public SANSFile
+{
+ public:
+  SANSInFile (const char* pszN, int file) : SANSFile(pszN,file)
+    {
       openFile();
       readimage();
     }
 
 };
-
 /////LOQ ///////////////////////////
 class LOQFile : public NewBinaryFile
 {
   
  public:
-  LOQFile (const char* pszN) : NewBinaryFile(pszN)
-    {
-      strp=NULL;
-      dataptr=NULL;
-      errorptr=NULL;
-    }
+	 LOQFile (const char* pszN, int file) : NewBinaryFile(pszN),fileNo(file)
+    {    }
   ~LOQFile ()
-    {
-      delete [] strp;
-      delete [] dataptr;
-      delete [] errorptr;
-      strp=NULL;
-      dataptr=NULL;
-      errorptr=NULL;
-
-    }
-
-void readimage1d();
-void readimage2d();
+    {  }
 
 protected:
- char *strp ;
- float *dataptr, *errorptr ;
+void readimage1d();
+void readimage2d();
+  int fileNo;
  char longtitle1[MAXLINE + 1] ;
  float q, c, ce, scale ;
- float cross1d[MAXLEN];
+ float cross1d[MAXLEN], error_cross1d[MAXLEN];
  float xy[2*MAXLEN];
- float cross2d[MAXLEN*MAXLEN];
+ float cross2d[MAXLEN*MAXLEN],error_cross2d[MAXLEN*MAXLEN];
  char line2d[MAXLINE2D + 1] ;
  char line1d[MAXLINE1D + 1] ;
 };
@@ -680,7 +583,7 @@ protected:
 class LOQ1dInFile : public LOQFile
 {
  public:
-  LOQ1dInFile (const char* pszN) : LOQFile(pszN)
+  LOQ1dInFile (const char* pszN, int file) : LOQFile(pszN,file)
     {
       openFile();
       readimage1d();
@@ -691,7 +594,7 @@ class LOQ1dInFile : public LOQFile
 class LOQ2dInFile : public LOQFile
 {
  public:
-  LOQ2dInFile (const char* pszN) :  LOQFile(pszN)
+  LOQ2dInFile (const char* pszN, int file) :  LOQFile(pszN,file)
     {
       openFile();
       readimage2d();
@@ -704,66 +607,33 @@ class TextInFile : public InConvFile
 {
 public:
   TextInFile () : InConvFile ()
-    {
-
-    }
-
+    {  }
   TextInFile (const char* pszN) : InConvFile (pszN)
     {
-      pfLine=NULL;
+	  pfLine=NULL;
       AsciiData=NULL;
       openFile ();
     }
-
   ~TextInFile ()
     {
       delete pIn;
       pIn=NULL;
-
-      if(pfLine){
+    	if(pfLine){
         delete[] pfLine;
         pfLine=NULL;
       }
-      if(AsciiData){
+       if(AsciiData){
         delete[] AsciiData;
         AsciiData=NULL;
       }
     }
-
+protected:
 void openFile();
 virtual void ReadText ()=0;
-virtual void convert (BSLHeader& headerFile, BinaryOutFile& binaryFile);
-virtual void tiffconvert (tiffOutFile& tiffFile );
-virtual float* transformLine (int nLine);
 virtual float interpolate (double x, double y);
-
-int pixels ()
-{
-  return nInPixels;
-}
-
-int rasters ()
-{
-  return nInRasters;
-}
-
-int rasters (int nOutP)
-{
-  return int (double (nOutP * nInRasters) /
-             (dAspect * double (nInPixels)) + 0.5);
-}
-
-protected:
   ifstream* pIn;
-  float* pfLine;
   float *AsciiData;
-  int nInPixels;
-  int nInRasters;
-  int nOutPixels;
-  int nOutRasters;
-  double dAspect;
-  double dRatio;
-};
+ };
 class RisoInFile : public TextInFile
 {
 public:
@@ -789,15 +659,27 @@ class BinaryOutFile : public OutConvFile
   
   BinaryOutFile (const char* pszN) : OutConvFile (pszN)
     {
-      pOut = new ofstream (pszN, ios::out);
+#ifndef WIN32
+		pOut = new ofstream (pszN, ios::out);
+#else
+	  pOut = new ofstream (pszN, ofstream::binary);
+#endif
     }
-  
+
   virtual ~BinaryOutFile ()
     {
-      delete pOut;
-      pOut=NULL;
+
+	#ifndef WIN32 
+	delete pOut;
+    pOut=NULL;
+	  #else    
+     pOut->close();
+     pOut=NULL;
+	 #endif
     }
-  
+
+
+
   void write (const char* pszSource, int nCount)
     {
       pOut->write(pszSource, nCount);
@@ -833,7 +715,7 @@ public:
     }
 
   BSLHeader (const char *pszN, int nPix, int nRast, int dtype, int nFram,
-	     const char *pszHead1, const char *pszHead2);
+	     const char *pszHead1, const char *pszHead2, int ind10);
 
   const strng& binaryName ()
     {
@@ -849,7 +731,7 @@ public:
     {
       return nRasters;
     }
-
+ void  WriteHeader ( int nPix, int nRast, int dtype, int nFram,int ind10,int fileNo);
 protected:
   void legalFileName () throw (XError);
   void legalValues () throw (XError);
@@ -866,18 +748,13 @@ class tiffFile : public OutConvFile
 {
  public:
   tiffFile () : OutConvFile ()
-    {
-
-    }
+    {    }
 
   tiffFile (const char* pszN,int nPix, int nRast) : OutConvFile (pszN) ,nPixels(nPix),nRasters(nRast)
-    {
-
-    }
+    {    }
 
   ~tiffFile ()
-    {
-    }
+    {    }
 
 protected:
 TIFF *out;
@@ -920,5 +797,56 @@ class tiffOutFile : public tiffFile
       return nRasters;
     }
 };
+class txtFile : public OutConvFile
+{
+ public:
+  txtFile () : OutConvFile ()
+    {    }
 
+  txtFile (const char* pszN,int nPix, int nRast) : OutConvFile (pszN) ,nPixels(nPix),nRasters(nRast)
+    {    }
+
+  ~txtFile ()
+    {    }
+
+protected:
+FILE *out;
+int nPixels;
+int nRasters;
+
+};
+class txtOutFile : public txtFile
+{
+ public:
+  txtOutFile () : txtFile ()
+    {
+
+    }
+
+   txtOutFile (const char* pszN ,int nPix, int nRast ): txtFile(pszN,nPix,nRast)
+{
+ out =fopen(sFileName.data(), "w");
+}
+
+  ~txtOutFile ()
+    {
+        if (out)
+	  fclose(out);
+    }
+  FILE* txtout_file()
+  {
+   return out;
+  }
+
+
+  int pixels ()
+    {
+      return nPixels;
+    }
+
+  int rasters ()
+    {
+      return nRasters;
+    }
+};
 #endif

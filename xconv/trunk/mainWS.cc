@@ -81,7 +81,7 @@ char* stripws(char*);
 
   int match(strng[],int,strng&);
 
-  static const int nTypes=23;
+  static const int nTypes=24;
 
 static strng psTypes[nTypes]=
 {
@@ -108,6 +108,7 @@ static strng psTypes[nTypes]=
   strng ("mar345"),
   strng ("bsl"),
   strng ("rax4"),
+  strng ("ILL_SANS"),
 };
 
 
@@ -134,12 +135,13 @@ static strng psTypes[nTypes]=
   static const int MAR345=20;
   static const int BSL=21;
   static const int RAX4=22;
+  static const int SANS=23;
 
-  static myBool bSwap;
+  static myBool bSwap,tiffseries;
   static strng sType,sFile,sNthFile,sOutFile,soFile;
   static strng sHead1,sHead2;
   static int nSkip,nInPix,nInRast,nOutPix,nOutRast,nDataType;
-  static int nFirst,nLast,nInc,nFrames;
+  static int nFirst,nLast,nInc,nFrames,indice10,fileNo;
   static double dAspect,dRange;
 
   static strng gotFile;
@@ -332,9 +334,26 @@ int _UxCmainWS::Convert( Environment * pEnv, char *error )
       BinaryOutFile* pBinary;
       InConvFile* pInFile;
       tiffOutFile* tifffile;
+       txtOutFile* txtfile;
+      int j;
+	   if(dtype>10)
+	 {
+		 soFile=sOutFile;
+		 int nOff; 
+		 if ((nOff = soFile.find("#")) != NPS)
+		 {
+			 tiffseries=1;
+		 }
+		 else
+		 {	 tiffseries=0;
+		 }
+	 }
+	   
+	   // Loop over run numbers
       
-      // Loop over run numbers
-      
+
+
+
       for (int i = nFirst; i <= nLast; i += nInc)
 	{
 	  // Get file name for this run number
@@ -402,10 +421,10 @@ int _UxCmainWS::Convert( Environment * pEnv, char *error )
 	      pInFile = new TiffInFile (sNthFile.data (),0);
 	      break;
 	    case LOQ1D: //log ID image
-	      pInFile = new LOQ1dInFile (sNthFile.data ());
+	      pInFile = new LOQ1dInFile (sNthFile.data (),0);
 	      break;
 	    case LOQ2D://log 2D image
-	      pInFile = new LOQ2dInFile (sNthFile.data ());
+	      pInFile = new LOQ2dInFile (sNthFile.data (),0);
 	      break;
 	    case SMV: //smv format
 	      pInFile = new SMVInFile (sNthFile.data ());
@@ -421,9 +440,13 @@ int _UxCmainWS::Convert( Environment * pEnv, char *error )
 		pInFile =new BrukerPLOSTOInFile (sNthFile.data ());
 		break;*/
 	     case   BSL: //BSl file
-	       pInFile =new BslInFile(sNthFile.data (),0);
+	       pInFile =new BslInFile(sNthFile.data (),0,0);
 	       break;
-
+	case SANS: // sans file format
+			pInFile =new SANSInFile (sNthFile.data (),0);                
+			// pInFile = new TiffInFile (sNthFile.data (),0);
+			 break;
+			 
 	    case TIF: // Tif file format
 	                 pInFile = new TiffInFile (sNthFile.data (),0);
 			 break;
@@ -442,153 +465,472 @@ int _UxCmainWS::Convert( Environment * pEnv, char *error )
 	    }
 	    #endif
 	  
-	  if(!strcmp(outdataptr,"bsl_out")){
-	      if (i == nFirst)
+	   if(dtype<10){
+	     
+		  if (i == nFirst)
 	    	{
-		  // Get the number of pixels from input file object if
-		  // none were specified from the command line
-		
-        	if (nOutPix == 0)
-		  {
-		    nOutPix = pInFile->pixels ();
-			
-	 	   }
-		
-	      // Calculate number of rasters if necessary
-		
-	        if (nOutRast == 0)
-	        {
-		  nOutRast = pInFile->rasters (nOutPix);
-	        }
-		//pInFile->putcurrentdir(0);
-		// Create BSL header and binary file objects
-		nFrames = (nLast - nFirst + nInc) / nInc;
-		
-		if (match(psTypes,nTypes,sType)==TIF &&nFrames==1)
-		  {
-		    nFrames=pInFile->getdircount();
 
-		    pHeader = new BSLHeader(sOutFile.data(),nOutPix,nOutRast,dtype,nFrames,sHead1.data(),sHead2.data());
-		    
-		    pBinary = new BinaryOutFile ((pHeader->binaryName ()).data ());
-		    
-		    for ( int j=0; j<(nFrames-1);j++)
+				// Get the number of pixels from input file object if
+		     // none were specified from the command line
+		   	 if (nOutPix == 0)
+		       {
+		        nOutPix = pInFile->pixels ();
+			   }
+		    // Calculate number of rasters if necessary
+		     if (nOutRast == 0)
+	          {
+		       nOutRast = pInFile->rasters (nOutPix);
+	          }
+		    //pInFile->putcurrentdir(0);
+		    // Create BSL header and binary file objects
+		     nFrames = (nLast - nFirst + nInc) / nInc;
+
+		    //tiff multi frame image 
+		     if (match(psTypes,nTypes,sType)==TIF &&nFrames==1)
 		      {
-			pInFile->putdtype(dtype);
-			pInFile->convert (*pHeader, *pBinary);
-			delete pInFile;
-			pInFile = new TiffInFile(sNthFile.data (),(j+1));
-			//pInFile->putcurrentdir(j+1);
-		      }
+		     
+				  nFrames=pInFile->getdircount();
+			
+		      pHeader = new BSLHeader(sOutFile.data(),nOutPix,nOutRast,dtype,nFrames,sHead1.data(),sHead2.data(),0);
+			//  AfxMessageBox(pHeader->binaryName ().data());
+			  pBinary = new BinaryOutFile ((pHeader->binaryName ()).data ());
+		     
+		       for ( j=0; j<(nFrames-1);j++)
+		         {
+				 pInFile->putdtype(dtype);
+				 pInFile->convert (*pHeader, *pBinary);
+				 delete pInFile;
+				 pInFile = new TiffInFile(sNthFile.data (),(j+1));
+				 }
+			   }
+               // BSL multi frame image 
+		      else if (match(psTypes,nTypes,sType)==BSL &&nFrames==1)
+		      {
+			   int bslcount;
+			   bslcount=0;
+			   nFrames=pInFile->getdircount();
+		       indice10 =  pInFile->bslind();
+			   fileNo =pInFile->bslfilNo();
+			   pHeader = new BSLHeader(sOutFile.data(),nOutPix,nOutRast,dtype,nFrames,sHead1.data(),sHead2.data(),indice10);
+		   	   pBinary = new BinaryOutFile ((pHeader->binaryName ()).data ());
+		       
+			   while(indice10!=0)
+			   {
+
+	            for (  j=0; j<(nFrames-1);j++)
+				  {
+				   pInFile->putdtype(dtype);
+				   pInFile->convert (*pHeader, *pBinary);
+				   delete pInFile;
+				   pInFile = new  BslInFile(sNthFile.data (),(j+1),bslcount);
+		   		  }
+				  pInFile->putdtype(dtype);
+                  pInFile->convert (*pHeader, *pBinary);
+			      delete pInFile;
+			      delete pBinary;
+				  bslcount++;
+				  pInFile = new  BslInFile(sNthFile.data (),0,bslcount);
+				  //pInFile = new  BslInFile(sNthFile.data (),(j+1),1);
+				  nFrames=pInFile->getdircount();
+		          indice10 =  pInFile->bslind();
+			      fileNo =pInFile->bslfilNo();
+				  nOutPix = pInFile->pixels ();
+			      nOutRast = pInFile->rasters (nOutPix);
+				  pHeader->WriteHeader(nOutPix,nOutRast,dtype,nFrames,indice10,fileNo);
+				  pBinary = new BinaryOutFile ((pHeader->binaryName ()).data ());
+			   }
+				  for (  j=0; j<(nFrames-1);j++)
+				  {
+				   pInFile->putdtype(dtype);
+				   pInFile->convert (*pHeader, *pBinary);
+				   delete pInFile;
+				   pInFile = new  BslInFile(sNthFile.data (),(j+1),bslcount);
+		   		  }
+
+			   
+		       }
+			  //////////////////////////LOQ file///////////////////////
+			  else if ((match(psTypes,nTypes,sType)==LOQ1D||match(psTypes,nTypes,sType)==LOQ2D)&&nFrames==1)
+				
+		      {
+               pHeader = new BSLHeader(sOutFile.data(),nOutPix,nOutRast,dtype,nFrames,sHead1.data(),sHead2.data(),1);
+		   	   pBinary = new BinaryOutFile ((pHeader->binaryName ()).data ());
+			   pInFile->putdtype(dtype);
+			   pInFile->convert (*pHeader, *pBinary);
+			   delete pInFile;
+			   delete pBinary;
+			    //error of intensities file 3-for error file
+				if (match(psTypes,nTypes,sType)==LOQ1D)
+			   {
+				 pInFile = new LOQ1dInFile (sNthFile.data (),3);
+			   }else //LOQ2D
+			   {
+				 pInFile = new LOQ2dInFile (sNthFile.data (),3);
+			   }
+               nOutPix = pInFile->pixels ();
+			   nOutRast = pInFile->rasters (nOutPix);
+			   pHeader->WriteHeader(nOutPix,nOutRast,dtype,nFrames,0,2);
+			   pBinary = new BinaryOutFile ((pHeader->binaryName ()).data ());
+			   pInFile->putdtype(dtype);
+			   pInFile->convert (*pHeader, *pBinary);
+			   delete pInFile;
+			   delete pBinary;
+			   delete pHeader;
+			   //create calibration file 2-for calibration  
+			   if (match(psTypes,nTypes,sType)==LOQ1D)
+			   {
+				 pInFile = new LOQ1dInFile (sNthFile.data (),2);
+			   }else //LOQ2D
+			   {
+				 pInFile = new LOQ2dInFile (sNthFile.data (),2);
+			   }
+			   nOutPix = pInFile->pixels ();
+			   nOutRast = pInFile->rasters (nOutPix);
+			   pHeader = new BSLHeader(InConvFile::getQAxFileName(sOutFile.data()).data(),nOutPix,nOutRast,dtype,nFrames,sHead1.data(),sHead2.data(),0);
+		   	   pBinary = new BinaryOutFile ((pHeader->binaryName ()).data ()); 			 
+			 
+			  } 
+			   //////////////////////////SANSfile///////////////////////
+			   else if (match(psTypes,nTypes,sType)==SANS&&nFrames==1)
+				
+		      {
+			   int error,dim;
+               dim=pInFile->rasters();
+			   error=pInFile->bslfilNo();			  
+				if(error==0)
+				{
+					pHeader = new BSLHeader(sOutFile.data(),nOutPix,nOutRast,dtype,nFrames,sHead1.data(),sHead2.data(),0);
+					pBinary = new BinaryOutFile ((pHeader->binaryName ()).data ());
+				} 
+				 else
+  				{
+				    pHeader = new BSLHeader(sOutFile.data(),nOutPix,nOutRast,dtype,nFrames,sHead1.data(),sHead2.data(),1);
+		   			pBinary = new BinaryOutFile ((pHeader->binaryName ()).data ());
+			        pInFile->putdtype(dtype);
+				    pInFile->convert (*pHeader, *pBinary);
+				    delete pInFile;
+				    delete pBinary;
+					pInFile = new SANSInFile (sNthFile.data (),3);
+			        nOutPix = pInFile->pixels ();
+			        nOutRast = pInFile->rasters (nOutPix);
+					pHeader->WriteHeader(nOutPix,nOutRast,dtype,nFrames,0,2);
+					pBinary = new BinaryOutFile ((pHeader->binaryName ()).data ());
+
+				}
+				if(dim==1)
+				{
+			    pInFile->putdtype(dtype);
+			    pInFile->convert (*pHeader, *pBinary);
+			    delete pInFile;
+			    delete pBinary;
+			    delete pHeader;
+                pInFile = new SANSInFile (sNthFile.data (),2);
+			    nOutPix = pInFile->pixels ();
+			    nOutRast = pInFile->rasters (nOutPix);
+			    pHeader = new BSLHeader(InConvFile::getQAxFileName(sOutFile.data()).data(),nOutPix,nOutRast,dtype,nFrames,sHead1.data(),sHead2.data(),0);
+		   	    pBinary = new BinaryOutFile ((pHeader->binaryName ()).data ());
+				 }	 
+			  } ////////////////////////////
+
+		      else
+  			  {
+		      pHeader = new BSLHeader(sOutFile.data(),nOutPix,nOutRast,dtype,nFrames,sHead1.data(),sHead2.data(),0);
+		      pBinary = new BinaryOutFile ((pHeader->binaryName ()).data ());
+		  	  }  
+		  
 		  }
-		else if (match(psTypes,nTypes,sType)==BSL &&nFrames==1)
-		  {
-		 nFrames=pInFile->getdircount();
-		 
-	         pHeader = new BSLHeader(sOutFile.data(),nOutPix,nOutRast,dtype,nFrames,sHead1.data(),sHead2.data());
-		 
-	     	 pBinary = new BinaryOutFile ((pHeader->binaryName ()).data ());
-		 
-	         for ( int j=0; j<(nFrames-1);j++)
-		   {
-		   pInFile->putdtype(dtype);
-		   pInFile->convert (*pHeader, *pBinary);
-		   delete pInFile;
-		   pInFile = new  BslInFile(sNthFile.data (),(j+1));
-		   
-		   }
-	        }
-		else
-		  {
-		    pHeader = new BSLHeader(sOutFile.data(),nOutPix,nOutRast,dtype,nFrames,sHead1.data(),sHead2.data());
-		    
-	        pBinary = new BinaryOutFile ((pHeader->binaryName ()).data ());
-		  }
-		
-	   }
 	      // Convert
 	      pInFile->putdtype(dtype);
 	      pInFile->convert (*pHeader, *pBinary);
-	      
-	      
-		         inpixptr = new char[10];
+          delete pInFile;
+	  }
+	  else //convert to tiff image 
+      {
+	   if (i == nFirst)
+		 {
+		  // Get the number of pixels from input file object if
+	  	  // none were specified from the command line
+		   if (nOutPix == 0)
+ 		   {
+	       	nOutPix = pInFile->pixels ();
+		    }
+	      // Calculate number of rasters if necessary
+		   if (nOutRast == 0)
+		   {
+	         nOutRast = pInFile->rasters (nOutPix);
+		    }
+		   if(dtype==10)
+			{
+			txtfile = new txtOutFile(sOutFile.data(),nOutPix,nOutRast);  
+			}
+		   else{
+		     if(tiffseries==1)
+		 	 {
+		 	 sOutFile=InConvFile::getNthFileName (soFile, 1);
+		     }
+			 tifffile = new tiffOutFile(sOutFile.data(),nOutPix,nOutRast);  
+			 }
+
+		   nFrames = (nLast - nFirst + nInc) / nInc;  
+		  
+         //tiff multi frame image 
+		   if (match(psTypes,nTypes,sType)==TIF &&nFrames==1)
+		     {
+		       nFrames=pInFile->getdircount();
+
+		       for ( j=0; j<(nFrames-1);j++)
+	           {
+			     pInFile->putdtype(dtype);
+			     if(dtype==10)
+			     {
+			      pInFile->convert(*txtfile);
+			     }
+			     else{
+				 pInFile->convert(*tifffile);
+			      }
+
+			     if(tiffseries==1)
+				 {
+					 delete  tifffile;					
+					 sOutFile=InConvFile::getNthFileName (soFile, j+2);
+					 tifffile = new tiffOutFile(sOutFile.data(),nOutPix,nOutRast);  
+					
+				 }
+			   delete pInFile;
+			   pInFile = new TiffInFile(sNthFile.data (),(j+1));
+			   }
+			 }
+		  //BSL multi frame image 
+		   else if (match(psTypes,nTypes,sType)==BSL &&nFrames==1)
+		     {
+		      int bslcount;
+			   bslcount=0;
+			   nFrames=pInFile->getdircount();
+		       indice10 =  pInFile->bslind();
+			   fileNo =pInFile->bslfilNo();
+			   	       
+			   while(indice10!=0)
+			   {
+
+	            for (  j=0; j<(nFrames-1);j++)
+				  {
+				     pInFile->putdtype(dtype);
+				     if(dtype==10)
+					 {
+					 pInFile->convert(*txtfile);
+					 }
+					 else
+					 {
+					  pInFile->convert(*tifffile);
+				     }
+
+				     if(tiffseries==1)
+				     {
+					  delete  tifffile;
+					 sOutFile=InConvFile::getNthFileName (soFile, j+2);
+					 tifffile = new tiffOutFile(sOutFile.data(),nOutPix,nOutRast);  
+					
+					 }
+				     delete pInFile;
+				     pInFile = new  BslInFile(sNthFile.data (),(j+1),bslcount);
+				  }
+			      pInFile->putdtype(dtype);
+                  if(dtype==10)
+				  {
+				  pInFile->convert(*txtfile);
+				  }
+			      else{
+				  pInFile->convert(*tifffile);
+				  }
+				  if(tiffseries==1)
+				  {
+					  delete  tifffile;
+					 sOutFile=InConvFile::getNthFileName (soFile, j+2);
+					 tifffile = new tiffOutFile(sOutFile.data(),nOutPix,nOutRast);  
+					 
+					}
+			      delete pInFile;
+			    
+				  bslcount++;
+				  pInFile = new  BslInFile(sNthFile.data (),0,bslcount);
+				  nFrames=pInFile->getdircount();
+		          indice10 =  pInFile->bslind();
+			      fileNo =pInFile->bslfilNo();
+				  nOutPix = pInFile->pixels ();
+			      nOutRast = pInFile->rasters (nOutPix);
+			   }
+			  for (  j=0; j<(nFrames-1);j++)
+			   {
+			     pInFile->putdtype(dtype);
+			    if(dtype==10)
+			 	{
+				 pInFile->convert(*txtfile);
+				 }
+				 else
+				 {
+			     pInFile->convert(*tifffile);
+				 }
+				  if(tiffseries==1)
+				 {
+					 delete  tifffile;
+					 sOutFile=InConvFile::getNthFileName (soFile, j+2);
+					 tifffile = new tiffOutFile(sOutFile.data(),nOutPix,nOutRast);  
+					 
+					}
+				   delete pInFile;
+				   pInFile = new  BslInFile(sNthFile.data (),(j+1),bslcount);
+			   }
+				 
+			 }
+		     //////////////////////////LOQ file///////////////////////
+		   else if ((match(psTypes,nTypes,sType)==LOQ1D||match(psTypes,nTypes,sType)==LOQ2D)&&nFrames==1)
+				
+		      {
+                 pInFile->putdtype(dtype);
+			 if(dtype==10)
+			 {
+			 pInFile->convert(*txtfile);
+			 }
+			 else{
+		      pInFile->convert(*tifffile);
+			 }
+			 
+			   
+			   //create calibration file 2-for calibration  
+			   if (match(psTypes,nTypes,sType)==LOQ1D)
+			   {
+				 pInFile = new LOQ1dInFile (sNthFile.data (),2);
+			   }else //LOQ2D
+			   {
+				 pInFile = new LOQ2dInFile (sNthFile.data (),2);
+			   }
+			   nOutPix = pInFile->pixels ();
+			   nOutRast = pInFile->rasters (nOutPix);
+			  
+			   if(dtype==10)
+			 {
+			 pInFile->convert(*txtfile);
+			 }
+			 else{
+		      pInFile->convert(*tifffile);
+			 }
+			   delete pInFile;
+			   
+			   
+			  //error of intensities file 3-for error file
+				if (match(psTypes,nTypes,sType)==LOQ1D)
+			   {
+				 pInFile = new LOQ1dInFile (sNthFile.data (),3);
+			   }else //LOQ2D
+			   {
+				 pInFile = new LOQ2dInFile (sNthFile.data (),3);
+			   }
+               nOutPix = pInFile->pixels ();
+			   nOutRast = pInFile->rasters (nOutPix);
+				 
+			  } 
+			   //////////////////////////SANSfile///////////////////////
+		    else if (match(psTypes,nTypes,sType)==SANS&&nFrames==1)
+				
+		      {
+			  int error,dim;
+               dim=pInFile->rasters();
+			   error=pInFile->bslfilNo();			  
+				
+				
+				pInFile->putdtype(dtype);
+			 if(dtype==10)
+			 {
+			 pInFile->convert(*txtfile);
+			 }
+			 else{
+		      pInFile->convert(*tifffile);
+			 }
+				delete pInFile;
+				
+			
+			   
+			  if(dim==1)
+			  {
+			   pInFile = new SANSInFile (sNthFile.data (),2);
+			   nOutPix = pInFile->pixels ();
+			   nOutRast = pInFile->rasters (nOutPix);
+			 
+			  }else if(error==1)
+			  {
+				pInFile = new SANSInFile (sNthFile.data (),2);
+			   nOutPix = pInFile->pixels ();
+			   nOutRast = pInFile->rasters (nOutPix);
+			   
+			  }
+
+			  if((dim==1)&&(error==1))
+			  {
+				pInFile->putdtype(dtype);
+			  if(dtype==10)
+			 {
+			 pInFile->convert(*txtfile);
+			 }
+			 else{
+		      pInFile->convert(*tifffile);
+			 }
+			   delete pInFile;
+			  
+
+			   pInFile = new SANSInFile (sNthFile.data (),3);
+			   nOutPix = pInFile->pixels ();
+			   nOutRast = pInFile->rasters (nOutPix);
+			  }
+	 
+			  } ////////////////////////////
+
+		      }
+		    pInFile->putdtype(dtype);
+		     if(dtype==10)
+			 {
+			 pInFile->convert(*txtfile);
+			 }
+			 else{
+		      pInFile->convert(*tifffile);
+			 }
+		          if(tiffseries==1&& i<nLast)
+				 {
+					 delete  tifffile;
+					 sOutFile=InConvFile::getNthFileName (soFile, i+2);
+					 tifffile = new tiffOutFile(sOutFile.data(),nOutPix,nOutRast);  
+					
+					}
+                   delete pInFile;
+	     }
+		 }
+	
+					inpixptr = new char[10];
 	                 inrastptr = new char[10];
 	                 sprintf(inpixptr,"%d",nOutPix);
 	                 sprintf(inrastptr,"%d",nOutRast);
 	                 XtVaSetValues(UxGetWidget(outpixField),XmNvalue,inpixptr,NULL);
 	                 XtVaSetValues(UxGetWidget(outrastField),XmNvalue,inrastptr,NULL);
-			     sprintf(inpixptr,"%d",pInFile->pixels());
+					 sprintf(inpixptr,"%d",pInFile->pixels());
 	                 sprintf(inrastptr,"%d",pInFile->rasters());
 	                 XtVaSetValues(UxGetWidget(inpixField),XmNvalue,inpixptr,NULL);
 	                 XtVaSetValues(UxGetWidget(inrastField),XmNvalue,inrastptr,NULL);
 	                 delete[] inpixptr;
 	                 delete[] inrastptr;
-			 // Tidy up
-			 delete pInFile;
 
-	  }
-	  
-	  else
-             {
-	       if (i == nFirst)
-		 {
-		   // Get the number of pixels from input file object if
-	      		// none were specified from the command line
-		   
-		   if (nOutPix == 0)
- 		      {
-	        	nOutPix = pInFile->pixels ();
-		      }
-		   
-		   // Calculate number of rasters if necessary
-
-		   if (nOutRast == 0)
-		     {
-	                 nOutRast = pInFile->rasters (nOutPix);
-		     }
-		   tifffile = new tiffOutFile(sOutFile.data(),nOutPix,nOutRast);  
-		   nFrames = (nLast - nFirst + nInc) / nInc;  
-		  // Create BSL header and binary file objects
-		   if (match(psTypes,nTypes,sType)==TIF &&nFrames==1)
-		     {
-		       nFrames=pInFile->getdircount();
-
-		       for ( int j=0; j<(nFrames-1);j++)
-	         	 {
-			   pInFile->putdtype(dtype);
-			   pInFile->tiffconvert(*tifffile);
-			   delete pInFile;
-			   pInFile = new TiffInFile(sNthFile.data (),(j+1));
-		  	 }
-		     }
-		   else if (match(psTypes,nTypes,sType)==BSL &&nFrames==1)
-		     {
-		       nFrames=pInFile->getdircount();
-		       
-		       for ( int j=0; j<(nFrames-1);j++)
-	         	 {
-			   pInFile->putdtype(dtype);
-			   pInFile->tiffconvert(*tifffile);
-			   delete pInFile;
-			   pInFile = new  BslInFile(sNthFile.data (),(j+1));
-	       		 }
-		     }
-		   
-		 }
-		   pInFile->putdtype(dtype);
-		   pInFile->tiffconvert(*tifffile);
-                   delete pInFile;
-	     }
-	}
-     if(!strcmp(outdataptr,"bsl_out"))
-       {
-	  delete pHeader;
-	  delete pBinary;
-       }
-     else
-       delete tifffile;
-
-    }
+    if(dtype<10)
+     {
+     delete pHeader;
+	 delete pBinary;
+     }
+    else if(dtype==10)
+	 {
+	 delete txtfile;
+	 }
+	 else{
+		 delete tifffile;  
+	 }
+    
+  }
   
   catch (XError& xerr)
     {
@@ -749,6 +1091,7 @@ void _UxCmainWS::FieldsEditable( Environment * pEnv, int i )
 	   !strcmp(sType.data(),"bruker_plosto")||
 	   !strcmp(sType.data(),"mar345")||
 	   !strcmp(sType.data(),"tiff")||
+	   !strcmp(sType.data(),"ILL_SANS")||
 	   !strcmp(sType.data(),"bsl")
 	   )
 	XtVaSetValues(UxGetWidget(toggleButton1),XmNsensitive,0,NULL);
@@ -795,6 +1138,7 @@ int _UxCmainWS::GetProfile( Environment * pEnv, char *error )
 	   !strcmp(sType.data(),"mar345")||
 	   !strcmp(sType.data(),"tiff")||
 	   !strcmp(sType.data(),"bsl")||
+	   !strcmp(sType.data(),"ILL_SANS")||
 	   !strcmp(sType.data(),"psci"))
 	{
 	  SaveInPix=0;
@@ -1462,7 +1806,7 @@ int _UxCmainWS::GetParams( Environment * pEnv, char *error )
 
 	strptr=XmTextGetString(outfileText);
 	sptr=stripws(strptr);
-	if(!strcmp(outdataptr,"bsl_out")){
+	if(dtype<10){
 	if(!mainWS_CheckOutFile(mainWS,&UxEnv,sptr,error,TRUE))
 	{
 	  XtFree(strptr);
@@ -1510,6 +1854,7 @@ int _UxCmainWS::GetParams( Environment * pEnv, char *error )
 	(strcmp(dataptr,"gfrm")!=0)&&
 	(strcmp(dataptr,"asc")!=0)&&
 	(strcmp(dataptr,"plosto")!=0)&&
+	(strcmp(dataptr,"ILL_SANS")!=0)&&
 	(strcmp(dataptr,"mar345")!=0))
 	{
 	  strptr=XmTextFieldGetString(inpixField);
@@ -1948,6 +2293,11 @@ int _UxCmainWS::LoadProfile( Environment * pEnv, char *error )
 	  XtVaSetValues(optionMenu1,XmNmenuHistory,optionMenu_p1_loq_2d,NULL);
 	  XtCallCallbacks(optionMenu_p1_loq_2d,XmNactivateCallback,0);
 	}
+		else if(!strcmp(sType.data(),"ILL_SANS"))
+	{
+	  XtVaSetValues(optionMenu1,XmNmenuHistory,optionMenu_p1_sans,NULL);
+	  XtCallCallbacks(optionMenu_p1_sans,XmNactivateCallback,0);
+	}
 	else if(!strcmp(sType.data(),"mar345"))
 	{
 	  XtVaSetValues(optionMenu1,XmNmenuHistory,optionMenu_p1_mar345,NULL);
@@ -2183,7 +2533,7 @@ void  _UxCmainWS::activateCB_optionMenu_p1_BSL_out(
 	Widget                  UxWidget = wgt;
 	XtPointer               UxClientData = cd;
 	XtPointer               UxCallbackArg = cb;
-	outdataptr="bsl_out";
+	
 
 	  XtVaSetValues(optionMenu2,XmNmenuHistory,optionMenu_p1_float32,NULL);
 	  XtCallCallbacks(optionMenu_p1_float32,XmNactivateCallback,0);
@@ -2209,8 +2559,8 @@ void  _UxCmainWS::activateCB_optionMenu_p1_tiff_8out(
 	Widget                  UxWidget = wgt;
 	XtPointer               UxClientData = cd;
 	XtPointer               UxCallbackArg = cb;
-        dtype=8;
-	outdataptr="tiff8";
+    dtype=11;
+	
 	mainWS_FieldsEditable_out(UxThisWidget,&UxEnv,0);
 
 }
@@ -2235,8 +2585,7 @@ void  _UxCmainWS::activateCB_optionMenu_p1_tiff_16out(
 	Widget                  UxWidget = wgt;
 	XtPointer               UxClientData = cd;
 	XtPointer               UxCallbackArg = cb;
-	outdataptr="tiff16";
-	dtype=16;
+	dtype=12;
 	mainWS_FieldsEditable_out(UxThisWidget,&UxEnv,0);
 
 }
@@ -2252,6 +2601,32 @@ void  _UxCmainWS::Wrap_activateCB_optionMenu_p1_tiff_16out(
 	XtPointer               UxCallbackArg = cb;
 	UxContext = (_UxCmainWS *) UxGetContext(UxWidget);
 	UxContext->activateCB_optionMenu_p1_tiff_16out(UxWidget, UxClientData, UxCallbackArg);
+}
+
+void  _UxCmainWS::activateCB_optionMenu_p1_txt_out(
+					Widget wgt,
+					XtPointer cd,
+					XtPointer cb)
+{
+	Widget                  UxWidget = wgt;
+	XtPointer               UxClientData = cd;
+	XtPointer               UxCallbackArg = cb;
+        dtype=10;
+	mainWS_FieldsEditable_out(UxThisWidget,&UxEnv,0);
+
+}
+
+void  _UxCmainWS::Wrap_activateCB_optionMenu_p1_txt_out(
+					Widget wgt,
+					XtPointer cd,
+					XtPointer cb)
+{
+	_UxCmainWS              *UxContext;
+	Widget                  UxWidget = wgt;
+	XtPointer               UxClientData = cd;
+	XtPointer               UxCallbackArg = cb;
+	UxContext = (_UxCmainWS *) UxGetContext(UxWidget);
+	UxContext->activateCB_optionMenu_p1_txt_out(UxWidget, UxClientData, UxCallbackArg);
 }
 void  _UxCmainWS::Wrap_activateCB_optionMenu_p1_float(
 					Widget wgt,
@@ -2770,6 +3145,43 @@ void  _UxCmainWS::Wrap_activateCB_optionMenu_p1_id3(
 	XtPointer               UxCallbackArg = cb;
 	UxContext = (_UxCmainWS *) UxGetContext(UxWidget);
 	UxContext->activateCB_optionMenu_p1_id3(UxWidget, UxClientData, UxCallbackArg);
+}
+
+void  _UxCmainWS::activateCB_optionMenu_p1_sans(
+					Widget wgt,
+					XtPointer cd,
+					XtPointer cb)
+{
+	Widget                  UxWidget = wgt;
+	XtPointer               UxClientData = cd;
+	XtPointer               UxCallbackArg = cb;
+	inpixptr="";
+	inrastptr="";
+	skptr="";
+	asptr="1.0";
+	rangeptr="";
+	dataptr="ILL_SANS";
+#ifndef DESIGN_TIME
+	  sType=strng("ILL_SANS");
+#endif
+
+	mainWS_UpdateFields(UxThisWidget,&UxEnv);
+	mainWS_UpdateData(UxThisWidget,&UxEnv);
+	mainWS_FieldsEditable(UxThisWidget,&UxEnv,0);
+	mainWS_RangeSensitive(UxThisWidget,&UxEnv,0);
+}
+
+void  _UxCmainWS::Wrap_activateCB_optionMenu_p1_sans(
+					Widget wgt,
+					XtPointer cd,
+					XtPointer cb)
+{
+	_UxCmainWS              *UxContext;
+	Widget                  UxWidget = wgt;
+	XtPointer               UxClientData = cd;
+	XtPointer               UxCallbackArg = cb;
+	UxContext = (_UxCmainWS *) UxGetContext(UxWidget);
+	UxContext->activateCB_optionMenu_p1_sans(UxWidget, UxClientData, UxCallbackArg);
 }
 
 void  _UxCmainWS::activateCB_optionMenu_p1_loq_2d(
@@ -3628,7 +4040,7 @@ Widget _UxCmainWS::_build()
 			XmNheight, 659,
 			XmNiconName, "xconv",
 			XmNwidth, 800,
-			XmNtitle, "CCP13 : xconv v5.0 (beta)",
+			XmNtitle, "CCP13 : xconv v6.0 ",
 			XmNx, 0,
 			XmNy, 0,
 			XmNmaxHeight, 659,
@@ -4105,6 +4517,7 @@ Widget _UxCmainWS::_build()
 		(XtPointer) NULL );
 
 	UxPutContext( optionMenu_p1_loq_2d, (char *) this );
+
 //Creation of optionMenu_p1_smv
 	optionMenu_p1_smv = XtVaCreateManagedWidget( "optionMenu_p1_smv",
 			xmPushButtonWidgetClass,
@@ -4181,7 +4594,18 @@ Widget _UxCmainWS::_build()
 		(XtPointer) NULL );
 
 	UxPutContext( optionMenu_p1_mar345, (char *) this );
+//Creation of optionMenu_p1_sans
+	optionMenu_p1_sans = XtVaCreateManagedWidget( "optionMenu_p1_sans",
+			xmPushButtonWidgetClass,
+			optionMenu_p1,
+			RES_CONVERT( XmNlabelString, "ILL_SANS" ),
+			XmNfontList, UxConvertFontList("9x15" ),
+			NULL );
+	XtAddCallback( optionMenu_p1_sans, XmNactivateCallback,
+		(XtCallbackProc) &_UxCmainWS::Wrap_activateCB_optionMenu_p1_sans,
+		(XtPointer) NULL );
 
+	UxPutContext( optionMenu_p1_sans, (char *) this );
 	// Creation of optionMenu1
 	optionMenu1 = XtVaCreateManagedWidget( "optionMenu1",
 			xmRowColumnWidgetClass,
@@ -4749,7 +5173,18 @@ Widget _UxCmainWS::_build()
 
 	UxPutContext( optionMenu_p1_tiff_16out, (char *) this );
 
+// Creation of optionMenu_p1_txt_out
+	optionMenu_p1_txt_out = XtVaCreateManagedWidget( "optionMenu_p1_txt_out",
+			xmPushButtonWidgetClass,
+			optionMenu_p3,
+			RES_CONVERT( XmNlabelString, "Txt" ),
+			XmNfontList, UxConvertFontList("9x15" ),
+			NULL );
+	XtAddCallback( optionMenu_p1_txt_out, XmNactivateCallback,
+		(XtCallbackProc) &_UxCmainWS::Wrap_activateCB_optionMenu_p1_txt_out,
+		(XtPointer) NULL );
 
+	UxPutContext( optionMenu_p1_txt_out, (char *) this );
 	// Creation of optionMenu_p1_float64
 	optionMenu_p1_float64 = XtVaCreateManagedWidget( "optionMenu_p1_float64",
 			xmPushButtonWidgetClass,
@@ -4956,7 +5391,7 @@ swidget _UxCmainWS::_create_mainWS(void)
 	incptr="1";
 	dataptr="float";
 	dtype=0;
-	outdataptr="bsl_out";
+	
 
 #ifndef DESIGN_TIME
 	  nFirst=1;

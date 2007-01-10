@@ -2,6 +2,7 @@
 #define  _MEM_MAP_H
 
 #include <stdio.h>
+#include <stdlib.h> 
 #include <sys/types.h>
 #include <sys/stat.h>
 
@@ -17,9 +18,14 @@
 #ifdef LINUX
   #include <exception>
 #else
-  #include <exception.h>
+#ifdef WIN32
+ #include <exception>
+typedef char *caddr_t;
+#else
+  #include <exception>
 #endif
-
+#endif
+ 
 #include "xerror.h"
 
 #ifndef PROT_RDWR
@@ -31,13 +37,16 @@ class MemMap
 public:
   MemMap ()
     {
-
+	dataAddress=NULL;
+	mapAddress=NULL;
     }
 
   MemMap (FILE *fp, unsigned long ulS, unsigned long ulOS, 
 	  int nProt = 0, int nShare = 0, caddr_t pAddr = 0) :
   pFile (fp), stMapSize ((size_t) ulS)
 {
+	dataAddress=NULL;
+	mapAddress=NULL;
   init (ulOS, nProt, nShare, pAddr);
 }
 
@@ -54,7 +63,7 @@ public:
 
   ~MemMap ()
     {
-      destroy ();
+		destroy ();
     }
   
   void advise (unsigned long nLen, int nAdvice);

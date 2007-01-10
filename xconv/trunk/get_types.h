@@ -55,8 +55,15 @@
   typedef unsigned long BSL_UINT64;
 #else
 #if(SIZEOF_LONG_LONG==8)
+#ifdef _WIN32
+  //typedef signed long  BSL_INT64;
+  //typedef unsigned long BSL_UINT64;
+   typedef __int64 BSL_INT64;
+   typedef unsigned __int64 BSL_UINT64;
+#else
   typedef signed long long BSL_INT64;
   typedef unsigned long long BSL_UINT64;
+#endif
 #else
 #  error Neither SIZEOF_LONG nor SIZEOF_LONG_LONG is 8!
 #endif

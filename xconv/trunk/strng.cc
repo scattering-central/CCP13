@@ -15,7 +15,9 @@
 // not the ANSI C++ standard string.h, which has
 
 // string class definitions
-
+#ifdef WIN32
+#include "stdafx.h"
+#endif
 #include <string.h> 
 
 #include <ctype.h>
@@ -30,7 +32,8 @@ strng::~strng()
 
 {
 
-    delete pszBuffer;
+    if( pszBuffer!=NULL)  
+	delete pszBuffer;
 
 }
 
@@ -439,15 +442,11 @@ void strng::read(istream& is)
 strng& strng::remove()
 
 {
-
+	if (pszBuffer)
     delete pszBuffer;
-
     pszBuffer = 0;
-
     nLength = 0;
-
     return *this;
-
 }
 
 
@@ -498,9 +497,7 @@ strng& strng::replace(size_t nOff,
 
     // okay, now insert the new string back in
 
-    char* pszNewBuffer = 
-
-                    new char[nLength + sNew.nLength + 1];
+    char* pszNewBuffer =    new char[nLength + sNew.nLength + 1];
 
     strncpy(pszNewBuffer, pszBuffer, nOff);
 

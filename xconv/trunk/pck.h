@@ -17,7 +17,6 @@
 #include <math.h>
 #include <ctype.h>
 #include <string.h>
-
 #define BYTE char
 #define WORD  short int
 #define LONG int
@@ -26,6 +25,7 @@
 #define FPOS(a)          ((int)( a/8. + 0.875 )*64)
 
 #define PACKIDENTIFIER "\nCCP4 packed image, X: %04d, Y: %04d\n"
+//#define PACKIDENTIFIER "CCP4 packed image, X: %04d, Y: %04d"
 #define PACKBUFSIZ BUFSIZ
 #define DIFFBUFSIZ 16384L
 #define max(x, y) (((x) > (y)) ? (x) : (y))
@@ -62,9 +62,10 @@ const LONG setbits[33] = {0x00000000L, 0x00000001L, 0x00000003L, 0x00000007L,
 /*
  * Function prototypes
  */
-static void 	get_pck		(FILE *,           WORD *);
-static void 	unpack_wordmar	(FILE *, int, int, WORD *);
+static void 	get_pck		( WORD *);
+//static void 	unpack_wordmar	(FILE *, int, int, WORD *);
+static void 	unpack_wordmar	( int, int, WORD *);
 static void 	rotate_clock90	(WORD *, int);
-static void 	swaplong	( int*, int );
-extern WORD *		openpckfile	(FILE *);
-extern  int getimagesize(FILE *);
+static void 	swaplong	( char*, int );
+extern WORD *		openpckfile	(const char *);
+extern  int getimagesize(const char *);

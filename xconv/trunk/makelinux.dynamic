@@ -1,5 +1,5 @@
 ########################################################################
-# $Date: 2004/01/16 16:49:51 $		$Revision: 2.46.18.6.23.7 $
+# $Date: 1995/03/29 16:49:51 $		$Revision: 2.46.18.6.23.7 $
 ########################################################################
 #             Copyright 1991, Visual Edge Software Ltd.
 #
@@ -40,74 +40,58 @@
 #
 ########################################################################
 
-SYS = sos5
-EXECUTABLE	= xconv
+EXECUTABLE	= ./xconv
 MAIN		= xconv.cc
 INTERFACES	= mainWS.cc \
 	QuestionDialog.cc \
 	FileSelection.cc \
 	ErrorMessage.cc \
 	InformationDialog.cc
-MYCODE		= file.cc \
-	map.cc \
+MYCODE		= map.cc \
+	file.cc \
 	strng.cc \
-        pck.cc
-
+	pck.cc \
+	
 
 LANGUAGE	= C++
-APPL_OBJS	= UxXt.o UxCplus.o UxMethod.o
+APPL_OBJS	= UxXt.o UxCplus.o UxMethod.o 
 
 SHELL		= /bin/sh
 
-X_LIBS          = -lXm -lXpm -lXt -lX11 -lXext
-X_LIBDIR	= /usr/openwin/lib
-X_LIBPATH	= -L$(X_LIBDIR)
-X_CFLAGS        = -I/usr/openwin/include
-T_LIB           = /user/gzr/tiff/lib/libtiff.a -ltiff
-T_LIBPATH       = -L/user/gzr/tiff/lib
-T_CFLAGS        = -I/user/gzr/tiff/include
+X_LIBS		= -lXm  -lXmu -lXt -lXpm -lSM -lICE -lXext -lX11
 
-# For SPARCompiler K&R cc
-KR_CC           = cc
-KR_CFLAGS       = -Xs -D_NO_PROTO
+X_LIBPATH	= -L/usr/X11R6/lib
+MOTIF_LIBPATH	= -L/home/mws/motif
+X_CFLAGS	= -I/usr/X11R6/include
+MOTIF_CFLAGS	= -I/home/mws/motif -DMOTIF
+#T_LIBPATH	= -L/usr/local/lib
+T_LIB		= /usr/local/lib/libtiff.a -ltiff
 
 # For GNU Ansi cc
-#ANSI_CC         = gcc
-#ANSI_CFLAGS     = -ansi
+ANSI_CC         = gcc
+ANSI_CFLAGS     = -ansi -g
 
-# For SPARCompiler Ansi cc
-ANSI_CC         = cc
-ANSI_CFLAGS     =
 
 # For GNU c++
-#CPLUS_CC        = g++
-#CPLUS_CFLAGS    = 
+CPLUS_CC        = g++
+CPLUS_CFLAGS    = -g
 
-# For SPARCompiler c++
-CPLUS_CC        = CC
-CPLUS_CFLAGS    =
+CFLAGS		= -DLINUX -DGNU -DUNIX -DXT_CODE -DXOPEN_CATALOG $(MOTIF_CFLAGS) \
+		  $(X_CFLAGS)
+UCB_LIBPATH     = /usr/ucblib
 
-CFLAGS          = -DGUN -DSOLARIS -DUNIX -DXT_CODE -DXOPEN_CATALOG -DMOTIF\
-                  $(X_CFLAGS) $(T_CFLAGS) -g
-UCB_LIBDIR      = /usr/ucblib
+LIBPATH		= $(MOTIF_LIBPATH) $(X_LIBPATH) $(T_LIBPATH) 
+LIBS            = $(X_LIBS) $(T_LIB) -lm 
 
-
-LIBPATH         = $(X_LIBPATH) $(T_LIBPATH)  
-LIBS            = $(X_LIBS) $(T_LIB)
 
 OBJS = $(MAIN:.cc=.o) $(INTERFACES:.cc=.o) $(MYCODE:.cc=.o) $(APPL_OBJS)
-
-all:		CONFIGURE config $(EXECUTABLE)
-
-CONFIGURE:
-	$(CC) configure.c -o Configure
 
 
 $(EXECUTABLE): $(OBJS)
 	@echo "Linking    $(EXECUTABLE)"
-	$(LD) $(LD_FLAGS) $(OBJS) $(LIBPATH) $(LIBS) -o $(EXECUTABLE)
+	$(LD)   $(OBJS) $(LIBPATH) $(LIBS)  -o $(EXECUTABLE)
 	@echo "Done"
-#$(LD)-B static  $(LD_FLAGS) $(OBJS) $(LIBPATH) $(LIBS) -o $(EXECUTABLE)
+
 
 .SUFFIXES: 
 .SUFFIXES: .o .cc .c
@@ -120,16 +104,14 @@ $(EXECUTABLE): $(OBJS)
 	$(CC) -c $(CFLAGS) $< -o $@
 
 
-clean:
-	@echo "Cleaning xconv $(OBJS)" ; \
-	/bin/rm -f xconv $(OBJS)
+#lean:
+#	@echo "Cleaning xconv $(OBJS)" ; \
+#	bin/rm -f xconv $(OBJS)
 
 CC = \
 @`if [ "$(LANGUAGE)" = "C++" ]; then echo $(CPLUS_CC) $(CPLUS_CFLAGS);fi` \
 `if [ "$(LANGUAGE)" = "ANSI C" ]; then echo $(ANSI_CC) $(ANSI_CFLAGS); fi`\
 `if [ "$(LANGUAGE)" = "KR-C" ]; then echo $(KR_CC) $(KR_CFLAGS); fi`
-
-
 
 LD = \
 @`if [ "$(LANGUAGE)" = "C++" ]; then echo $(CPLUS_CC);fi` \
@@ -140,7 +122,3 @@ LD_FLAGS = \
 `if [ "$(LANGUAGE)" = "C++" ]; then echo $(CPLUS_LDFLAGS);fi`\
 `if [ "$(LANGUAGE)" = "ANSI C" ]; then echo $(ANSI_LDFLAGS); fi`\
 `if [ "$(LANGUAGE)" = "KR-C" ]; then echo $(KR_LDFLAGS); fi`
-
-config:
-	./Configure
-

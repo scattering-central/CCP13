@@ -6,9 +6,13 @@
 
 #define _XERROR_H
 
-
-
+#ifdef WIN32
+#include <iostream>
+using namespace std;
+#else
 #include <iostream.h>
+#endif
+
 
 #include "strng.h"
 

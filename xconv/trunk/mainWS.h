@@ -209,6 +209,7 @@ protected:
 	Widget	optionMenu_p1_id3;
 	Widget	optionMenu_p1_loq_1d;
 	Widget	optionMenu_p1_loq_2d;
+	Widget	optionMenu_p1_sans;
 	Widget	optionMenu_p1_smv;
 	Widget	optionMenu_p1_bruker_gfrm;
 	Widget	optionMenu_p1_bruker_asc;
@@ -267,6 +268,7 @@ protected:
 	Widget	optionMenu_p1_BSL_out;
 	Widget	optionMenu_p1_tiff_8out;
 	Widget	optionMenu_p1_tiff_16out;
+	Widget	optionMenu_p1_txt_out;
 	Widget	optionMenu3;
 	Widget	optionMenu_p3;
 
@@ -344,6 +346,8 @@ protected:
 	static void  Wrap_activateCB_optionMenu_p1_loq_1d(Widget, XtPointer, XtPointer);
 	virtual void  activateCB_optionMenu_p1_loq_2d(Widget, XtPointer, XtPointer);
 	static void  Wrap_activateCB_optionMenu_p1_loq_2d(Widget, XtPointer, XtPointer);
+virtual void  activateCB_optionMenu_p1_sans(Widget, XtPointer, XtPointer);
+	static void  Wrap_activateCB_optionMenu_p1_sans(Widget, XtPointer, XtPointer);
 	virtual void  activateCB_optionMenu_p1_smv(Widget, XtPointer, XtPointer);
 	static void  Wrap_activateCB_optionMenu_p1_smv(Widget, XtPointer, XtPointer);
 	virtual void  activateCB_optionMenu_p1_bruker_gfrm(Widget, XtPointer, XtPointer);
@@ -399,6 +403,8 @@ protected:
 	static void  Wrap_activateCB_optionMenu_p1_tiff_8out(Widget, XtPointer, XtPointer);
 	virtual void  activateCB_optionMenu_p1_tiff_16out(Widget, XtPointer, XtPointer);
 	static void  Wrap_activateCB_optionMenu_p1_tiff_16out(Widget, XtPointer, XtPointer);
+	virtual void  activateCB_optionMenu_p1_txt_out(Widget, XtPointer, XtPointer);
+	static void  Wrap_activateCB_optionMenu_p1_txt_out(Widget, XtPointer, XtPointer);
 	// Callback function to destroy the context
 	static void  UxDestroyContextCB(Widget, XtPointer, XtPointer);
 

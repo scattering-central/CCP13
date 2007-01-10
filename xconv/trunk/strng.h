@@ -13,9 +13,12 @@
 #define _STRNG_
 
 
-
+#ifdef WIN32
+#include <iostream>
+using namespace std;
+#else
 #include <iostream.h>
-
+#endif
 #include <memory.h>
 
 
@@ -36,7 +39,7 @@ class strng
 
         nLength = 0;
 
-        pszBuffer = 0;
+        pszBuffer = NULL;
 
     }
 
@@ -293,7 +296,6 @@ inline istream& operator>>(istream& is, strng& s)
 istream& getline(istream& in, strng& s,
 
                                    char cDelim = '\n');
-
 
 
 #endif

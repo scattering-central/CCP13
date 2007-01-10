@@ -1,5 +1,5 @@
 ########################################################################
-# $Date: 2002-11-13 17:53:17 +0000 (Wed, 13 Nov 2002) $		$Revision: 9 $
+# $Date: 1995/03/29 16:49:51 $		$Revision: 2.46.18.6.23.7 $
 ########################################################################
 #             Copyright 1991, Visual Edge Software Ltd.
 #
@@ -50,10 +50,11 @@ INTERFACES	= mainWS.cc \
 MYCODE		= map.cc \
 	file.cc \
 	strng.cc \
+	pck.cc \
 	
 
 LANGUAGE	= C++
-APPL_OBJS	= UxXt.o UxCplus.o UxMethod.o pck.o
+APPL_OBJS	= UxXt.o UxCplus.o UxMethod.o 
 
 SHELL		= /bin/sh
 
@@ -88,7 +89,7 @@ OBJS = $(MAIN:.cc=.o) $(INTERFACES:.cc=.o) $(MYCODE:.cc=.o) $(APPL_OBJS)
 
 $(EXECUTABLE): $(OBJS)
 	@echo "Linking    $(EXECUTABLE)"
-	$(LD)  $(OBJS) $(LIBPATH) $(LIBS)  -o $(EXECUTABLE)
+	$(LD) -static  $(OBJS) $(LIBPATH) $(LIBS)  -o $(EXECUTABLE)
 	@echo "Done"
 
 
