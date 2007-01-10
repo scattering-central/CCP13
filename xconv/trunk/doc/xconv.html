@@ -1,0 +1,241 @@
+<!doctype html public "-//w3c//dtd html 4.0 transitional//en">
+<html>
+<head>
+   <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+   <meta name="GENERATOR" content="Mozilla/4.51 [en] (WinNT; I) [Netscape]">
+   <title>CCP13 Documentation: XCONV</title>
+</head>
+<body text="#000000" bgcolor="#FFFFCC" link="#0000EE" vlink="#551A8B" alink="#FF0000">
+<i><a href="http://wserv1.dl.ac.uk/SRS/CCP13">CCP13
+- Software Development for Fibre Diffraction</a></i>
+<h2>
+<img SRC="xconv_icon.gif" height=95 width=76 align=CENTER>&nbsp; XCONV:
+File conversion to BSL format</h2>
+
+<table WIDTH="500" >
+<tr>
+<th ALIGN=LEFT>Version 3.0: 29/04/99&nbsp;</th>
+
+<th ALIGN=RIGHT>Richard Denny and Mark Shotton&nbsp;</th>
+</tr>
+
+<tr>
+<td></td>
+
+<td></td>
+</tr>
+</table>
+
+<h3>
+Introduction</h3>
+XCONV provides for the conversion of various image data files to <a href="http://wserv1.dl.ac.uk/SRS/NCD/manual.bsl.html">BSL</a>
+format with the aid of an OSF/Motif-based graphical user interface (GUI).
+It replaces the CONV program. <font size=+0>The XCONV window is split into
+two sections relating to the input image data file(s) and the output BSL
+file (header file + data file). These are described below.</font>
+<br>&nbsp;
+<p><b><font size=+1>Input section</font></b>
+<ul>
+<li>
+<b>Filename ...</b></li>
+
+<br>The path and filename of the input image data file(s) can be entered
+directly in the text window or selected using the File Selection Tool,
+which is opened by clicking the "Browse" button. If no path is specified,
+the current directory is searched. For multiple file input, where filenames
+differ only in their run numbers, the wildcard characters "%" and "#" may
+be entered in the text window. <tt>%</tt> marks the position in the filename
+where the run number is to be inserted. If the run number is to be written
+into a fixed number of positions in the filename, <tt>#</tt> is used to
+indicate the position of a digit.
+<p>For example, <tt>my_data_%.dat</tt> would expand to:
+<br><tt>my_data_1.dat, my_data_2.dat, ... , my_data_10.dat, ...</tt>
+<p>whereas <tt>my_data_###.dat</tt> would expand to:
+<br><tt>my_data_001.dat, my_data_002.dat, ... , my_data_010.dat, ...</tt>
+<br>&nbsp;
+<li>
+<b>First run number, last run number and increment ...</b></li>
+
+<br>If the input filename contains wildcard characters, the run numbers
+to process can be specified with this option.
+<br>&nbsp;
+<li>
+<b>File type ...</b></li>
+
+<br>The following file types are allowed:
+<ol>
+<li>
+<b>float</b> - float</li>
+
+<li>
+<b>int</b> - unsigned int</li>
+
+<li>
+<b>short</b> - unsigned short</li>
+
+<li>
+<b>char</b> - unsigned char</li>
+
+<li>
+<b>smar</b> - small MAR image plate (1200 x 1200)</li>
+
+<li>
+<b>bmar</b> - big MAR image plate (2000 x 2000)</li>
+
+<li>
+<b>fuji</b> - Fuji image plate (2048 x 4096)</li>
+
+<li>
+<b>fuji2500</b> - BAS2500 Fuji image plate (2000 x 2500)</li>
+
+<li>
+<b>rax2</b> - R-Axis II image plate</li>
+
+<li>
+<b>psci</b> - Photonics Science CCD</li>
+
+<li>
+<b>riso</b> - RISO file format</li>
+</ol>
+
+<li>
+<b>Swap byte order ...</b></li>
+
+<br>If this toggle button is activated, the byte order of the input file(s)
+will be swapped.
+<br>&nbsp;
+<li>
+<b>Input pixels and rasters ...</b></li>
+
+<br>If the <b>input file type</b> corresponds to one of the first four
+primitive types listed above, then the number of pixels and rasters in
+the input file(s) must be entered in the text fields provided. These fields
+are filled automatically for the non-primitive types smar, bmar, fuji,
+rax2 and psci.&nbsp; For RISO format files, the input pixels and rasters
+are read from the input file header.
+<br>&nbsp;
+<li>
+<b>Bytes to skip ...</b></li>
+
+<br>If there is some header information to be skipped at the beginning
+of the input file(s), the starting point of the data can be entered in
+this field. If this field is left blank, the number of bytes to skip is
+taken as 0. The field is filled automatically for the non-primitive file
+types.
+<br>&nbsp;
+<li>
+<b>Aspect ratio ...</b></li>
+
+<br>If the image consists of non-square pixels, the X/Y ratio of the pixel
+dimensions can be entered in this field. If no number is entered, the aspect
+ratio is taken as 1.0. The field is filled automatically for the non-primitive
+file types.
+<br>&nbsp;
+<li>
+<b>Dynamic range ...</b></li>
+
+<br>This field may be used to specify the dynamic range for Fuji image
+plates. If the <b>input file type</b> is not fuji, the field is non-selectable.</ul>
+<b><font size=+1>Output Section</font></b>
+<ul>
+<li>
+<b>Filename ...</b></li>
+
+<br>The path and filename of the output BSL header file can be entered
+directly in the text window or selected using the File Selection Tool,
+which is opened by clicking the "Browse" button. If no path is specified,
+the current directory is selected. Multiple input files will be converted
+and written to consecutive frames of the output data file. The BSL file
+format is described in the <a href="http://wserv1.dl.ac.uk/SRS/NCD/manual.bsl.html">BSL
+manual</a>. BSL header filenames must be of the form Xnn000.XXX where X
+is any alphanumeric character and n is a digit. The corresponding BSL data
+file will be named Xnn001.XXX.
+<br>&nbsp;
+<li>
+<b>Data Type ...</b></li>
+
+<br>Specifies the data type of the output BSL file:
+<ol>
+<li>
+<b>float32</b> - 32 bit floating point</li>
+
+<li>
+<b>float64</b> - 64 bit floating point</li>
+
+<li>
+<b>int16 </b>- 16 bit integer</li>
+
+<li>
+<b>uint16</b> - 16 bit unsigned integer</li>
+
+<li>
+<b>int32</b> - 32 bit integer</li>
+
+<li>
+<b>uint32</b> - 32 bit unsigned integer</li>
+
+<li>
+<b>int64</b> - 64 bit integer</li>
+
+<li>
+<b>uint64</b> - 64 bit unsigned integer</li>
+
+<li>
+<b>char8 </b>- 8 bit char</li>
+
+<li>
+<b>uchar8 </b>- 8 bit unsigned char</li>
+
+<br>&nbsp;</ol>
+
+<li>
+<b>Output pixels and rasters ...</b></li>
+
+<br>The number of pixels and rasters in the output data file frame(s) must
+be specified in the fields provided. If either of these fields is left
+blank, the corresponding input file dimension is used. If the output dimensions
+differ from those of the input data file(s), bilinear interpolation is
+used to determine the pixel values at the new positions.
+<br>&nbsp;
+<li>
+<b>Headers 1 and 2 ...</b></li>
+
+<br>Two lines of text to be included in the output BSL header file may
+be specified in these fields.</ul>
+<b><font size=+1>Save profile</font></b>
+<blockquote>The "Save profile" button may be used to save the contents
+of the following fields to an ascii file:
+<ul>
+<li>
+File type</li>
+
+<li>
+Input pixels and rasters</li>
+
+<li>
+Bytes to skip</li>
+
+<li>
+Aspect ratio</li>
+
+<li>
+Dynamic range for Fuji image plates</li>
+
+<li>
+Byte swapping on/off</li>
+
+<li>
+Output pixels and rasters</li>
+</ul>
+The saved profile can then be reloaded on another occasion using the "Load
+profile" button.</blockquote>
+&nbsp;<b><font size=+1>Load profile</font></b>
+<blockquote>The "Load profile" button can be used to open a previously
+saved profile.</blockquote>
+<b><font size=+1>Run</font></b>
+<blockquote>If all information has been entered correctly, clicking on
+the "Run" button will cause the file conversion to proceed. Once the conversion
+has been completed successfully, a message to confirm this will be displayed.</blockquote>
+
+</body>
+</html>
