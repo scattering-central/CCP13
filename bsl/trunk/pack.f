@@ -1,0 +1,126 @@
+C     LAST UPDATE 16/03/89
+C+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+C
+      SUBROUTINE PACK
+      IMPLICIT   NONE
+C
+C Purpose: Pack an image into smaller dimensions by averaging.
+C
+      INCLUDE 'COMMON.FOR'
+C
+C Calls  10: IMDISP , WFRAME , RFRAME , ERRMSG , FILL
+C            GETVAL , GETHDR , OPNFIL , OPNNEW , OUTFIL
+C Called by: BSL
+C
+C-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-
+C LOCAL VARIABLES:
+C
+      REAL            VALUE(10)
+      INTEGER         ISPEC,LSPEC,INCR,MEM,IFFR,ILFR,IFINC,IHFMAX
+      INTEGER         IFRMAX,NPIX,NRAST,NFRAME,IMEM,IFRAME,I,J,K,L
+      INTEGER         XPAK,YPAK,MRAST,MPIX,IRC,M,N,KLMN,INDX,NVAL,KPIC
+      CHARACTER*80    HEAD1,HEAD2
+      CHARACTER*13    OFNAM,HFNAM
+C
+C IFRMAX : NOS. OF FRAMES IN SEQUENCE
+C IHFMAX : NOS. OF HEADER FILE IN SEQUENCE
+C ISPEC  : FIRST HEADER FILE OF SEQUENCE
+C LSPEC  : LAST HEADER FILE IN SEQUENCE
+C MEM    : POSITIONAL OR CALIBRATION DATA INDICATOR
+C IFFR   : FIRST FRAME IN SEQUENCE
+C ILFR   : LAST FRAME IN SEQUENCE
+C INCR   : HEADER FILE INCREMENT
+C IFINC  : FRAME INCREMENT
+C IMEM   : OUTPUT MEMORY DATASET
+C NPIX   : NOS. OF PIXELS
+C NRAST  : NOS. OF RASTERS
+C NFRAME : NOS. OF TIME FRAMES
+C OFNAM  : OUTPUT FILENAME
+C HFNAM  : INPUT FILENAME
+C HEAD1  : HEADER RECORD 1
+C HEAD2  : HEADER RECORD 2
+C XPAK   : X PACKING FACTOR
+C YPAK   : Y PACKING FACTOR
+C MRAST  : ACTUAL NOS. OF RASTER TO PACK (DIVISIBLE BY PACKING FACTOR)
+C MPIX   : ACTUAL NOS. OF PIXELS TO PACK (DIVISIBLE BY PACKING FACTOR)
+C IRC    : RETURN CODE   
+C
+      DATA IMEM/1/
+C
+C-----------------------------------------------------------------------
+C
+C========GET HEADER & BINARY FILE ATTRIBUTES
+C
+10    KPIC=0
+      CALL GETHDR (ITERM,IPRINT,IUNIT,HFNAM,ISPEC,LSPEC,INCR,MEM,IFFR,
+     &             ILFR,IFINC,IHFMAX,IFRMAX,NPIX,NRAST,IRC)
+      IF (IRC.NE.0) GOTO 999
+      IFRAME=IHFMAX+IFRMAX-1
+C
+C========GET X & Y PACKING FACTORS
+C
+      XPAK=1
+      YPAK=1
+20    WRITE (IPRINT,1000) 
+      CALL GETVAL (ITERM,VALUE,NVAL,IRC)
+      IF (IRC.EQ.1) GOTO 999
+      IF (IRC.EQ.2) GOTO 20
+      IF (NVAL.GT.0) XPAK=INT(VALUE(1))
+      IF (NVAL.GT.1) YPAK=INT(VALUE(2))
+      IF (XPAK.LT.1.OR.YPAK.LT.1.OR.XPAK.GT.NPIX.
+     &   OR.YPAK.GT.NRAST) THEN
+         CALL ERRMSG ('Error: Invalid packing factor')
+         GOTO 20
+      ENDIF
+C
+      DO 70 I=1,IHFMAX
+         CALL OPNFIL (JUNIT,HFNAM,ISPEC,MEM,IFFR,ILFR,NPIX,NRAST,
+     &                NFRAME,IRC)
+         IF (IRC.EQ.0) THEN
+C
+            ISPEC=ISPEC+INCR
+            DO 60 J=1,IFRMAX
+               CALL RFRAME (JUNIT,IFFR,NPIX,NRAST,SP1,IRC)
+               IF (IRC.NE.0) GOTO 80
+               IFFR=IFFR+IFINC
+               KPIC=KPIC+1
+C
+C========PACK IMAGE
+C
+               MRAST=(NRAST/YPAK)
+               MPIX=(NPIX/XPAK)
+               CALL FILL (SP2,MPIX*MRAST,0.0)
+               INDX=1
+               DO 40 K=1,MRAST*YPAK,YPAK
+                  DO 35 L=1,MPIX*XPAK,XPAK
+                     DO 30 M=1,YPAK
+                        DO 25 N=1,XPAK
+                           KLMN=(K+M-2)*NPIX+(L+N-1)
+                           SP2(INDX)=SP2(INDX)+SP1(KLMN)
+25                      CONTINUE
+30                   CONTINUE
+                     SP2(INDX)=SP2(INDX)/REAL(XPAK*YPAK)
+                     INDX=INDX+1
+35                CONTINUE
+40             CONTINUE
+C
+               IF (IFRAME.EQ.1) CALL IMDISP(ITERM,IPRINT,SP2,MPIX,MRAST)
+               IF (KPIC.EQ.1) THEN
+                  CALL OUTFIL (ITERM,IPRINT,OFNAM,HEAD1,HEAD2,IRC)
+                  IF (IRC.NE.0) GOTO 80
+                  CALL OPNNEW (KUNIT,MPIX,MRAST,IFRAME,OFNAM,IMEM,HEAD1,
+     &                         HEAD2,IRC)
+                  IF (IRC.NE.0) GOTO 80
+               ENDIF
+               CALL WFRAME (KUNIT,KPIC,MPIX,MRAST,SP2,IRC)
+               IF (IRC.NE.0) GOTO 80
+60          CONTINUE
+            CALL FCLOSE (JUNIT)
+         ENDIF
+70    CONTINUE
+80    CALL FCLOSE (KUNIT)
+      CALL FCLOSE (JUNIT)
+      GOTO 10
+999   RETURN
+1000  FORMAT(' Enter X & Y packing factors [1,1]: ',$)
+      END

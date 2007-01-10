@@ -1,0 +1,308 @@
+      SUBROUTINE VB06A (M,N,XD,YD,WD,RD,XN,FN,GN,DN,THETA,IPRINT,W)
+C
+C	-----------------------------------------------------------
+C
+C	to calculate a least squares fit to given data
+C	x\i\, y\i\, w\i\	i=1,2, .... m
+C	by cubic spline S\x\, which has knots specified by the user.
+C	smoothing conditions under control of the user.
+C
+C	------------------------------------------------------------
+C
+      LOGICAL SWITCH
+      REAL*8   W(1),ALPHA
+      DIMENSION XD(1),YD(1),WD(1),RD(1),XN(1),FN(1),GN(1),DN(1),
+     1THETA(1)
+C     RESERVE THE FIRST FIFTEEN LOCATIONS OF W FOR
+C     COMPUTED VALUES AND THIRD DERIVATIVES OF B-SPLINES
+      W(1)=0.
+      W(7)=0.
+C     THEN SET THE KNOT POSITIONS INCLUDING SIX OUTSIDE THE RANGE
+C     AND DELETE ANY KNOTS NOT IN STRICTLY ASCENDING ORDER
+      I=1
+      NN=1
+   10 W(NN+18)=XN(I)
+   20 IF (I.GE.N) GO TO 30
+      I=I+1
+      IF (XN(I).LE.W(NN+18)) GO TO 20
+      NN=NN+1
+      XN(NN)=XN(I)
+      THETA(NN)=THETA(I)
+      GO TO 10
+   30 IF (NN.GE.N) GO TO 50
+      N=NN
+      WRITE(5,40)
+   40 FORMAT (//5X,'SOME KNOTS HAVE BEEN DELETED BY VB06A')
+   50 IF (NN.GE.2) GO TO 70
+      WRITE(5,60)
+   60 FORMAT (//5X,'THE EXECUTION OF VB06A HAS BEEN STOPPED ',
+     1'BECAUSE THERE ARE TOO FEW KNOTS')
+      GO TO 770
+   70 DO 80 I=1,3
+      W(19-I)=2.*W(20-I)-W(21-I)
+   80 W(NN+I+18)=2.*W(NN+I+17)-W(NN+I+16)
+C     DELETE ANY DATA POINTS THAT ARE NOT IN ASCENDING ORDER
+      I=1
+      MM=1
+      XD(MM)=AMIN1(AMAX1(XD(1),XN(1)),XN(NN))
+   90 IF (I.GE.M) GO TO 100
+      I=I+1
+      IF (XD(I).LT.XD(MM)) GO TO 90
+      MM=MM+1
+      XD(MM)=AMIN1(XD(I),XN(NN))
+      YD(MM)=YD(I)
+      WD(MM)=WD(I)
+      GO TO 90
+  100 IF (MM.GE.M) GO TO 120
+      M=MM
+      WRITE(5,110)
+  110 FORMAT (//5X,'SOME DATA POINTS HAVE BEEN DELETED BY VB06A')
+C     COMPUTE THE THIRD DERIVATIVES OF THE B-SPLINES AT XN(1)
+  120 SWITCH=.TRUE.
+      IN=1
+      GO TO 280
+  130 DO 140 I=2,5
+      W(I+6)=W(I)
+  140 W(I+10)=W(I)
+C     INITIALIZE THE FACTORIZATION OF THE LEAST SQUARES MATRIX
+      KS=NN+22
+      KU=KS+22
+      DO 150 I=KS,KU
+  150 W(I)=0.
+      IM=1
+      IN=2
+      KK=KS
+      SWITCH=.FALSE.
+C     TEST WHETHER A DATA POINT OR A KNOT DEFINES THE NEXT EQUATION
+  160 KR=KK
+      NC=5
+      IF (IM.GT.MM) GO TO 260
+      IF (XD(IM).GT.XN(IN)) GO TO 260
+C     CALCULATE THE VALUES OF THE B-SPLINES AT XD(IM)
+  170 W(2)=1./(W(IN+18)-W(IN+17))
+      DO 190 J=2,4
+      I=J+1
+      W(I)=0.
+  180 II=IN+I+16
+      W(I)=((XD(IM)-W(II-J))*W(I-1)+(W(II)-XD(IM))*W(I))/(W(II)-W(II-J))
+      I=I-1
+      IF (I.GE.2) GO TO 180
+  190 CONTINUE
+      IF (SWITCH) GO TO 540
+C     COMPLETE THE EQUATION OF THE DATA POINT
+      W(6)=YD(IM)
+      C=WD(IM)**2
+      IM=IM+1
+C     REVISE NC PRIOR TO THE NEXT GIVENS TRANSFORMATION
+  200 NC=NC-1
+      IF (NC.LE.0) GO TO 160
+C     MAKE THE GIVENS TRANSFORMATION
+  210 ALPHA=C*W(2)
+      IF (ALPHA.NE.0.) GO TO 230
+      DO 220 I=1,NC
+  220 W(I+1)=W(I+2)
+      GO TO 250
+  230 DSTAR=W(KR)+ALPHA*W(2)
+      BETA=W(KR)/DSTAR
+      C=BETA*C
+      GAMMA=ALPHA/DSTAR
+      W(KR)=DSTAR
+      DSTAR=W(2)
+      DO 240 I=1,NC
+      W(I+1)=W(I+2)-DSTAR*W(KR+I)
+  240 W(KR+I)=BETA*W(KR+I)+GAMMA*W(I+2)
+  250 KR=KR+7
+      GO TO 200
+C     ADVANCE THE CURRENT ROW OF THE UPPER TRIANGULAR MATRIX
+  260 IF (IN.GE.NN) GO TO 330
+      W(KK+28)=0.
+      DO 270 I=4,28,6
+      W(KK+I+1)=W(KK+I)
+  270 W(KK+I)=0.
+      KK=KK+7
+C     CALCULATE THE THIRD DERIVATIVES OF THE B-SPLINES AT XN(IN+)
+  280 W(2)=6./(W(IN+19)-W(IN+18))
+      DO 300 J=2,4
+      I=J+1
+      W(I)=0.
+  290 II=IN+I+17
+      W(I)=(W(I-1)-W(I))/(W(II)-W(II-J))
+      I=I-1
+      IF (I.GE.2) GO TO 290
+  300 CONTINUE
+      IF (SWITCH) GO TO 130
+C     SET UP THE EQUATION FOR THE SMOOTHING TERM AT A KNOT
+      ALPHA=0.
+      I=6
+  310 W(I)=W(I-1)-ALPHA
+      I=I-1
+      IF (I.LE.1) GO TO 320
+      ALPHA=W(I+6)
+      W(I+6)=W(I)
+      GO TO 310
+  320 C=THETA(IN)**2
+      IN=IN+1
+      GO TO 210
+C     BACK-SUBSTITUTE TO OBTAIN THE MULTIPLIERS OF THE B-SPLINES
+  330 KU=KK
+      KUU=KU+21
+      KB=KS+7
+      IBS=5
+      DO 335 I=3,6
+      KK=KK+7
+  335 W(KK-2)=W(KK-I)
+  340 KK=KUU+IBS
+      KR=KK
+  350 KK=KK-7
+      K=KK
+      J=KK-IBS
+  360 J=J+1
+      K=K+7
+      W(KK)=W(KK)-W(J)*W(K)
+      IF (K.LT.KR) GO TO 360
+      KR=MIN0(KR,KK+21)
+      IF (KK.GT.KB) GO TO 350
+      IF (IBS-6) 370,470,500
+  370 SWITCH=.TRUE.
+      ALPHA=1.
+      DO 380 K=KS,KUU,7
+  380 ALPHA=MIN(ALPHA,W(K))
+      IF (ALPHA.LE.0.) GO TO 592
+      IF (NN.LE.2) GO TO 600
+C     NEXT A SPLINE WITH FIXED VALUES OF S'''(XN(1)) AND S'''(XN(N))
+C     IS CALCULATED TO OBTAIN THE OPTIMAL EXTREME VALUES OF S'''(X).
+C     SET THE COEFFICIENTS OF S'''(X(1)) AND S'''(X(N))
+      KR=KS
+      KK=KU
+      DO 410 I=8,11
+      W(KK+4)=W(I)
+      KK=KK+7
+      W(KR+6)=W(I+4)
+  410 KR=KR+7
+      DO 420 K=KR,KUU,7
+  420 W(K+6)=0.
+      IBS=6
+      KRR=KS
+C     BACK-SUBSTITUTE USING THE TRANSPOSE OF THE UPPER TRIANGULAR
+C     MATRIX TO CALCULATE THE RESIDUALS OF EACH EXTRA SPLINE
+  425 I=KRR+7
+      KR=KRR
+      DO 450 KK=I,KUU,7
+      J=KK
+      K=KK
+  430 K=K-7
+      J=J-6
+      W(KK+IBS)=W(KK+IBS)-W(J)*W(K+IBS)
+      IF (K.GT.KR) GO TO 430
+  450 KR=MAX0(KR,KK-21)
+      DO 460 KK=KRR,KUU,7
+  460 W(KK+IBS)=W(KK+IBS)/W(KK)
+      IF (IBS.EQ.6) GO TO 340
+      DO 465 K=KS,KUU,7
+      W(K+7)=0.
+  465 IF (K.GE.KU) W(K+7)=W(K+4)
+      IBS=7
+      GO TO 340
+C     BACK-SUBSTITUTE TO GIVE THE VECTOR FOR S'''(X(N))
+  470 IBS=4
+      KRR=KU
+      GO TO 425
+C     AT EACH DATA POINT CALCULATE THE RESIDUALS OF THREE SPLINES
+  500 DO 520 I=6,10
+  520 W(I)=0.
+      IN=2
+      KK=KS
+      DO 580 IM=1,MM
+  530 IF (XD(IM).LE.XN(IN)) GO TO 170
+      IN=IN+1
+      KK=KK+7
+      GO TO 530
+  540 KR=KK
+      W(11)=YD(IM)
+      W(12)=0.
+      W(13)=0.
+      DO 560 I=2,5
+      DO 550 J=5,7
+  550 W(J+6)=W(J+6)-W(I)*W(KR+J)
+  560 KR=KR+7
+      DO 570 I=11,13
+  570 W(I)=WD(IM)*W(I)
+C     FORM THE NORMAL EQUATIONS TO FIX S'''(X) AT THE ENDS OF THE RANGE
+      DO 580 I=12,13
+      K=I+I-29
+      DO 580 J=11,I
+  580 W(K+J)=W(K+J)+W(I)*W(J)
+C     CALCULATE THE B-SPLINE MULTIPLIERS OF THE REQUIRED FIT
+      ALPHA=(W(8)*W(9)-W(6)*W(10))/(W(7)*W(10)-W(9)**2)
+      BETA=(-W(8)-ALPHA*W(9))/W(10)
+      DO 590 K=KS,KUU,7
+  590 W(K+5)=W(K+5)+ALPHA*W(K+6)+BETA*W(K+7)
+      GO TO 600
+C     PRINT A DIAGNOSTIC MESSAGE IF THERE IS INSUFFICIENT DATA
+  592 WRITE(5,594)
+  594 FORMAT (//5X,'THE RESULTS FROM VB06A ARE UNRELIABLE BECAUSE ',
+     1'THERE IS INSUFFICIENT DATA TO DEFINE THE SPLINE UNIQUELY')
+C     CALCULATE THE REQUIRED VALUES OF S(X) AND S'(X) AT THE KNOTS
+  600 KK=KS
+      DO 620 IN=1,NN
+      FN(IN)=0.
+      GN(IN)=0.
+      W(2)=(W(IN+19)-W(IN+18))/((W(IN+19)-W(IN+17))*(W(IN+19)-W(IN+16)))
+      W(3)=(W(IN+18)-W(IN+17))/((W(IN+19)-W(IN+17))*(W(IN+20)-W(IN+17)))
+      W(4)=0.
+      DO 610 I=1,3
+      J=IN+I+14
+      ALPHA=((XN(IN)-W(J))*W(I)+(W(J+4)-XN(IN))*W(I+1))/(W(J+4)-W(J))
+      FN(IN)=FN(IN)+ALPHA*W(KK+5)
+      BETA=3.*(W(I)-W(I+1))/(W(J+4)-W(J))
+      GN(IN)=GN(IN)+BETA*W(KK+5)
+  610 KK=KK+7
+  620 KK=KK-14
+C     CALCULATE THE THIRD DERIVATIVE DISCONTINUITIES OF THE SPLINE
+      DN(1)=0.
+      IN=1
+      IM=1
+  630 H=XN(IN+1)-XN(IN)
+      ALPHA=FN(IN)-FN(IN+1)+H*GN(IN)
+      BETA=ALPHA+FN(IN)-FN(IN+1)+H*GN(IN+1)
+      DN(IN+1)=6.*BETA/H**3
+      DN(IN)=DN(IN+1)-DN(IN)
+      IN=IN+1
+C     CALCULATE THE RESIDUALS AT THE DATA POINTS
+  640 IF (IM.GT.MM) GO TO 650
+      IF (XD(IM).GT.XN(IN)) GO TO 630
+      C=(XD(IM)-XN(IN-1))/H
+      RD(IM)=YD(IM)-C*FN(IN)+(C-1.)*(FN(IN-1)+C*(ALPHA-C*BETA))
+      IM=IM+1
+      GO TO 640
+  650 IF (IN.LT.NN) GO TO 630
+C     PROVIDE PRINTING IF REQUESTED
+      IF (IPRINT.LE.0) GO TO 770
+      WRITE(5,660)
+  660 FORMAT (1H1,35X,'SPLINE APPROXIMATION OBTAINED BY VB06A'//4X,'I',
+     19X,'XN(I)',18X,'FN(I)',18X,'GN(I)',13X,'3RD DERIV CHANGE',
+     211X,'THETA(I)'//)
+      I=1
+  670 WRITE(5,680)I,XN(I),FN(I),GN(I)
+  680 FORMAT (I5,5E23.14)
+  690 I=I+1
+      IF (I-NN) 700,670,710
+  700 WRITE(5,680)I,XN(I),FN(I),GN(I),DN(I),THETA(I)
+      GO TO 690
+  710 WRITE(5,720)
+  720 FORMAT (///4X,'I',9X,'XD(I)',18X,'YD(I)',18X,'WD(I)',19X,'FIT',
+     118X,'RESIDUAL'//)
+      IN=2
+      DO 760 IM=1,MM
+  730 IF (XD(IM).LE.XN(IN)) GO TO 750
+      IN=IN+1
+      IF (SWITCH) GO TO 730
+      SWITCH=.TRUE.
+      WRITE(5,740)
+  740 FORMAT (5X)
+      GO TO 730
+  750 C=YD(IM)-RD(IM)
+      WRITE(5,680)IM,XD(IM),YD(IM),WD(IM),C,RD(IM)
+  760 SWITCH=.FALSE.
+  770 RETURN
+      END

@@ -1,0 +1,83 @@
+Otoko is a 1-D interactive data manipulation package.
+
+ .ABS Calculate the absolute value of all data points.
+ .ADC Add a constant to a selected range in spectrum.
+ .ADD Perform weighted addition of two spectra.
+ .ADN Add and normalise data in a region of interest.
+ .ASF Add single file to multiple frames.
+ .AVE Calculate the average of a multiple set of data files.
+ .BAK Perform automatic background removal by spline.
+ .BPK Subtract background under a peak by polynomial fitting.
+ .CHG Modify selected channels of a spectrum.
+ .COS Calculate the cosine of data points.
+ .CPK Determine the major peak parameters.
+ .CUM Calculate the cumulative sum for a region of interest.
+ .CUT Cut a frame into a series of frames.
+ .DER Calculate the first derivative of all data points.
+ .DIC Divide a constant into a selected range in spectrum.
+ .DIN Divide and normalise data in a region of interest.
+ .DIV Perform weighted division of two spectra.
+ .EXP Calculate the exponential of all data values.
+ .FCH Calculate the fractional change.
+ *FFT Compute an in-place DFT using Sande algorithm.
+ .FIT Perform interactive background fitting.
+ .FPK Pack a series of frames using frame increment supplied.
+ *FPK Average a range of frames to a given packing sequence.
+ .FUN Generate a function.
+ .GEN Generate a frame of data.
+ .GIN Generate interpolated x-axis
+ *GUI Calculate Guinier functions.
+ *IFT Compute the reverse in-place DFT using Sande algorithm.
+ *ILT Calculate inverse latice transform.
+ .INT Integrate a series of data files.
+ .ISQ Integrate sequentially using specified sequence.
+ *ISQ Integrate sequentially using specified sequence.
+ .ITP Interpolate a series of data points.
+ .JOI Combine a series of time frames into a single sequence.
+ .LAT Calculate electron densities from amplitudes.
+ .LOG Calculate 1000*log (base10) of data.
+ .LSQ Calculate the least squares fit to a straight line.
+ .MAX Calculate maximum value of spectrum.
+ *MAX Calculate max value and position in terms of X data.
+ .MIR Make a mirror image of spectrum.
+ .MPL Make a multiple plot of spectra.
+ *MPL Make a multiple plot of spectra with an x-axis.
+
+ .MRG Merge a series of frames into one frame.
+ *MRG Merge a series of frames into one frame with an X-axis.
+ .MUC Multiply a selected range in spectrum by a constant.
+ .MUL Perform weighted multiplication of two spectra.
+ .MUN Multiply and normalise data in a region of interest.
+ .NBK Background subtraction using variable degree polynomial
+ .PAK Compress a frame of data by averaging.
+ .PCC Plot the percentage change.
+ .PKK Calculate the parameters which describe a peak.
+ *PLC Produce a correlation plot for a series of frames.
+ .PLO Plot a series of frames.
+ *PLO Plot a series of frames with an x-axis.
+ .PL3 Make a 3D plot of a series of frames.
+ .PNT Select points and store in file
+ *POE 
+ .POL Calculate a polynomial of degree M.
+ *POL Calculate a polynomial of degree M, with an x-axis.
+ .POW Raise data values to specified power.
+ .PRO Process raw data upto and including shift.
+ .PRT Print values of data on laser, lineprinter or terminal.
+ .RBK Background subtraction using straight line fitting
+ *RMZ Remove zero values from dataset
+ .SBK Background subtraction (linear, with same value repeat)
+ .SEL Select a section of data.
+ .SEP Separate odd/even values into 2 files
+ *SFT Compute the Singleton Fast Forward fourier transform.
+ .SHO Shift to optimize overlap.
+ .SIN Calculate the sine of all data points.
+ .SIT Compute the reverse Singleton fourier transform.
+ .SMO Smooth a spectrum using a five point parabola.
+ .SPL Calculate spline function through data.
+ *SPL Calculate spline function through data with an X-axis.
+ .SUM Calculate the sum of a multiple set of data files.
+ .SUN Subtract and normalise data in a region of interest.
+ .WIN Create a TUKEY window function for a FFT.
+ .XAX Generate an x-axis.
+ .XSH Shift a spectrum in y direction.
+ .ZER Replace all negative values by zero.

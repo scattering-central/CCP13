@@ -1,0 +1,53 @@
+BSL is a 2-D interactive data manipulation package.
+
+ .ADC Add a constant to a selected range in spectrum.
+ .ADD Weighted addition of two images.
+ .ADN Add and normalise image using a calibration file.
+ .ARG Display image on X-window terminal
+ .ASF Add/subtract a single file/raster to an image.
+ .AVE Average a series of images
+ .BAK Background subtraction of an image
+ .CHG Change a selected value in an image
+ .CNV Convolve two files
+ .CON Generate a contour map
+ .CUT Cut part of an image into a smaller image
+ .DGL Deglitch an image
+ .DIC Divide a selected region of an image by a constant
+ .DIN Divide and normalise image using a calibration file.
+ .DIS Display image on X-window terminal
+ .DIV Weighted division of two images
+ .DSF Divide an image by a single file/raster.
+ .DUP Duplicate and or remove frames of an image.
+ .EXP Exponentiate data values.
+ .FFT Perform 2-D fourier transform on an image
+ .GAU Generate a 2-D gaussian function 
+ .HOR Perform a horizontal integration in a selected region.
+ .IFT Calculate the inverse fourier transform.
+ .INT Integrate through selected region of image.
+ .IPO Transform image from polar to cartesian coordinates.
+ .ITP Interpolate a 2-D iamge
+ .LOG Calculate natural or base10 log of image.
+ .LZR Create postscript output file of image.
+ .MAX Calculate minimum & maximum values of an image.
+ .MIR Mirror the four quadrants of an image.
+ .MSF Multiply an image by a single file/raster.
+ .MSK Display an image & create a bit mask of selected areas.
+ .MUC Multiply a selected region of an image by a constant.
+ .MUL Weighted multiplication of two images.
+ .MUN Multiply and normalise image using a calibration file.
+ .PAK Pack an image into smaller dimensions by averaging.
+ .POL Transform image from cartesian to polar cordinates
+ .POW Raises image to specified power.
+ .PRT Print values of data on lineprinter or terminal.
+ .RAD Create circles around a centre point.
+ .REM Duplicate and or remove frames of an image.
+ .REP Replace a single raster or rasters in an image.
+ .RMP Remap an image to a given set of remapping points.
+ .ROT Rotate an image.
+ .SEC Perform sector integration.
+ .SHF Shift an image in x and/or y directions.
+ .SUM Sum a series of images.
+ .SUN Subtract and normalise image using a calibration file.
+ .VER Perform a vertical integration in a selected region.
+ .WIN Create a contrast transfer function in 2D from 1D file.
+ .ZER Set all negative values in an image equal to 0.0.

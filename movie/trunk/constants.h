@@ -1,0 +1,160 @@
+/*                                      
+   Program    :    Movie 
+   FileName   :    constants.h
+   Author     :    Written By L.Hudson.
+ */
+        
+#ifndef _CONSTANTS_
+#define _CONSTANTS_
+
+#define MAX(a, b) ((a) > (b) ? (a) : (b))
+#define MIN(a, b) ((a) < (b) ? (a) : (b))
+#define FALSE 			0
+#define TRUE 			1
+#define ONMERID                 1
+#define OFFMERID                0
+#define SMALL                   1E-8
+#define NOT(A) 			((A) =! (A))
+#define AMBIGUOUS 		-1
+#define NOMATCH 		0
+#define GLOBAL 			1
+#define SIMPLEX 		2
+#define POWELL                  3
+#define LEASTSQ 		4
+#define CORRELATION 		5
+#define SCORING			6
+#define CRYSTALLOGRAPHIC 	7
+#define WEIGHTED 		8
+#define MSLEW 			9
+#define MTILT 			10
+#define MROTATION 		11
+#define MHEADSEP 	       	12
+#define MHEADANG   		13
+#define LATTICEROT 		14
+#define CELL 			15
+#define MREPEAT 	       	16
+#define MYOSIN			17
+#define ACTIN 			18
+#define TOTREPEAT 	       	19
+#define IFILE 			20
+#define HEADFILE  		21
+#define MRADIUS 	       	22
+#define MPSLEW 			23
+#define MPTILT 			24
+#define MPROTATION 	       	25
+#define STATUS 			26
+#define QUIT 			27
+#define EXIT 			28
+#define VIEW 			29
+#define STRANDS 		30
+#define MCROWN 			31
+#define MRASTER 		32
+#define MSPHERE 		33
+#define RUN 			34
+#define SCOREDEV                35
+#define HKLOUTPUT               36
+#define WARRENTY                37
+#define LICENSE                 38
+#define COMBINE                 39
+#define CWEIGHT                 40
+#define WRITE                   41
+#define TITIN                   42
+#define CPROTEIN                43
+#define CPRADIUS                44
+#define CPAZIMUTH               45
+#define CPTILT                  46
+#define CPWEIGHT                47
+#define CPAXIAL                 48
+#define TTRADIUS                49
+#define TTAZIMUTH               50
+#define TTWEIGHT                51
+#define CPDOMRAD                52
+#define CPNODOM                 53
+#define TTDOMRAD                54
+#define TTNODOM                 55
+#define TTREPEAT                56
+#define CPREPEAT                57
+#define ANNEALING               58
+#define TEMPERATURE             59
+#define ITERATIONS              60
+#define TEMPDROP                61
+#define NUMREPS                 62
+#define BBRADIUS                63
+#define FILAMENTS               64
+#define FOURIERDIF              65
+#define REFLECTIONS             66
+#define CPNUM_PIVOT             67
+#define CPPIVOT_TYPE            68
+#define CPPIVOT_TILT            69
+#define CPPIVOT_SLEW            70
+#define BACKBONE                71
+#define BBFILE                  72
+#define BBSPHERE                73
+#define BBREPEAT                74
+#define OSCALE                  75
+#define MSCALE                  76
+#define BBAZI                   77
+#define CPDOMSEP                78
+#define MPRADIUS                79
+#define MPAXIAL                 80
+#define OBSERVED                81
+#define REPLEX                  82
+#define DISPLAY                 83
+#define HASH                    84
+#define LOAD                    85
+#define SHELL                   86
+#define BBMODEL 		87
+#define SCALEDATA	        88
+#define RESET                   89
+#define FISH                    90
+#define INSECT                  91
+#define CCP13                   92
+#define TROPOMYOSIN             93
+#define TRRAD                   94
+#define TRPHI                   95
+#define TRZPERT                 96
+#define TRREPEAT                97
+#define AARAD                   98
+#define AAPHI                   99
+#define AAZ                    100
+#define AAREPEAT               101
+#define AAPERTPHI              102
+#define AAPERTZ                103
+#define TRSUBU                 104
+#define TRSPHSZ                105
+#define AASPHSZ                106
+#define OUTPUTFILE             107
+#define ONESHOT                108
+#define TRWEIGHT               109
+#define AAWEIGHT               110
+#define BOGUSDATA              111
+#define RESBOGUSDATA           112
+#define MPAZIMUTHAL            113             
+#define MPIVPOINT              114
+#define MPIVTILT               115
+#define MPIVSLEW               116
+#define AVS                    117
+#define DCAD                   118
+#define PDB                    119
+#define TORUS                  120
+#define MYHEADS                121
+#define BROOKEHAVEN            122
+#define NOPERTS                123
+#define BESNUM                 124
+#define REPLEVEL               125
+#define CUTOFF                 126
+#define AAFIL                  127
+#define TRFIL                  128
+#define MPIVROT                129
+#define HEAD 			 1
+#define START 			 2
+#define SIZE  			 3
+#define STEPS 			 4
+#define SCALE                    5
+#define LEVEL                    6
+#define DOMAIN                   7
+#endif
+
+
+
+

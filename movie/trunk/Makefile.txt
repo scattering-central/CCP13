@@ -1,0 +1,80 @@
+#SHELL = /bin/sh
+
+# BIN DIRECTORY 
+BINDIR=.
+
+SRCDIR=.
+
+OBJDIR=.
+
+# LIBRARY NAMES 
+LIBRARIES=-lm -lc
+
+# LINKER FLAGS 
+ifeq (bs-muscle1pc,alpha1)
+  LD=cc
+  CC=cc
+  LDFLAGS= -O2 -std
+  else
+  ifeq (bs-muscle1pc,alpha2)
+    LDFLAGS= -O2 -std
+    LD=cc
+    CC=cc
+    else
+    ifeq (${HOST},hudsonpc)
+      LDFLAGS= -O2
+      else
+        LDFLAGS= -O2 -m486
+    endif
+  endif
+endif
+
+# DEFINES
+CP=cp
+CC=g++
+
+LDFLAGS = -ansi -g
+
+# COMPILER FLAGS 
+CFLAGS=$(LDFLAGS)
+PFLAGS=$(CFLAGS)
+FFLAGS=$(CFLAGS)
+
+.SUFFIXES: .c .o .h
+
+# SOURCES 
+SRCS=\
+Movie.c			Process_Data.c		Output.c\
+View_Output.c		Fourier_Calculation.c	Initialization.c\
+Intensity.c		Refine.c		Parser.c\
+Readc.c			Gen_Coordinates.c	Numerical_Routines.c\
+Status.c		Copyright.c             Legal.c\
+Simularity.c		Minimisation.c          Memory_Set.c\
+Global.c\
+
+
+# OBJECTS 
+OBJS= $(patsubst %.c,%.o,$(SRCS))
+
+# $(shell next_build build.h)
+
+PATH_OBJS = $(OBJS:%=$(OBJDIR)/%)
+
+Movie:	$(PATH_OBJS)
+	$(CC) -o $(BINDIR)/$@ $(LDFLAGS) $(PATH_OBJS) $(LIBRARIES)
+
+# include .depend
+
+clean:
+	$(RM) $(PATH_OBJS)
+	${RM} *~ ${OBJDIR}/*.d core
+
+backup:
+	$(RM) $(PATH_OBJS) core *~
+	tar -cvf Movie.tar *.c *.h *.ini *.inf Makefile
+
+$(OBJDIR)/%.o: %.c
+	$(CC) -c $(CFLAGS) $(INCLUDES) -o $(OBJDIR)/$*.o $*.c
+
+touch:
+	touch $(SRCS)

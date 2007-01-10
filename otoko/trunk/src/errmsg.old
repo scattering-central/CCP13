@@ -1,0 +1,39 @@
+C     LAST UPDATE 16/03/89
+C+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+C 
+      SUBROUTINE ERRMSG (MESAGE)
+      IMPLICIT NONE
+C 
+C Purpose: Print error message in inverse video on a VT100 emulator
+C          terminal.
+C 
+      CHARACTER*(*) MESAGE
+C 
+C MESAGE : Error message to be displayed
+C 
+C Calls   0:
+C 
+C-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-
+C Local variables:
+C 
+      INTEGER     L,LEN
+      CHARACTER*1 BELL,ESC,SEVEN,ZERO
+C 
+C BELL   : Bell ascii character
+C ESC    : Escape character
+C 
+      DATA BELL/7/ , ESC/27/ , SEVEN/55/ , ZERO/48/
+C 
+C-----------------------------------------------------------------------
+C 
+C======PRINT ERROR MESSAGE AND RING BELL IN INVERSE VIDEO
+C 
+      PRINT 1000 , ESC , '[' , SEVEN , 'm' ,
+     &            (MESAGE(L:L),L=1,LEN(MESAGE)),
+     &             BELL , ESC , '[' , ZERO , 'm'
+      RETURN
+C 
+1000  FORMAT (' ',89A1)
+      END
+
+
