@@ -1,0 +1,92 @@
+SYS = sos5
+#
+FC = f77
+CC = cc
+CFLAGS = -DSOLARIS -DMMAP
+FFLAGS = -O
+RANLIB = /usr/ccs/bin/ar ts
+#
+BSLIOF = bsl/eofchar.f bsl/frdata.f bsl/getfil.f bsl/gethdr.f bsl/getval.f \
+	  bsl/imsize.f bsl/upcase.f
+
+BSLIOC = bsl/errmsg.c  bsl/fileio.c  bsl/igets.c
+
+BSLIO2C = bsl/errmsg.c bsl/fileio2.c bsl/igets.c
+
+BSLIODEVC = bsl/errmsg.c  bsl/fileio_dev.c  bsl/igets.c
+
+BSLIODEV2C = bsl/errmsg.c  bsl/fileio_dev2.c  bsl/igets.c
+
+BSLIONEWF = bsl/eofchar.f bsl/frdata.f bsl/getfil2.f bsl/gethdr2.f bsl/getval.f \
+	  bsl/imsize.f bsl/upcase.f bsl/strippath.f
+
+BSLIONEWC = bsl/errmsg.c  bsl/fileio_new2.c  bsl/igets.c
+
+BSLIOO = $(BSLIOF:.f=.o) $(BSLIOC:.c=.o)
+BSLIO2O = $(BSLIOF:.f=.o) $(BSLIO2C:.c=.o)
+BSLIODEVO = $(BSLIOF:.f=.o) $(BSLIODEVC:.c=.o)
+BSLIODEV2O = $(BSLIOF:.f=.o) $(BSLIODEV2C:.c=.o)
+BSLIONEWO = $(BSLIONEWF:.f=.o) $(BSLIONEWC:.c=.o)
+#
+FITPACKF = fitpack/fitpack.f
+FITPACKO = $(FITPACKF:.f=.o)
+#
+IOLIBF = iolib/ask.f iolib/rdcom.f iolib/wrtlog.f
+IOLIBC = iolib/fmem.c iolib/readc.c iolib/wrdlen.c iolib/fprint.c \
+       	 iolib/fproc.c iolib/ftime.c 
+IOLIBO = $(IOLIBC:.c=.o) $(IOLIBF:.f=.o) 
+#
+MLIBF = mlib/bessj.f mlib/brent2.f mlib/frprmn.f mlib/mrqmin.f mlib/svbksb.f \
+	mlib/svdvar.f mlib/tqli.f mlib/bessj0.f mlib/covsrt.f mlib/linmin.f \
+	mlib/rtsafe.f mlib/svdcmp.f mlib/syminv.f mlib/tred2.f mlib/bessj1.f \
+	mlib/f1dim.f  mlib/mnbrak2.f mlib/sort.f mlib/svdfit.f mlib/tbksb.f \
+	mlib/dlinmin.f mlib/qgaus.f mlib/dbrent2.f
+MLIBC = mlib/fplex.c
+MLIBO = $(MLIBF:.f=.o) $(MLIBC:.c=.o)
+#
+all: CONFIGURE bslio_dev.a bslio_dev2.a bslio.a bslio2.a bslio_new.a fitpack.a iolib.a mlib.a clean
+#
+CONFIGURE:
+	/bin/cp Configure.h bsl
+
+#
+bslio_new.a: $(BSLIONEWO)
+	/usr/ccs/bin/ar r $(SYS)/$@ $(BSLIONEWO)
+	$(RANLIB) $(SYS)/$@
+#
+bslio_dev2.a: $(BSLIODEV2O)
+	/usr/ccs/bin/ar r $(SYS)/$@ $(BSLIODEV2O)
+	$(RANLIB) $(SYS)/$@
+#
+bslio_dev.a: $(BSLIODEVO)
+	/usr/ccs/bin/ar r $(SYS)/$@ $(BSLIODEVO)
+	$(RANLIB) $(SYS)/$@
+#
+bslio2.a: $(BSLIO2O)
+	/usr/ccs/bin/ar r $(SYS)/$@ $(BSLIO2O)
+	$(RANLIB) $(SYS)/$@
+#
+bslio.a: $(BSLIOO)
+	/usr/ccs/bin/ar r $(SYS)/$@ $(BSLIOO)
+	$(RANLIB) $(SYS)/$@
+#
+fitpack.a: $(FITPACKO)
+	/usr/ccs/bin/ar r $(SYS)/$@ $(FITPACKO)
+	$(RANLIB) $(SYS)/$@
+#
+iolib.a: $(IOLIBO)
+	/usr/ccs/bin/ar r $(SYS)/$@ $(IOLIBO)
+	$(RANLIB) $(SYS)/$@
+#
+mlib.a: $(MLIBO)
+	/usr/ccs/bin/ar r $(SYS)/$@ $(MLIBO)
+	$(RANLIB) $(SYS)/$@
+#
+.f.o:
+	$(FC) $(FFLAGS) -c $< -o $@
+.c.o:
+	$(CC) $(CFLAGS) -c $< -Iinclude -o $@
+#
+clean:
+	/bin/rm $(BSLIOO) $(FITPACKO) $(IOLIBO) $(MLIBO)
+#

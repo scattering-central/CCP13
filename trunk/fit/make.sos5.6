@@ -1,0 +1,40 @@
+SYS = sos5
+#
+EXEC = ../bin/$(SYS)
+MLIB = ../libs/$(SYS)/mlib.a
+IOLIB = ../libs/$(SYS)/iolib.a
+OTLIB = ../libs/$(SYS)/libotoko.a
+PGDIR = $(HOME)/pgplot5.1/sos5
+PGLIB = -lpgplot
+#
+FC = f77
+FCOMP = -O -g
+FLINK = -Bstatic
+#
+FITFORT = PGFIT.f GETOTO.f
+FITINCL = FIT.COM
+#
+COMFORT = PGFPLOT.f FUNCS.f FGAUSS.f FLORENTZ.f FPEARSON.f FPOLY.f \
+	FVOIGT.f PSNINT.f VGTINT.f FDEBYE.f FDEXP.f FLEIB.f
+#
+COMOBJS = $(COMFORT:.f=.o)
+FITOBJS = $(FITFORT:.f=.o)
+#
+#
+lfit: $(FITOBJS) $(COMOBJS)
+	$(FC) -o $(EXEC)/$@  $(FLINK) $(FITOBJS) $(COMOBJS) \
+	$(MLIB) $(IOLIB) $(OTLIB) \
+	-L$(PGDIR) $(PGLIB) -Bdynamic -lX11 -lcurses -ltermlib
+#
+$(FITOBJS): $(FITFORT) $(FITINCL)
+$(COMOBJS): $(COMFORT) $(FITINCL)
+#
+.f.o:
+	$(FC) -c $(FCOMP) $<
+#
+clean:
+#	/bin/rm $(FITOBJS) $(COMOBJS)
+#
+
+
+

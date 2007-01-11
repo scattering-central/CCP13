@@ -1,0 +1,95 @@
+C     LAST UPDATE 15/09/88
+C+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+C
+      SUBROUTINE IMSIZE (ITERM,IPRINT,NPIX,NRAST,IFPIX,ILPIX,
+     &                   IFRAST,ILRAST,IRC)
+      IMPLICIT NONE
+C
+C PURPOSE: ALLOW USER TO SELECT A SECTION OF THE IMAGE.
+C
+      INTEGER ITERM,IPRINT,NPIX,NRAST,IFPIX,ILPIX,IFRAST,ILRAST,IRC
+C
+C ITERM  : TERMINAL INPUT
+C IPRINT : TERMINAL OUTPUT
+C NPIX   : NOS. OF PIXELS IN IMAGE
+C NRAST  : NOS. OF RASTERS IN IMAGE
+C IFPIX  : FIRST PIXEL OF SECTION
+C ILPIX  : LAST PIXEL OF SECTION
+C IFRAST : FIRST RASTER OF SECTION
+C ILRAST : LAST RASTER OF SECTION
+C IRC    : RETURN CODE
+C
+C CALLS  2: ERRMSG , GETVAL
+C
+C-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-
+C LOCAL VARIABLES:
+C
+      REAL    VALUE(10)
+      INTEGER ITEMP,NVAL
+C
+C-----------------------------------------------------------------------
+C
+C========GET INTEGRATION LIMITS
+C
+20    WRITE (IPRINT,1000) NPIX,NRAST
+      CALL FLUSH(IPRINT)
+      IFPIX=1
+      ILPIX=NPIX
+      IFRAST=1
+      ILRAST=NRAST
+      CALL GETVAL (ITERM,VALUE,NVAL,IRC)
+      IF (IRC.EQ.1) GOTO 999
+      IF (IRC.EQ.2) GOTO 20
+      IF (NVAL.GT.0) IFPIX=INT(VALUE(1))
+      IF (NVAL.GT.1) ILPIX=INT(VALUE(2))
+      IF (NVAL.GT.2) IFRAST=INT(VALUE(3))
+      IF (NVAL.GT.3) ILRAST=INT(VALUE(4))
+C
+C======CHECK VALUES LIE WITHIN CORRECT LIMITS
+C
+      IF (IFPIX.LT.1) IFPIX=1
+      IF (ILPIX.LT.1) ILPIX=1
+      IF (IFPIX.GT.NPIX) IFPIX=NPIX
+      IF (ILPIX.GT.NPIX) ILPIX=NPIX
+      IF (IFRAST.LT.1) IFRAST=1
+      IF (ILRAST.LT.1) ILRAST=1
+      IF (IFRAST.GT.NRAST) IFRAST=NRAST
+      IF (ILRAST.GT.NRAST) ILRAST=NRAST
+      IF (ILPIX.LT.IFPIX) THEN
+         ITEMP=IFPIX
+         IFPIX=ILPIX
+         ILPIX=ITEMP
+      ENDIF
+      IF (ILRAST.LT.IFRAST) THEN
+         ITEMP=IFRAST
+         IFRAST=ILRAST
+         ILRAST=ITEMP
+      ENDIF
+999   RETURN
+C
+1000  FORMAT (' Enter first & last pixels and',/,' first & last'
+     &        ' rasters or <CTRL-Z> [1,',I4,',1,',I4,']: ',$)
+      END
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

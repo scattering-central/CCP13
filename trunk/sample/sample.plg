@@ -1,0 +1,31 @@
+<html>
+<body>
+<pre>
+<h1>Build Log</h1>
+<h3>
+--------------------Configuration: sample - Win32 Release--------------------
+</h3>
+<h3>Command Lines</h3>
+Creating temporary file "C:\temp\RSP186.tmp" with contents
+[
+kernel32.lib /nologo /subsystem:console /incremental:no /pdb:"Release/sample.pdb" /machine:I386 /out:"Release/sample.exe" 
+.\Release\BESSD.obj
+.\Release\KCOF.obj
+.\Release\NMIN.obj
+.\Release\ROOTJ.obj
+.\Release\SAMPLE.obj
+..\..\mlib\Release\mlib.lib
+..\..\mlib\bslio2\Release\bslio2.lib
+..\..\mlib\iolib\Release\iolib.lib
+]
+Creating command line "link.exe @C:\temp\RSP186.tmp"
+<h3>Output Window</h3>
+Linking...
+
+
+
+<h3>Results</h3>
+sample.exe - 0 error(s), 0 warning(s)
+</pre>
+</body>
+</html>

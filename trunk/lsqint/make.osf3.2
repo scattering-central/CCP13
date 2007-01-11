@@ -1,0 +1,30 @@
+FC = f77
+FCOMP = -O3
+FLINK = 
+#
+EXEC = ../bin
+LIBS = ../libs
+BSLIO = $(LIBS)/bslio.a
+IOLIB = $(LIBS)/iolib.a
+MLIB = $(LIBS)/mlib.a
+FITPACK = $(LIBS)/fitpack.a
+#
+FORT = LSQINT.f DRAGON.f BGCSYM.f BGWSRT.f BGWLSH.f BGWLSI.f DLSQFIT.f \
+	LMAXENT.f RESPON.f TRANSR.f REPROF.f REPORT.f RECCEL.f RDINT.f DCAL.f \
+	GETBSL.f ALLOUT.f BRGOUT.f CONOUT.f IMGCAL.f MATCAL.f FALL.f FBRAG.f \
+	FCONT.f ODFNRM.f CHICAL.f RZDCAL.f ADDHORIZ.f ADDVERT.f SETSPLODGE.f \
+	SPLODGE.f SQUELCH.f TRIM.f WRAPZ.f spraxis.f
+OBJS = $(FORT:.f=.o)
+#
+all: lsqint clean
+#
+lsqint: $(OBJS)
+	$(FC) -o $(EXEC)/$@ $(FLINK) \
+	$(OBJS) $(IOLIB) $(BSLIO) $(MLIB) $(FITPACK) -ltermcap
+#
+.f.o:
+	$(FC) -c $(FCOMP) $<
+#
+clean:
+	/bin/rm $(OBJS)
+#

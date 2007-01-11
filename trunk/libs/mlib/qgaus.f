@@ -1,0 +1,25 @@
+      SUBROUTINE QGAUS(FUNC,A,B,SS)
+      IMPLICIT NONE
+C
+      REAL A,B,SS,FUNC
+      EXTERNAL FUNC
+C
+      REAL X(5),W(5)
+      REAL XM,XR,DX
+      INTEGER J
+C
+      DATA X/0.1488743389, 0.4333953941, 0.6794095682, 0.8650633666,
+     &       0.9739065285/
+      DATA W/0.2955242247, 0.2692667193, 0.2190863625, 0.1494513491,
+     &       0.0666713443/
+C
+      XM = 0.5*(B+A)
+      XR = 0.5*(B-A)
+      SS = 0.0
+      DO 10 J=1,5
+         DX = XR*X(J)
+         SS = SS + W(J)*(FUNC(XM+DX)+FUNC(XM-DX))
+ 10   CONTINUE
+      SS = XR*SS
+      RETURN
+      END

@@ -1,0 +1,41 @@
+SYS = hp9
+#
+EXEC = ../bin/$(SYS)
+MLIB = ../libs/$(SYS)/mlib.a
+IOLIB = ../libs/$(SYS)/iolib.a
+OTLIB = ../libs/$(SYS)/libotoko_noflush.a
+PGDIR = /usr/local/lib
+PGLIB = -lpgplot
+#
+FC = fort77
+FCOMP = -O -K
+FLINK = -O
+#
+FITFORT = PGFIT.f GETOTO.f
+FITINCL = FIT.COM
+#
+COMFORT = PGFPLOT.f FUNCS.f FGAUSS.f FLORENTZ.f FPEARSON.f FPOLY.f \
+	FVOIGT.f PSNINT.f VGTINT.f FDEBYE.f FDEXP.f FLEIB.f
+#
+COMOBJS = $(COMFORT:.f=.o)
+FITOBJS = $(FITFORT:.f=.o)
+#
+all: lfit clean
+#
+lfit: $(FITOBJS) $(COMOBJS)
+	$(FC) -o $(EXEC)/$@  $(FLINK) $(FITOBJS) $(COMOBJS) \
+	$(MLIB) $(OTLIB) $(IOLIB) \
+	-L$(PGDIR) $(PGLIB) -lX11 -lcurses -ltermlib
+#
+$(FITOBJS): $(FITFORT) $(FITINCL)
+$(COMOBJS): $(COMFORT) $(FITINCL)
+#
+.f.o:
+	$(FC) -c $(FCOMP) $<
+#
+clean:
+	/bin/rm $(FITOBJS) $(COMOBJS)
+#
+
+
+

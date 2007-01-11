@@ -1,0 +1,35 @@
+LIBS = $(HOME)/LIBS
+EXEC = $(HOME)/bin
+MLIB = $(LIBS)/sol/mlib.a
+IOLIB = $(LIBS)/sol/iolib.a
+OTLIB = /net/dlsn/priv1/ncd/lib/libotoko.a
+X11INCLUDE = /usr/openwin/include
+GHOSTDIR = /net/ncdfs1/usr2/ghost/sos5/lib
+GHOSTLIB = -lghost -lgrid_xghost
+#
+FCOMP = -g
+CCOMP = -g  -I$(X11INCLUDE)
+FLINK = -Bstatic
+#
+FITFORT = FIT.f GETOTO.f
+FITINCL = FIT.COM
+#
+COMFORT = FPLOT.f FUNCS.f FGAUSS.f FLORENTZ.f FPEARSON.f FPOLY.f \
+	FVOIGT.f PSNINT.f VGTINT.f FDEBYE.f FDEXP.f FLEIB.f
+#
+COMOBJS = $(COMFORT:.f=.o)
+FITOBJS = $(FITFORT:.f=.o)
+#
+ghostfit: $(FITOBJS) $(COMOBJS)
+	f77 -g -o $(EXEC)/$@  $(FLINK) $(FITOBJS) $(COMOBJS) \
+	$(MLIB) $(IOLIB) $(OTLIB) \
+	-L$(GHOSTDIR) $(GHOSTLIB) -lX11 -lcurses -ltermlib
+#
+$(FITOBJS): $(FITFORT) $(FITINCL)
+$(COMOBJS): $(COMFORT) $(FITINCL)
+#
+.f.o:
+	$(FC) -c $(FCOMP) $<
+#
+
+

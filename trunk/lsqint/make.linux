@@ -1,0 +1,32 @@
+FC = g77
+FCOMP = -O3
+FLINK = -static
+#
+EXEC = /home/ccp13/ccp13dist/bin/linux
+LIBS = /home/ccp13/ccp13dist/libs/bin
+BSLIO = $(LIBS)/bslio.a
+IOLIB = $(LIBS)/iolib.a
+MLIB = $(LIBS)/mlib.a
+FITPACK = $(LIBS)/fitpack.a
+#
+FORT = LSQINT.f DRAGON.f BGCSYM.f BGWSRT.f BGWLSH.f BGWLSI.f \
+        DLSQFIT_aug02.f \
+	LMAXENT_aug02.f \
+	RESPON.f TRANSR.f REPROF.f REPORT.f RECCEL.f RDINT.f DCAL.f \
+	GETBSL.f ALLOUT.f BRGOUT.f CONOUT.f IMGCAL.f MATCAL.f FALL.f FBRAG.f \
+	FCONT.f ODFNRM.f CHICAL.f RZDCAL.f ADDHORIZ.f ADDVERT.f SETSPLODGE.f \
+	SPLODGE.f SQUELCH.f TRIM.f WRAPZ.f spraxis.f
+OBJS = $(FORT:.f=.o)
+#
+all: lsqint_aug02 clean
+#
+lsqint_aug02: $(OBJS)
+	$(FC) -o $(EXEC)/$@ $(FLINK) \
+	$(OBJS) $(IOLIB) $(BSLIO) $(MLIB) $(FITPACK) -ltermcap
+#
+.f.o:
+	$(FC) -c $(FCOMP) $<
+#
+clean:
+	/bin/rm $(OBJS)
+#

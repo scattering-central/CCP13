@@ -1,0 +1,36 @@
+SYS = sos5
+#
+FC = f77
+FCOMP = -O
+FLINK = 
+#
+EXEC = ../bin/$(SYS)
+BSLIO = ../libs/$(SYS)//bslio.a
+IOLIB = ../libs/$(SYS)/iolib.a
+MLIB = ../libs/$(SYS)/mlib.a
+FITPACK = ../libs/$(SYS)/fitpack.a
+#
+FDSCALEF = FDSCALE.f 
+FD2BSLF = FD2BSL.f
+FDCOMF = RECCEL.f DCAL.f
+#
+FDSCALEO = $(FDSCALEF:.f=.o)
+FD2BSLO = $(FD2BSLF:.f=.o)
+FDCOMO = $(FDCOMF:.f=.o)
+#
+all: fdscale fd2bsl clean
+#
+fdscale: $(FDSCALEO) $(FDCOMO)
+	$(FC) -o $(EXEC)/$@ $(FLINK) \
+	$(FDSCALEO) $(FDCOMO) $(MLIB) $(IOLIB) $(BSLIO) -ltermcap
+#
+fd2bsl: $(FD2BSLO) $(FDCOMO)
+	$(FC) -o $(EXEC)/$@ $(FLINK) \
+	$(FD2BSLO) $(FDCOMO) $(MLIB) $(IOLIB) $(BSLIO) $(FITPACK) -ltermcap
+#
+.f.o:
+	$(FC) -c $(FCOMP) $< 
+#
+clean:
+	/bin/rm $(FDSCALEO) $(FD2BSLO) $(FDCOMO)
+#

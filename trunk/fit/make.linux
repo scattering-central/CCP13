@@ -1,0 +1,40 @@
+SYS = linux
+#
+EXEC = ../bin
+MLIB = ../libs/mlib.a
+IOLIB = ../libs/iolib.a
+OTLIB = ../libs/libotoko.a
+PGLIB = -lpgplot
+#
+FC = f77
+FCOMP = -O
+FLINK = -static
+#
+FITFORT = PGFIT.f GETOTO.f
+FITINCL = FIT.COM
+#
+COMFORT = PGFPLOT.f FUNCS.f FGAUSS.f FLORENTZ.f FPEARSON.f FPOLY.f \
+	FVOIGT.f PSNINT.f VGTINT.f FDEBYE.f FDEXP.f FLEIB.f
+#
+COMOBJS = $(COMFORT:.f=.o)
+FITOBJS = $(FITFORT:.f=.o)
+#
+all: lfit clean
+#
+lfit: $(FITOBJS) $(COMOBJS)
+	$(FC) -o $(EXEC)/$@  $(FLINK) $(FITOBJS) $(COMOBJS) \
+	$(MLIB) $(IOLIB) $(OTLIB) \
+	$(PGLIB) -static -lX11 -lcurses -ltermcap
+#
+$(FITOBJS): $(FITFORT) $(FITINCL)
+$(COMOBJS): $(COMFORT) $(FITINCL)
+#
+.f.o:
+	$(FC) -c $(FCOMP) $<
+#
+clean:
+	/bin/rm $(FITOBJS) $(COMOBJS)
+#
+
+
+
