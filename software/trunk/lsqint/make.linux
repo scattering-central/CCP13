@@ -2,8 +2,8 @@ FC = g77
 FCOMP = -O3
 FLINK = -static
 #
-EXEC = /home/ccp13/ccp13dist/bin/linux
-LIBS = /home/ccp13/ccp13dist/libs/bin
+EXEC = .
+LIBS = ../libs
 BSLIO = $(LIBS)/bslio.a
 IOLIB = $(LIBS)/iolib.a
 MLIB = $(LIBS)/mlib.a
@@ -18,7 +18,7 @@ FORT = LSQINT.f DRAGON.f BGCSYM.f BGWSRT.f BGWLSH.f BGWLSI.f \
 	SPLODGE.f SQUELCH.f TRIM.f WRAPZ.f spraxis.f
 OBJS = $(FORT:.f=.o)
 #
-all: lsqint_aug02 clean
+all: lsqint_aug02
 #
 lsqint_aug02: $(OBJS)
 	$(FC) -o $(EXEC)/$@ $(FLINK) \
@@ -28,5 +28,5 @@ lsqint_aug02: $(OBJS)
 	$(FC) -c $(FCOMP) $<
 #
 clean:
-	/bin/rm $(OBJS)
+	/bin/rm $(OBJS) lsqint_aug02
 #

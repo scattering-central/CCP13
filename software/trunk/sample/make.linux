@@ -3,14 +3,15 @@ FCOMP = -O
 FLINK =
 #
 EXEC =.
-BSLIO = C:/MinGW/home/libs/bin/bslio.a
-IOLIB = C:/MinGW/home/libs/bin/iolib.a
-MLIB = C:/MinGW/home/libs/bin/mlib.a
-TERM = /lib/libtermcap.a -ltermcap
+LIBS=../libs
+BSLIO = $(LIBS)/bslio.a
+IOLIB = $(LIBS)/iolib.a
+MLIB = $(LIBS)/mlib.a
+TERM = /usr/lib/libtermcap.a -ltermcap
 FORT = SAMPLE.f ROOTJ.f BESSD.f NMIN.f KCOF.f
 OBJS = $(FORT:.f=.o)
 #
-all: sample clean
+all: sample
 #
 sample: $(OBJS)
 	$(FC) -o $(EXEC)/$@ $(FLINK) \
@@ -20,5 +21,5 @@ sample: $(OBJS)
 	$(FC) -c $(FCOMP) $<
 #
 clean:
-	/bin/rm $(OBJS)
+	/bin/rm $(OBJS) sample
 #

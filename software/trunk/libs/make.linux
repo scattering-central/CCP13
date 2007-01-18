@@ -1,4 +1,4 @@
-SYS = bin
+SYS = .
 #
 FC = g77
 CC = gcc
@@ -44,7 +44,7 @@ MLIBF = mlib/bessj.f mlib/brent2.f mlib/frprmn.f mlib/mrqmin.f mlib/svbksb.f \
 MLIBC = mlib/fplex.c
 MLIBO = $(MLIBF:.f=.o) $(MLIBC:.c=.o)
 #
-all: config bslio_dev.a bslio_dev2.a bslio.a bslio2.a bslio_new.a fitpack.a iolib.a mlib.a clean
+all: config bslio_dev.a bslio_dev2.a bslio.a bslio2.a bslio_new.a fitpack.a iolib.a mlib.a
 #
 bslio_new.a: $(BSLIONEWO)
 	ar r $(SYS)/$@ $(BSLIONEWO)
@@ -89,6 +89,5 @@ config:
 	/bin/mv Configure.h bsl
 #
 clean:
-	/bin/rm $(BSLIOO) $(FITPACKO) $(IOLIBO) $(MLIBO)
+	/bin/rm $(BSLIOO) $(FITPACKO) $(IOLIBO) $(MLIBO) *.a Configure bsl/Configure.h
 #
-
