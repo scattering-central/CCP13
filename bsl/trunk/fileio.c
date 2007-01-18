@@ -175,7 +175,7 @@ void outfil (int *iterm, int *iprint, Str_Desc *filename,
 #ifdef DEC5000
 #include <sys/file.h>
 #else
-#include <sys/fcntlcom.h>
+#include <sys/fcntl.h>
 #endif
 #endif
 #include <unistd.h>

@@ -1,12 +1,3 @@
-From POSTMASTER@uk.ac.daresbury.dlgm Tue Sep 22 13:46:22 1992
-Via:   UK.AC.DARESBURY.CXA;  Tue, 22 Sep 92 13:48 WET (V41 at UK.AC.DARESBURY.DLGM)
-From: "P.W.J.G. Wijnen" <pww@uk.ac.daresbury.cxa>
-Date: Tue, 22 Sep 92 13:49:43 +0100
-Reply-To: pww@uk.ac.daresbury.cxa
-To: G.MANT@uk.ac.daresbury
-Subject: boxcount code, second try, now from cxa
-Content-Length: 1832
-
 #include <stdio.h>
 #include <math.h>
 

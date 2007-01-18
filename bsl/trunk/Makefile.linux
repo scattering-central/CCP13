@@ -1,0 +1,3 @@
+# bsl compiles but currently can not be linked (plot library missing?)
+bsl:
+	gfortran -c -DLINUX *.c *.f *.F -L/usr/lib/gcc/i386-redhat-linux/4.1.0/ -lgfortran -lgcc -L/usr/X11R6/lib -lX11
