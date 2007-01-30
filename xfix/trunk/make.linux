@@ -59,7 +59,7 @@ SHELL		= /bin/sh
 
 UX_DIR		= /usr/uimx2.6
 UX_LIBPATH	= -L$(UX_DIR)/lib
-X_LIBS		= /home/mws/motif/libXm.a -lXmu -lXt -lXpm -lSM -lICE -lXext -lX11
+X_LIBS		= /usr/X11R6/lib/libXm.a -lXp -lpthread -lXmu -lXt -lXpm -lSM -lICE -lXext -lX11
 
 X_LIBPATH    = -L/usr/X11R6/lib
 MOTIF_LIBPATH   = -L/home/mws/motif 
@@ -116,3 +116,5 @@ LD = \
 `if [ "$(LANGUAGE)" = "ANSI C" ]; then echo $(ANSI_CC); fi`\
 `if [ "$(LANGUAGE)" = "KR-C" ]; then echo $(KR_CC); fi`
 
+clean:
+	-rm *.o xfix
