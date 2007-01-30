@@ -163,6 +163,7 @@ static Widget	_Uxbuild_headerDialog()
 			XmNwidth, 700,
 			XmNheight, 230,
 			XmNdialogType, XmDIALOG_TEMPLATE,
+			RES_CONVERT( XmNcancelLabelString, "Cancel" ),
 			XmNlabelFontList, UxConvertFontList("8x13bold" ),
 			RES_CONVERT( XmNokLabelString, "OK" ),
 			RES_CONVERT( XmNdialogTitle, "Header Dialog" ),

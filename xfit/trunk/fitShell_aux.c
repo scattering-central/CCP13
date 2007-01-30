@@ -56,7 +56,7 @@ void SetBusyPointer (int busyState)
     }
 }
 
-static int put_file (char *filename, int nffr, int nlfr, int nfinc, int nfilenum, char *string)
+static int put_file (char *filename, char *string)
 {
   char *cptr = findtok (string, " ");
   static int fframe = 1, lframe = 1, inc = 1;
@@ -74,11 +74,11 @@ static int put_file (char *filename, int nffr, int nlfr, int nfinc, int nfilenum
 	}
       if (strcmp (cptr, "first") == 0)
 	{
-	  command ("%d %d %d\n", nffr, nlfr, nfinc);
+	  command ("%d %d %d\n", iffr, ilfr, ifinc);
 	} 
       if (strcmp (cptr, "[1]") == 0)
 	{
-	  command ("%d\n", nfilenum);
+	  command ("%d\n", filenum);
 	}
     }
   
@@ -404,7 +404,7 @@ static void message_parser (char *buf)
 		case 201:
 		  if (yfile)
 		    {
-		      if ((irc = put_file (yfile,yiffr,yilfr,yifinc,yfilenum,cptr)) == -1)
+		      if ((irc = put_file (yfile, cptr)) == -1)
 			{
 			  yfile = NULL;
 			  file_ready = 0;
@@ -422,7 +422,7 @@ static void message_parser (char *buf)
 		case 701:
 		  if (xfile)
 		    {
-		      if ((irc = put_file (xfile,xiffr,xilfr,xifinc,xfilenum,cptr)) == -1)
+		      if ((irc = put_file (xfile, cptr)) == -1)
 			xfile = NULL;
 		    }
 		  break;
@@ -431,7 +431,7 @@ static void message_parser (char *buf)
 		case 703:
 		  if (initfile)
 		    {
-		      if ((irc = put_file (initfile,initiffr,initilfr,initifinc,initfilenum,cptr)) == -1)
+		      if ((irc = put_file (initfile, cptr)) == -1)
 			initfile = NULL;
 		    }
 		  break;
@@ -447,7 +447,7 @@ static void message_parser (char *buf)
 		case 713:
 		  if (sfile)
 		    {
-		      if ((irc = put_file (sfile,siffr,silfr,sifinc,sfilenum,cptr)) == -1)
+		      if ((irc = put_file (sfile, cptr)) == -1)
 			sfile = NULL;
 		    }
 		  break;
@@ -490,7 +490,7 @@ static void say_no ()
 static void save_pars ()
 {
   command ("Y\n");
-  show_fileSelect (fileSelect, "*000.*", "", get_outfile, CancelSave);
+  show_fileSelect (fileSelect, "*000.*", get_outfile, CancelSave);
 }
 
 static void CancelSave ()
@@ -518,28 +518,20 @@ static void quit ()
 static void get_yfile (char *string, int np, int nr, int ff, int lf, int inc, int fnum)
 {
   yfile = chopdir (string);
-  yiffr = ff;
-  yilfr = lf;
-  yifinc = inc;
-  yfilenum = fnum;
+  iffr = ff;
+  ilfr = lf;
+  ifinc = inc;
+  filenum = fnum;
 }
 
 static void get_xfile (char *string, int np, int nr, int ff, int lf, int inc, int fnum)
 {
   xfile = chopdir (string);
-  xiffr = ff;
-  xilfr = lf;
-  xifinc = inc;
-  xfilenum = fnum;
 }
 
 static void get_initfile (char *string, int np, int nr, int ff, int lf, int inc, int fnum)
 {
   initfile = chopdir (string);
-  initiffr = ff;
-  initilfr = lf;
-  initifinc = inc;
-  initfilenum = fnum;
 }
 
 static void get_outfile (char *string)
@@ -556,10 +548,6 @@ static void get_hardfile (char *string)
 static void get_sfile (char *string, int np, int nr, int ff, int lf, int inc, int fnum)
 {
   sfile = chopdir (string);
-  siffr = ff;
-  silfr = lf;
-  sifinc = inc;
-  sfilenum = fnum;
 }
 
 static char *chopdir (char *string)

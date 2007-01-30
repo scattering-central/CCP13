@@ -110,22 +110,6 @@ typedef	struct
 	int	Uxilfr;
 	int	Uxifinc;
 	int	Uxfilenum;
-	int	Uxyiffr;
-	int	Uxyilfr;
-	int	Uxyifinc;
-	int	Uxyfilenum;
-	int	Uxxiffr;
-	int	Uxxilfr;
-	int	Uxxifinc;
-	int	Uxxfilenum;
-	int	Uxinitiffr;
-	int	Uxinitilfr;
-	int	Uxinitifinc;
-	int	Uxinitfilenum;
-	int	Uxsiffr;
-	int	Uxsilfr;
-	int	Uxsifinc;
-	int	Uxsfilenum;
 	swidget	UxUxParent;
 } _UxCfitShell;
 
@@ -176,22 +160,6 @@ static _UxCfitShell            *UxFitShellContext;
 #define ilfr                    UxFitShellContext->Uxilfr
 #define ifinc                   UxFitShellContext->Uxifinc
 #define filenum                 UxFitShellContext->Uxfilenum
-#define yiffr                   UxFitShellContext->Uxyiffr
-#define yilfr                   UxFitShellContext->Uxyilfr
-#define yifinc                  UxFitShellContext->Uxyifinc
-#define yfilenum                UxFitShellContext->Uxyfilenum
-#define xiffr                   UxFitShellContext->Uxxiffr
-#define xilfr                   UxFitShellContext->Uxxilfr
-#define xifinc                  UxFitShellContext->Uxxifinc
-#define xfilenum                UxFitShellContext->Uxxfilenum
-#define initiffr                UxFitShellContext->Uxinitiffr
-#define initilfr                UxFitShellContext->Uxinitilfr
-#define initifinc               UxFitShellContext->Uxinitifinc
-#define initfilenum             UxFitShellContext->Uxinitfilenum
-#define siffr                   UxFitShellContext->Uxsiffr
-#define silfr                   UxFitShellContext->Uxsilfr
-#define sifinc                  UxFitShellContext->Uxsifinc
-#define sfilenum                UxFitShellContext->Uxsfilenum
 #define UxParent                UxFitShellContext->UxUxParent
 
 #endif /* CONTEXT_MACRO_ACCESS */

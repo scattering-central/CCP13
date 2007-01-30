@@ -1,4 +1,4 @@
-! UIMX ascii 2.9 key: 6514                                                      
+! UIMX ascii 2.9 key: 8393                                                      
 
 *fitShell.class: applicationShell
 *fitShell.classinc:
@@ -20,7 +20,7 @@ typedef void (*vfptr)();\
 #include <X11/cursorfont.h>\
 #include "xfit.m.pm"\
 \
-extern void show_fileSelect (Widget, char *, char *, void (*) (char *), void (*) ());\
+extern void show_fileSelect (Widget, char *, void (*) (char *), void (*) ());\
 extern void ConfirmDialogAsk (Widget, char *, void (*)(), void (*)(), char *);\
 \
 void Continue ();\
@@ -119,12 +119,8 @@ char *header1, *header2;\
 char chartmp[100];\
 int firstrun, file_input, file_ready, mode, inputPause;\
 int iffr, ilfr, ifinc, filenum;\
-int yiffr,yilfr,yifinc,yfilenum;\
-int xiffr,xilfr,xifinc,xfilenum;\
-int initiffr,initilfr,initifinc,initfilenum;\
-int siffr,silfr,sifinc,sfilenum;\
 
-*fitShell.ispeclist: xfile, yfile, initfile, outfile, sfile, hardfile, helpfile, ccp13ptr, header1, header2, chartmp, firstrun, file_input, file_ready, mode, inputPause, iffr, ilfr, ifinc, filenum, yiffr, yilfr, yifinc, yfilenum, xiffr, xilfr, xifinc, xfilenum, initiffr, initilfr, initifinc, initfilenum, siffr, silfr, sifinc, sfilenum
+*fitShell.ispeclist: xfile, yfile, initfile, outfile, sfile, hardfile, helpfile, ccp13ptr, header1, header2, chartmp, firstrun, file_input, file_ready, mode, inputPause, iffr, ilfr, ifinc, filenum
 *fitShell.ispeclist.xfile: "char", "*%xfile%"
 *fitShell.ispeclist.yfile: "char", "*%yfile%"
 *fitShell.ispeclist.initfile: "char", "*%initfile%"
@@ -145,22 +141,6 @@ int siffr,silfr,sifinc,sfilenum;\
 *fitShell.ispeclist.ilfr: "int", "%ilfr%"
 *fitShell.ispeclist.ifinc: "int", "%ifinc%"
 *fitShell.ispeclist.filenum: "int", "%filenum%"
-*fitShell.ispeclist.yiffr: "int", "%yiffr%"
-*fitShell.ispeclist.yilfr: "int", "%yilfr%"
-*fitShell.ispeclist.yifinc: "int", "%yifinc%"
-*fitShell.ispeclist.yfilenum: "int", "%yfilenum%"
-*fitShell.ispeclist.xiffr: "int", "%xiffr%"
-*fitShell.ispeclist.xilfr: "int", "%xilfr%"
-*fitShell.ispeclist.xifinc: "int", "%xifinc%"
-*fitShell.ispeclist.xfilenum: "int", "%xfilenum%"
-*fitShell.ispeclist.initiffr: "int", "%initiffr%"
-*fitShell.ispeclist.initilfr: "int", "%initilfr%"
-*fitShell.ispeclist.initifinc: "int", "%initifinc%"
-*fitShell.ispeclist.initfilenum: "int", "%initfilenum%"
-*fitShell.ispeclist.siffr: "int", "%siffr%"
-*fitShell.ispeclist.silfr: "int", "%silfr%"
-*fitShell.ispeclist.sifinc: "int", "%sifinc%"
-*fitShell.ispeclist.sfilenum: "int", "%sfilenum%"
 *fitShell.funcdecl: swidget create_fitShell(swidget UxParent)
 *fitShell.funcname: create_fitShell
 *fitShell.funcdef: "swidget", "<create_fitShell>(%)"
@@ -428,7 +408,7 @@ UxPopupInterface (otokoSelect, nonexclusive_grab);
 *menuBar_p1_b2.name: menuBar_p1_b2
 *menuBar_p1_b2.parent: menuBar_p1
 *menuBar_p1_b2.labelString: "Save Parameters..."
-*menuBar_p1_b2.activateCallback: show_fileSelect (fileSelect, "*000.*", "", get_outfile, NULL);
+*menuBar_p1_b2.activateCallback: show_fileSelect (fileSelect, "*000.*", get_outfile, NULL);
 
 *menuBar_p1_separator.class: separator
 *menuBar_p1_separator.static: true
@@ -665,7 +645,7 @@ else\
 *scrolledText1.height: 67
 *scrolledText1.fontList: "8x13"
 *scrolledText1.editable: "false"
-*scrolledText1.text: "xfit GUI: last update 10/07/98\nstarting fit program...\n"
+*scrolledText1.text: "xfit GUI: last update 11/12/96\nstarting fit program...\n"
 *scrolledText1.createCallback: {\
 \
 }

@@ -44,7 +44,7 @@ typedef void (*vfptr)();
 #include <X11/cursorfont.h>
 #include "xfit.m.pm"
 
-extern void show_fileSelect (Widget, char *, char *, void (*) (char *), void (*) ());
+extern void show_fileSelect (Widget, char *, void (*) (char *), void (*) ());
 extern void ConfirmDialogAsk (Widget, char *, void (*)(), void (*)(), char *);
 
 void Continue ();
@@ -418,7 +418,7 @@ static void  activateCB_menuBar_p1_b2(
 	UxSaveCtx = UxFitShellContext;
 	UxFitShellContext = UxContext =
 			(_UxCfitShell *) UxGetContext( UxWidget );
-	show_fileSelect (fileSelect, "*000.*", "", get_outfile, NULL);
+	show_fileSelect (fileSelect, "*000.*", get_outfile, NULL);
 	UxFitShellContext = UxSaveCtx;
 }
 
@@ -1112,7 +1112,7 @@ static Widget	_Uxbuild_fitShell()
 			XmNheight, 67,
 			XmNfontList, UxConvertFontList("8x13" ),
 			XmNeditable, FALSE,
-			XmNvalue, "xfit GUI: last update 10/07/98\nstarting fit program...\n",
+			XmNvalue, "xfit GUI: last update 11/12/96\nstarting fit program...\n",
 			XmNmappedWhenManaged, TRUE,
 			XmNmaxLength, 1000,
 			XmNcursorPositionVisible, FALSE,

@@ -1,4 +1,4 @@
-! UIMX ascii 2.9 key: 8791                                                      
+! UIMX ascii 2.9 key: 4503                                                      
 
 *headerDialog.class: templateDialog
 *headerDialog.classinc:
@@ -47,6 +47,7 @@
 *headerDialog.isCompound: "true"
 *headerDialog.compoundIcon: "templateD.xpm"
 *headerDialog.compoundName: "template_Dialog"
+*headerDialog.cancelLabelString: "Cancel"
 *headerDialog.labelFontList: "8x13bold"
 *headerDialog.okLabelString: "OK"
 *headerDialog.dialogTitle: "Header Dialog"
