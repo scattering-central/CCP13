@@ -7,7 +7,7 @@
 #include<iostream>
 using namespace std;
 #else
-#include <strstream.h>
+#include "/usr/include/c++/3.2.3/backward/strstream.h"
 #include <fstream.h>
 #include <iomanip.h>
 #include<iostream.h>

@@ -198,7 +198,7 @@ if (fread(head,sizeof(int), 10, fp) != 10 )
 		
 			i16 =(unsigned short)*(img+j) ;
                 ihigh = high[1];
-                ihigh = min(ihigh, 262128);
+                ihigh = std::min(ihigh, 262128);
 			i32 = -(ihigh + 4)/8;
 			*(img+j) = (unsigned short)i32;
 		}

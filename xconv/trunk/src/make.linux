@@ -57,7 +57,7 @@ APPL_OBJS	= UxXt.o UxCplus.o UxMethod.o pck.o
 
 SHELL		= /bin/sh
 
-X_LIBS		= /usr/X11R6/lib/libXm.a -lXmu -lXt -lXpm -lSM -lICE -lXext -lX11
+X_LIBS		= /usr/X11R6/lib/libXm.a -lXp -lpthread -lXmu -lXt -lXpm -lSM -lICE -lXext -lX11
 
 X_LIBPATH	= -L/usr/X11R6/lib
 MOTIF_LIBPATH	= -L/home/mws/motif
@@ -71,14 +71,14 @@ ANSI_CFLAGS     = -ansi -O3
 
 # For GNU c++
 CPLUS_CC        = g++
-CPLUS_CFLAGS    =-O3
+CPLUS_CFLAGS    =-O3 -Wno-deprecated
 
 CFLAGS		= -DLINUX -DGNU -DUNIX -DXT_CODE -DXOPEN_CATALOG $(MOTIF_CFLAGS) \
 		  $(X_CFLAGS)
 UCB_LIBPATH     = /usr/ucblib
 
 LIBPATH		= $(MOTIF_LIBPATH) $(X_LIBPATH) $(T_LIB) 
-LIBS            = $(X_LIBS) -ltiff -lm 
+LIBS            = $(X_LIBS) -ltiff -ljpeg -lz -lm 
 
 
 OBJS = $(MAIN:.cc=.o) $(INTERFACES:.cc=.o) $(MYCODE:.cc=.o) $(APPL_OBJS)
@@ -101,9 +101,9 @@ $(EXECUTABLE): $(OBJS)
 	$(CC) -c $(CFLAGS) $< -o $@
 
 
-#lean:
-#	@echo "Cleaning xconv $(OBJS)" ; \
-#	bin/rm -f xconv $(OBJS)
+clean:
+	@echo "Cleaning xconv $(OBJS)" ; \
+	rm -f xconv $(OBJS)
 
 CC = \
 @`if [ "$(LANGUAGE)" = "C++" ]; then echo $(CPLUS_CC) $(CPLUS_CFLAGS);fi` \

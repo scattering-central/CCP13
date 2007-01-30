@@ -2150,7 +2150,7 @@ int _UxCmainWS::LoadProfile( Environment * pEnv, char *error )
 	char lstring[81];
 	int nstate;
 
-	ifstream in_profile(gotFile.data(),ios::in|ios::skipws);
+	ifstream in_profile(gotFile.data(),(ios::openmode)(ios::in|ios::skipws));
 	if(in_profile.bad())
 	{
 	  strcpy(error,"Error opening input file");
