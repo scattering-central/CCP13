@@ -1,12 +1,12 @@
 SYS = linux
 #
-EXEC = ../bin
+EXEC = .
 MLIB = ../libs/mlib.a
 IOLIB = ../libs/iolib.a
 OTLIB = ../libs/libotoko.a
-PGLIB = -lpgplot
+PGLIB = -L ~/local/pgplot -lpgplot
 #
-FC = f77
+FC = g77
 FCOMP = -O
 FLINK = -static
 #
@@ -24,7 +24,7 @@ all: lfit clean
 lfit: $(FITOBJS) $(COMOBJS)
 	$(FC) -o $(EXEC)/$@  $(FLINK) $(FITOBJS) $(COMOBJS) \
 	$(MLIB) $(IOLIB) $(OTLIB) \
-	$(PGLIB) -static -lX11 -lcurses -ltermcap
+	$(PGLIB) -static -L/usr/X11R6/lib -lX11 -lcurses -ltermcap -lpthread
 #
 $(FITOBJS): $(FITFORT) $(FITINCL)
 $(COMOBJS): $(COMFORT) $(FITINCL)

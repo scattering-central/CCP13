@@ -40,7 +40,7 @@ C
       DOUBLE PRECISION FCONST,DFCONST
       EXTERNAL FCONST,DFCONST
 C
-      SAVE FCOM,FCOM1,FCOM2,FCOM3
+      SAVE /FCOM/,/FCOM1/,/FCOM2/,/FCOM3/
 C
 C-----------------------------------------------------------------------
       K = 0

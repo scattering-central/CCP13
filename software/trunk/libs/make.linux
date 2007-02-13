@@ -33,7 +33,7 @@ FITPACKO = $(FITPACKF:.f=.o)
 #
 IOLIBF = iolib/ask.f iolib/rdcom.f iolib/wrtlog.f
 IOLIBC = iolib/fmem.c iolib/readc.c iolib/wrdlen.c iolib/fprint.c \
-       	 iolib/fproc.c iolib/ftime.c 
+	iolib/fproc.c iolib/ftime.c 
 IOLIBO = $(IOLIBC:.c=.o) $(IOLIBF:.f=.o) 
 #
 MLIBF = mlib/bessj.f mlib/brent2.f mlib/frprmn.f mlib/mrqmin.f mlib/svbksb.f \
@@ -44,7 +44,11 @@ MLIBF = mlib/bessj.f mlib/brent2.f mlib/frprmn.f mlib/mrqmin.f mlib/svbksb.f \
 MLIBC = mlib/fplex.c
 MLIBO = $(MLIBF:.f=.o) $(MLIBC:.c=.o)
 #
-all: config bslio_dev.a bslio_dev2.a bslio.a bslio2.a bslio_new.a fitpack.a iolib.a mlib.a
+LIBOTOKO = otoko/dawrt.F otoko/igets.c otoko/opnfil.F otoko/errmsg.c otoko/gethdr.f otoko/upcase.f otoko/outfil.f otoko/rdhdr.f otoko/hdrgen.f otoko/getfil.f otoko/frdata.f otoko/getval.f otoko/eofchar.f
+#
+LIBOTOKOO =  otoko/dawrt.o otoko/igets.o otoko/opnfil.o otoko/errmsg.o otoko/gethdr.o otoko/upcase.o otoko/outfil.o otoko/rdhdr.o otoko/hdrgen.o otoko/getfil.o otoko/frdata.o otoko/getval.o otoko/eofchar.o
+#
+all: config bslio_dev.a bslio_dev2.a bslio.a bslio2.a bslio_new.a fitpack.a iolib.a libotoko.a mlib.a
 #
 bslio_new.a: $(BSLIONEWO)
 	ar r $(SYS)/$@ $(BSLIONEWO)
@@ -72,6 +76,10 @@ fitpack.a: $(FITPACKO)
 #
 iolib.a: $(IOLIBO)
 	ar r $(SYS)/$@ $(IOLIBO)
+	$(RANLIB) $(SYS)/$@
+#
+libotoko.a: $(LIBOTOKOO)
+	ar r $(SYS)/$@ $(LIBOTOKOO)
 	$(RANLIB) $(SYS)/$@
 #
 mlib.a: $(MLIBO)
