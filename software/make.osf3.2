@@ -1,0 +1,42 @@
+EXEC = ../bin
+LIBS = $(HOME)/ccp13dist/libs
+BSLIO = $(LIBS)/bslio_dev.a
+OTLIB = $(LIBS)/libotoko.a
+MLIB = $(LIBS)/mlib.a
+FITPACK = $(LIBS)/fitpack.a
+IOLIB = $(LIBS)/iolib.a
+PGDIR = $(HOME)/pgplot
+PGLIB = -lpgplot
+#
+FCOMP = -O
+FLINK = -O
+#
+FIXFORT = PGGUIFIX.f CENTRE.f CIRFIT.f CTILT.f EVPOLY.f FTOSTD.f LIST.f \
+	REDUCE.f REPLACE.f ROTATE.f STOREC.f FLIST.f PGLINES.f DELPNT.f \
+	DELLIN.f DELSCN.f REDSCN.f REDSEC.f PGSCANS.f REFALL.f REFPAR.f \
+	RECIP.f RECTOFF.f DRAGON.f FIBGEN.f RZDCAL.f MATCAL.f \
+	BCKSMOOTH.f BLUR.f BLURLIMITS.f BCKWIN.f BGWSRT2.f GETBUF.f \
+	BCKCSYM.f BGCSYM2.f gethdr2.f getfil2.f strippath.f
+FIXC	= fileio_dev2.c
+FIXINCL = FIXPAR.COM
+FITINCL = FIT.COM
+#
+COMFORT = PGFPLOT.f FUNCS.f FGAUSS.f FLORENTZ.f FPEARSON.f FPOLY.f \
+	FVOIGT.f PSNINT.f VGTINT.f FDEBYE.f FDEXP.f
+#
+FIXOBJS = $(FIXFORT:.f=.o)
+COMOBJS = $(COMFORT:.f=.o)
+COBJS	= $(FIXC:.c=.o)
+#
+guifix: $(FIXOBJS) $(COMOBJS) $(COBJS)
+	f77 -o $(EXEC)/$@ $(FLINK) $(FIXOBJS) $(COMOBJS) $(COBJS) \
+	$(MLIB) $(IOLIB) $(BSLIO) $(OTLIB) $(FITPACK) \
+	-L$(PGDIR) $(PGLIB) -lX11 -ltermcap
+#
+$(FIXOBJS): $(FIXFORT) $(FIXINCL)
+$(COMOBJS): $(COMFORT) $(FITINCL)
+#
+.f.o:
+	$(FC) -c $(FCOMP) $<
+.c.o:
+	$(CC) -c -DOSF -DULTRIX -DMMAP -g $<
