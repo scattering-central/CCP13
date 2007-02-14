@@ -1,11 +1,11 @@
-LIBS = $(HOME)/ccp13dist/libs/bin
+LIBS = ../libs
 EXEC = .
 BSLIO = $(LIBS)/bslio_new.a
-OTLIB = $(LIBS)/otoko.a
+OTLIB = $(LIBS)/libotoko.a
 MLIB = $(LIBS)/mlib.a
 FITPACK = $(LIBS)/fitpack.a
 IOLIB = $(LIBS)/iolib.a
-PGDIR = $(HOME)/pgplot 
+PGDIR = $(HOME)/local/pgplot 
 PGLIB = -lpgplot
 X11INCLUDE = /usr/openwin/include
 X11DIR = /usr/X11R6/lib
@@ -35,7 +35,7 @@ COBJS	= $(FIXC:.c=.o)
 guifix: $(FIXOBJS) $(COMOBJS) $(COBJS)
 	g77 -o $(EXEC)/$@ $(FLINK) $(FIXOBJS) $(COMOBJS) $(COBJS) \
 	$(MLIB) $(IOLIB) $(BSLIO) $(OTLIB) $(FITPACK)\
-	-L$(PGDIR) -L$(X11DIR) -L$(TERMDIR) $(PGLIB) -lX11 -ltermcap
+	-L$(PGDIR) -L$(X11DIR) -L$(TERMDIR) $(PGLIB) -lX11 -ltermcap -lpthread
 #
 $(FIXOBJS): $(FIXFORT) $(FIXINCL)
 $(COMOBJS): $(COMFORT) $(FITINCL)
@@ -45,8 +45,8 @@ $(COMOBJS): $(COMFORT) $(FITINCL)
 .c.o:
 	$(CC) -c -DLINUX -DMMAP $(FCOMP) $<
 #
-#clean:
-#	/bin/rm $(FIXOBJS) $(COMOBJS)
+clean:
+	/bin/rm $(FIXOBJS) $(COMOBJS)
 #
 
 
