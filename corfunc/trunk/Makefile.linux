@@ -1,0 +1,10 @@
+corfunc:
+	make -C fortran/corfunc -f Makefile.linux
+	make -C fortran/tropus -f Makefile.linux
+	make -C java/java_src -f Makefile.linux
+
+clean:
+	make -C fortran/corfunc -f Makefile clean
+	make -C fortran/tropus -f Makefile clean
+	make -C java/java_src -f Makefile.linux clean
+	-rm *.jar *.exe

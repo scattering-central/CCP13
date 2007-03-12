@@ -6,9 +6,7 @@ all:
 	g77 --fixed-line-length-none extrapolate.f tailfit.f tailjoin.f corfunc_io.o wrdlen.o getfiletype.o readascii.o getpath.o addstr.o byte_order.o mrqmin.o strpath.o tred2.o tqli.o syminv.o covsrt.o tbksb.o loqread.o writeascii.o -static -o extrapolate
 	g77 extract_par.f corfunc_io.o wrdlen.o getpath.o strpath.o -static -o extract_par
 	cp corfunc_io.o ../tropus
-	mv extrapolate ../..
-	mv ftransform ../..
-	mv extract_par ../..
+	mv *.exe ../..
 
 clean:
-	-rm extrapolate ftransform extract_par *.o
+	-rm *.exe *.o

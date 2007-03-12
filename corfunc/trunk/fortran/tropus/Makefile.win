@@ -1,5 +1,5 @@
 tropus: corfunc_io.o
 	g77 -ffixed-line-length-none tropus.f tropus_io.f polint.f corfunc_io.o -static -o tropus
-	mv tropus ../..
+	mv *.exe ../..
 clean:
-	-rm *.o tropus
+	-rm *.o *.exe
