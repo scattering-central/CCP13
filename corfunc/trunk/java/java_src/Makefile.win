@@ -1,0 +1,8 @@
+corfunc:
+	javac -classpath "other_jars\graph.jar;other_jars\jai_codec.jar;other_jars\jai_core.jar;other_jars\jh.jar" *.java
+	jar cmf main.txt corfunc.jar *.class
+	mv corfunc.jar ../..
+	cp other_jars/*.jar ../..
+
+clean:
+	-rm *.class

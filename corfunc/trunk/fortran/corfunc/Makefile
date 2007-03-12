@@ -1,0 +1,12 @@
+all:
+	gcc -c *.c
+	g77 -c addstr.f corfunc_io.f covsrt.f getpath.f mrqmin.f savgol.f
+	g77 -c sig.f strpath.f syminv.f tbksb.f tqli.f tred2.f loqread.f
+	g77 --fixed-line-length-none ftransform.f corfunc_io.o wrdlen.o getpath.o strpath.o endian.o writeascii.o -static -o ftransform
+	g77 --fixed-line-length-none extrapolate.f tailfit.f tailjoin.f corfunc_io.o wrdlen.o getfiletype.o readascii.o getpath.o addstr.o byte_order.o mrqmin.o strpath.o tred2.o tqli.o syminv.o covsrt.o tbksb.o loqread.o writeascii.o -static -o extrapolate
+	g77 extract_par.f corfunc_io.o wrdlen.o getpath.o strpath.o -static -o extract_par
+	cp corfunc_io.o ../tropus
+	mv *.exe ../..
+
+clean:
+	-rm *.exe *.o
