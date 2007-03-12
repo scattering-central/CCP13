@@ -4,7 +4,7 @@ corfunc:
 	make -C java/java_src -f Makefile.linux
 
 clean:
-	make -C fortran/corfunc -f Makefile clean
-	make -C fortran/tropus -f Makefile clean
+	make -C fortran/corfunc -f Makefile.linux clean
+	make -C fortran/tropus -f Makefile.linux clean
 	make -C java/java_src -f Makefile.linux clean
-	-rm *.jar *.exe
+	-rm *.jar extract_par extrapolate ftransform tropus
