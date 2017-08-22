@@ -1,8 +1,4 @@
-The class 'bslp_test' plots a 3-D representation of the data files
-listed in the file 'datafile'. (This should be changed so that it accepts an
-argument of any data file). The file 'datafile' is merely a list of
-data files - each of which contain simple x,y data points. 
 
-
+bslp_test.class is the main class for testing 3d plotting stuff.
 
 

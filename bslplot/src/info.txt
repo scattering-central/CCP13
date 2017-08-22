@@ -1,4 +1,0 @@
-
-bslp_test.class is the main class for testing 3d plotting stuff.
-
-
